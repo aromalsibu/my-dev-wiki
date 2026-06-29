@@ -1,0 +1,169 @@
+site_name: My Wiki
+
+theme:
+  name: material
+
+  palette:
+
+    # Light mode
+    - scheme: default
+      primary: white
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+
+    # Dark mode
+    - scheme: slate
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - navigation.footer
+    - navigation.top
+
+
+  copyright: ""  
+
+extra_css:
+  - stylesheet/extra.css
+
+markdown_extensions:
+  - pymdownx.highlight:
+      pygments_lang_class: true
+      anchor_linenums: false
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+
+nav:
+  - Home: index.md
+  - Drift:
+          - Getting Started: drift/01_getting_started.md
+          - Database: drift/architecture/database.md
+          - Table: drift/architecture/tables.md
+          - Database Connection: drift/architecture/db_connection.md
+
+  - Riverpod:
+      - Concept Map: riverpod/map.md
+      - Getting Started:
+          - What is Riverpod: riverpod/01_getting_started/01_what_is_riverpod.md
+          - Installation: riverpod/01_getting_started/02_installation.md
+          - Your First Provider: riverpod/01_getting_started/03_first_provider.md
+          - Consumer Widget: riverpod/01_getting_started/04_consumer_widget.md
+          - ProviderScope: riverpod/01_getting_started/05_provider_scope.md
+      - Core Concepts:
+          - ProviderContainer: riverpod/02_core_concepts/01_provider_container.md
+          - ProviderScope In-Depth: riverpod/02_core_concepts/02_providerscope_indepth.md
+          - Provider Lifecycle: riverpod/02_core_concepts/03_provider_lifecycle.md
+          - Dependency Graph: riverpod/02_core_concepts/04_dependancy_graph.md
+          - State Invalidation: riverpod/02_core_concepts/05_state_invalidation.md
+          - Caching: riverpod/02_core_concepts/06_caching.md
+          - Auto Dispose: riverpod/02_core_concepts/07_auto_dispose.md
+          - Code Generation: riverpod/02_core_concepts/08_code_generation.md    
+      - Provider Types:
+          - Provider: riverpod/03_provider_types/01_provider.md
+          - StateProvider: riverpod/03_provider_types/02_stateprovider.md
+          - FutureProvider: riverpod/03_provider_types/03_future_provider.md
+          - StreamProvider: riverpod/03_provider_types/04_stream_provider.md
+          - NotifierProvider: riverpod/03_provider_types/05_notifier_provider.md
+          - AsyncNotifierProvider: riverpod/03_provider_types/06_async_notifier_provider.md
+          - StreamNotifierProvider: riverpod/03_provider_types/07_stream_notifier_provider.md
+          - ChangeNotifierProvider: riverpod/03_provider_types/08_change_notifier_provider.md
+          - StateNotifierProvider: riverpod/03_provider_types/09_state_notfier_provider.md    
+      - Notifiers & Mutations:
+          - Notifier: riverpod/04_notfiers/01_notfier.md
+          - AsyncNotifier: riverpod/04_notfiers/02_async_notfier.md
+          - StreamNotifier: riverpod/04_notfiers/03_stream_notfier.md
+          - The build() Method: riverpod/04_notfiers/04_build.md
+          - The state Property: riverpod/04_notfiers/05_state.md
+          - The ref Property: riverpod/04_notfiers/06_ref.md
+          - Provider Families: riverpod/04_notfiers/07_provider_family.md
+      - Ref:
+          - What is Ref: riverpod/05_ref/01_what_is_ref.md
+          - ref.watch(): riverpod/05_ref/02_ref_watch.md
+          - ref.read(): riverpod/05_ref/03_ref_read.md
+          - ref.listen(): riverpod/05_ref/04_ref_listen.md
+          - ref.listenManual(): riverpod/05_ref/05_ref_listen_manual.md
+          - ref.invalidate(): riverpod/05_ref/06_ref_invalidate.md
+          - ref.invalidateSelf(): riverpod/05_ref/07_ref_invalidate_self.md
+          - ref.refresh(): riverpod/05_ref/08_ref_refresh.md
+          - ref.keepAlive(): riverpod/05_ref/09_ref_keep_alive.md
+          - ref.onDispose(): riverpod/05_ref/10_ref_on_dispose.md
+          - ref.onCancel(): riverpod/05_ref/11_ref_on_cancel.md
+          - ref.onResume(): riverpod/05_ref/12_ref_on_resume.md
+          - ref.exists(): riverpod/05_ref/13_ref_exists.md
+          - Ref Lifecycle: riverpod/05_ref/14_ref_lifecycle.md
+      - AsyncValue:
+          - What is AsyncValue?: riverpod/06_async_value/01_what_is_async_value.md
+          - Loading State: riverpod/06_async_value/02_loading.md
+          - Data State: riverpod/06_async_value/03_data.md
+          - Error State: riverpod/06_async_value/04_error.md
+          - when(): riverpod/06_async_value/05_when.md
+          - maybeWhen(): riverpod/06_async_value/06_maybe_when.md
+          - map(): riverpod/06_async_value/07_map.md
+          - maybeMap(): riverpod/06_async_value/08_maybe_map.md
+          - guard(): riverpod/06_async_value/09_guard.md
+          - Best Practices: riverpod/06_async_value/10_best_practices.md
+      - Provider Modifiers:
+          - .autoDispose: riverpod/07_provider_modifiers/01_auto_dispose.md
+          - .family: riverpod/07_provider_modifiers/02_family.md
+          - .overrideWith: riverpod/07_provider_modifiers/03_override_with.md
+          - .overrideWithValue: riverpod/07_provider_modifiers/04_override_with_value.md
+          - .select: riverpod/07_provider_modifiers/05_select.md
+          - keepAlive: riverpod/07_provider_modifiers/06_keep_alive.md
+      - Consumers:
+          - Consumer: riverpod/08_consumers/01_consumer.md
+          - ConsumerWidget: riverpod/08_consumers/02_consumer_widget.md
+          - ConsumerStatefulWidget: riverpod/08_consumers/03_consumer_stateful_widget.md
+          - WidgetRef: riverpod/08_consumers/04_widget_ref.md
+      - Provider Observers:
+          - ProviderObserver: riverpod/09_provider_observers/01_provider_observer.md
+          - Logging: riverpod/09_provider_observers/02_logging.md
+          - Debugging: riverpod/09_provider_observers/03_debugging.md
+          - Performance Monitoring: riverpod/09_provider_observers/04_performance_monitoring.md
+      - Testing:
+          - ProviderContainer: riverpod/10_testing/01_provider_container.md
+          - Overriding Providers: riverpod/10_testing/02_overriding_providers.md
+          - Testing Providers: riverpod/10_testing/03_testing_providers.md
+          - Testing Notifiers: riverpod/10_testing/04_testing_notifiers.md
+          - Mocking Dependencies: riverpod/10_testing/05_mocking_dependencies.md
+          - Integration Testing: riverpod/10_testing/06_integration_testing.md
+      - Performance:
+          - Minimizing Rebuilds: riverpod/11_performance/01_minimizing_rebuilds.md
+          - Fine-grained select(): riverpod/11_performance/02_select.md
+          - Splitting Providers: riverpod/11_performance/03_splitting_providers.md
+          - Auto Dispose Strategy: riverpod/11_performance/04_auto_dispose_strategy.md
+          - Caching Structures: riverpod/11_performance/05_caching.md
+          - Common Pitfalls: riverpod/11_performance/06_common_performance_pitfalls.md
+      - Best Practices:
+          - Project Structure: riverpod/12_best_practices/01_project_structure.md
+          - Naming Conventions: riverpod/12_best_practices/02_naming_conventions.md
+          - Provider Organization: riverpod/12_best_practices/03_provider_organization.md
+          - Error Handling: riverpod/12_best_practices/04_error_handling.md
+          - State Management Patterns: riverpod/12_best_practices/05_state_management_patterns.md
+          - Dependency Injection: riverpod/12_best_practices/06_dependency_injection.md
+      - Migrations:
+          - Provider → Riverpod: riverpod/13_migration/01_provider_to_riverpod.md
+          - StateNotifier → Notifier: riverpod/13_migration/02_state_notifier_to_notifier.md
+          - FutureProvider → AsyncNotifier: riverpod/13_migration/03_future_provider_to_async_notifier.md
+          - StateProvider → Notifier: riverpod/13_migration/04_state_provider_to_notifier.md
+          - Riverpod 2 → Riverpod 3: riverpod/13_migration/05_riverpod2_to_riverpod3.md
+      - Comparisons:
+          - Provider vs StateProvider: riverpod/14_comparisons/01_provider_vs_state_provider.md
+          - FutureProvider vs AsyncNotifier: riverpod/14_comparisons/02_future_provider_vs_async_notifier.md
+          - StreamProvider vs StreamNotifier: riverpod/14_comparisons/03_stream_provider_vs_stream_notifier.md
+          - Notifier vs AsyncNotifier: riverpod/14_comparisons/04_notifier_vs_async_notifier.md
+          - Notifier vs StateNotifier: riverpod/14_comparisons/05_notifier_vs_state_notifier.md
+          - Provider vs BLoC: riverpod/14_comparisons/06_provider_vs_bloc.md
+          - Provider vs GetX: riverpod/14_comparisons/07_provider_vs_getx.md
+          - Choosing the Right Provider: riverpod/14_comparisons/08_choosing_the_right_provider.md
+      - API Cheat Sheet:
+          - Common APIs: riverpod/15_api_cheat_sheet/01_common_apis.md
+          - Lifecycle APIs: riverpod/15_api_cheat_sheet/02_lifecycle_apis.md
+          - Ref APIs: riverpod/15_api_cheat_sheet/03_ref_apis.md
+          - AsyncValue APIs: riverpod/15_api_cheat_sheet/04_async_value_apis.md
+          - Provider Types Overview: riverpod/15_api_cheat_sheet/05_provider_types_overview.md
