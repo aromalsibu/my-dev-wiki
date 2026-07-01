@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#listenable" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -6639,6 +6644,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,769 @@
 
 
 
-  <h1>Listenable</h1>
+<h1 id="listenable">Listenable</h1>
+<p>Understand how to create custom observable objects with Listenable in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Listenable is an abstract class that provides the foundation for change notification in Flutter. It represents an object that can have listeners which are notified when the object changes. Both ChangeNotifier and ValueNotifier extend Listenable. Understanding Listenable gives you the ability to create custom observable objects with fine-grained control over change notifications.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Listenable exists to:</p>
+<ul>
+<li>Provide a foundation for reactive programming</li>
+<li>Enable custom observable objects</li>
+<li>Support change notification patterns</li>
+<li>Integrate with Flutter's widget system</li>
+<li>Allow efficient UI updates</li>
+<li>Create custom state management solutions</li>
+<li>Support listener-based architectures</li>
+</ul>
+<hr />
+<h1 id="listenable-basics">Listenable Basics</h1>
+<blockquote>
+<p><strong>Understanding</strong> Listenable and its usage.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// A custom Listenable implementation</span>
+<span class="c1">/// This demonstrates how to create a custom observable object</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CounterListenable</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Listenable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Private list of listeners</span>
+<span class="w">  </span><span class="c1">// This tracks all the listeners that have been added</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">VoidCallback</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_listeners</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
 
+<span class="w">  </span><span class="c1">// Private state</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Getter for the count</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_count</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Method to increment the counter</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">increment</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_count</span><span class="o">++</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// Notify all listeners about the change</span>
+<span class="w">    </span><span class="n">_notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Method to decrement the counter</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">decrement</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_count</span><span class="o">--</span><span class="p">;</span>
+<span class="w">    </span><span class="n">_notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Method to add a listener</span>
+<span class="w">  </span><span class="c1">// This is required by the Listenable interface</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">addListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Method to remove a listener</span>
+<span class="w">  </span><span class="c1">// This is required by the Listenable interface</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">removeListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Helper method to notify all listeners</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_notifyListeners</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Notify each listener by calling their callback</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">listener</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_listeners</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">listener</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Application demonstrating custom Listenable usage</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ListenableExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ListenableExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">ListenableExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_ListenableExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_ListenableExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">ListenableExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Create an instance of our custom Listenable</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">CounterListenable</span><span class="w"> </span><span class="n">_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CounterListenable</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Add a listener to the counter</span>
+<span class="w">    </span><span class="c1">// This listener will be called whenever the counter changes</span>
+<span class="w">    </span><span class="n">_counter</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// This callback will be executed when _counter notifies listeners</span>
+<span class="w">      </span><span class="c1">// We could perform side effects here</span>
+<span class="w">      </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Counter changed to: </span><span class="si">${</span><span class="n">_counter</span><span class="p">.</span><span class="n">count</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Clean up resources</span>
+<span class="w">    </span><span class="c1">// Remove all listeners to prevent memory leaks</span>
+<span class="w">    </span><span class="c1">// For this example, we&#39;d need to track the listener reference</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Listenable Counter&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// Use AnimatedBuilder to listen to the counter</span>
+<span class="w">            </span><span class="c1">// AnimatedBuilder will rebuild whenever the counter changes</span>
+<span class="w">            </span><span class="n">AnimatedBuilder</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">animation:</span><span class="w"> </span><span class="n">_counter</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                  </span><span class="s1">&#39;Count: </span><span class="si">${</span><span class="n">_counter</span><span class="p">.</span><span class="n">count</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// Control buttons</span>
+<span class="w">            </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_counter</span><span class="p">.</span><span class="n">decrement</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_counter</span><span class="p">.</span><span class="n">increment</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- CounterListenable implements the Listenable interface
+- addListener and removeListener manage listeners
+- _notifyListeners triggers all listeners
+- AnimatedBuilder listens to Listenable objects
+- Custom observable objects can be created</p>
+<hr />
+<h1 id="listenable-vs-changenotifier">Listenable vs ChangeNotifier</h1>
+<blockquote>
+<p><strong>Comparing</strong> Listenable with ChangeNotifier.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Custom Listenable implementation</span>
+<span class="c1">/// More control over listener management</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CustomListenable</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Listenable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">VoidCallback</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_listeners</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_value</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">setValue</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">newValue</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">newValue</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newValue</span><span class="p">;</span>
+<span class="w">      </span><span class="n">_notifyListeners</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">addListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">removeListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_notifyListeners</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">listener</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_listeners</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">listener</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Comparison of Listenable and ChangeNotifier</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ListenableComparison</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ListenableComparison</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Custom Listenable</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">customListenable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CustomListenable</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// ChangeNotifier (pre-built)</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">changeNotifier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ChangeNotifier</span><span class="p">()..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Listenable Comparison&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// Listenable implementation</span>
+<span class="w">            </span><span class="n">_buildListenableSection</span><span class="p">(</span><span class="n">customListenable</span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Divider</span><span class="p">(),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// ChangeNotifier implementation</span>
+<span class="w">            </span><span class="n">_buildChangeNotifierSection</span><span class="p">(</span><span class="n">changeNotifier</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// Advantages of each approach</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">crossAxisAlignment:</span><span class="w"> </span><span class="n">CrossAxisAlignment</span><span class="p">.</span><span class="n">start</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                      </span><span class="s1">&#39;Key Differences:&#39;</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                    </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;• Listenable: Full control, manual listener management&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;• ChangeNotifier: Built-in notifyListeners(), easier to use&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;• Both: Support AnimatedBuilder and ListenableBuilder&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildListenableSection</span><span class="p">(</span><span class="n">CustomListenable</span><span class="w"> </span><span class="n">listenable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Custom Listenable&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="n">AnimatedBuilder</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">animation:</span><span class="w"> </span><span class="n">listenable</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Value: </span><span class="si">${</span><span class="n">listenable</span><span class="p">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">listenable</span><span class="p">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">listenable</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">listenable</span><span class="p">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">listenable</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildChangeNotifierSection</span><span class="p">(</span><span class="n">ChangeNotifier</span><span class="w"> </span><span class="n">notifier</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Using a ValueNotifier as an example of ChangeNotifier</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">valueNotifier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ValueNotifier</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;ChangeNotifier (ValueNotifier)&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="n">ValueListenableBuilder</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">valueListenable:</span><span class="w"> </span><span class="n">valueNotifier</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Value: </span><span class="si">$</span><span class="n">value</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">valueNotifier</span><span class="p">.</span><span class="n">value</span><span class="o">--</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">valueNotifier</span><span class="p">.</span><span class="n">value</span><span class="o">++</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- CustomListenable: Manual listener management
+- ChangeNotifier: Built-in notification system
+- Both work with AnimatedBuilder
+- Choose based on control vs convenience</p>
+<hr />
+<h1 id="advanced-listenable-usage">Advanced Listenable Usage</h1>
+<blockquote>
+<p><strong>Advanced patterns</strong> with Listenable.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Combined Listenable that listens to multiple sources</span>
+<span class="c1">/// This demonstrates how to create complex observable objects</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CompositeListenable</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Listenable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Listenable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_children</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">VoidCallback</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_listeners</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isListening</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">CompositeListenable</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">_children</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_startListening</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_startListening</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isListening</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="n">_isListening</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Add a listener to each child</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">child</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_children</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">child</span><span class="p">.</span><span class="n">addListener</span><span class="p">(</span><span class="n">_notifyListeners</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">addListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">_isListening</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_startListening</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">removeListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// If no listeners, stop listening to children</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_listeners</span><span class="p">.</span><span class="n">isEmpty</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">_isListening</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_stopListening</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_stopListening</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">_isListening</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="n">_isListening</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">child</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_children</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">child</span><span class="p">.</span><span class="n">removeListener</span><span class="p">(</span><span class="n">_notifyListeners</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_notifyListeners</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">listener</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_listeners</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">listener</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Advanced Listenable usage example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AdvancedListenableExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">AdvancedListenableExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">AdvancedListenableExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_AdvancedListenableExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_AdvancedListenableExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">AdvancedListenableExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Create two independent Listenables</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ValueNotifier</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_counter1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ValueNotifier</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ValueNotifier</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_counter2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ValueNotifier</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// Create a composite that combines both</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">CompositeListenable</span><span class="w"> </span><span class="n">_combined</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_combined</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CompositeListenable</span><span class="p">([</span><span class="n">_counter1</span><span class="p">,</span><span class="w"> </span><span class="n">_counter2</span><span class="p">]);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_combined</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_counter1</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_counter2</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Advanced Listenable&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// First counter</span>
+<span class="w">            </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">spaceBetween</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Counter 1:&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">remove</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_counter1</span><span class="p">.</span><span class="n">value</span><span class="o">--</span><span class="p">,</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="n">AnimatedBuilder</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">animation:</span><span class="w"> </span><span class="n">_counter1</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="k">return</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_counter1</span><span class="p">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">                          </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">add</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_counter1</span><span class="p">.</span><span class="n">value</span><span class="o">++</span><span class="p">,</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                      </span><span class="p">],</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// Second counter</span>
+<span class="w">            </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">spaceBetween</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Counter 2:&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">remove</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_counter2</span><span class="p">.</span><span class="n">value</span><span class="o">--</span><span class="p">,</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="n">AnimatedBuilder</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">animation:</span><span class="w"> </span><span class="n">_counter2</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="k">return</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_counter2</span><span class="p">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">                          </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">add</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_counter2</span><span class="p">.</span><span class="n">value</span><span class="o">++</span><span class="p">,</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                      </span><span class="p">],</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// Combined total (updates when either changes)</span>
+<span class="w">            </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">spaceBetween</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                      </span><span class="s1">&#39;Combined Total:&#39;</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                    </span><span class="n">AnimatedBuilder</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">animation:</span><span class="w"> </span><span class="n">_combined</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="k">return</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                          </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_counter1</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_counter2</span><span class="p">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                            </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">                            </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                          </span><span class="p">),</span>
+<span class="w">                        </span><span class="p">);</span>
+<span class="w">                      </span><span class="p">},</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- CompositeListenable combines multiple Listenables
+- Starts/stops listening based on listeners
+- Efficient resource management
+- Complex observable hierarchies</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> with Listenable.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Form validation with Listenable</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">FormValidationListenable</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Listenable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ValueNotifier</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">_validators</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">VoidCallback</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_listeners</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isValid</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isValid</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">addValidator</span><span class="p">(</span><span class="n">ValueNotifier</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">validator</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_validators</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">validator</span><span class="p">);</span>
+<span class="w">    </span><span class="n">validator</span><span class="p">.</span><span class="n">addListener</span><span class="p">(</span><span class="n">_validate</span><span class="p">);</span>
+<span class="w">    </span><span class="n">_validate</span><span class="p">();</span><span class="w"> </span><span class="c1">// Initial validation</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_validate</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">newValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">validator</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_validators</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">validator</span><span class="p">.</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">newValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isValid</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">newValid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_isValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newValid</span><span class="p">;</span>
+<span class="w">      </span><span class="n">_notifyListeners</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">addListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">removeListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_notifyListeners</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">listener</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_listeners</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">listener</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">validator</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_validators</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">validator</span><span class="p">.</span><span class="n">removeListener</span><span class="p">(</span><span class="n">_validate</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Listenable with debouncing</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">DebouncedListenable</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Listenable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Listenable</span><span class="w"> </span><span class="n">_source</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="n">delay</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">VoidCallback</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_listeners</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="n">Timer</span><span class="o">?</span><span class="w"> </span><span class="n">_timer</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">DebouncedListenable</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">_source</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">delay</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_source</span><span class="p">.</span><span class="n">addListener</span><span class="p">(</span><span class="n">_onSourceChanged</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_onSourceChanged</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Cancel previous timer</span>
+<span class="w">    </span><span class="n">_timer</span><span class="o">?</span><span class="p">.</span><span class="n">cancel</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Wait for the delay before notifying</span>
+<span class="w">    </span><span class="n">_timer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Timer</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span><span class="w"> </span><span class="n">_notifyListeners</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">addListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">removeListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_notifyListeners</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">listener</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_listeners</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">listener</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_source</span><span class="p">.</span><span class="n">removeListener</span><span class="p">(</span><span class="n">_onSourceChanged</span><span class="p">);</span>
+<span class="w">    </span><span class="n">_timer</span><span class="o">?</span><span class="p">.</span><span class="n">cancel</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Form validation with multiple validators
+- Debounced notifications for performance
+- Custom listener management
+- Real-world observable patterns</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="implement-listener-management">Implement Listener Management</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Proper listener management</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MyListenable</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Listenable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">VoidCallback</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_listeners</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">addListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">removeListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="notify-efficiently">Notify Efficiently</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Only notify when needed</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="n">_notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Notify even without changes</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">  </span><span class="n">_notifyListeners</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="clean-up-resources">Clean Up Resources</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Dispose properly</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MyWidget</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MyWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_MyWidgetState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_MyWidgetState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MyWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">MyListenable</span><span class="w"> </span><span class="n">_listenable</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_listenable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyListenable</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Add listeners</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Remove listeners and dispose</span>
+<span class="w">    </span><span class="n">_listenable</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="forgetting-to-remove-listeners">Forgetting to Remove Listeners</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">  </span><span class="n">listenable</span><span class="p">.</span><span class="n">addListener</span><span class="p">(</span><span class="n">_handleChange</span><span class="p">);</span>
+<span class="w">  </span><span class="c1">// No removal in dispose</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">  </span><span class="n">listenable</span><span class="p">.</span><span class="n">addListener</span><span class="p">(</span><span class="n">_handleChange</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">listenable</span><span class="p">.</span><span class="n">removeListener</span><span class="p">(</span><span class="n">_handleChange</span><span class="p">);</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="not-implementing-removelistener">Not Implementing RemoveListener</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">MyListenable</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Listenable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">addListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="c1">// Missing removeListener</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">MyListenable</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Listenable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">VoidCallback</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_listeners</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">addListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">removeListener</span><span class="p">(</span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">listener</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_listeners</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">listener</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Listenable provides the foundation for reactive programming in Flutter. It enables custom observable objects with listener-based change notification. Use Listenable for custom reactive solutions, advanced patterns, and when you need full control over notification behavior.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="restoration.md">Restoration</a></li>
+<li><a href="state-management-overview.md">State Management Overview</a></li>
+<li><a href="provider.md">Provider</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Listenable is the base class for ChangeNotifier</li>
+<li>AnimatedBuilder works with any Listenable</li>
+<li>Listenable supports multiple listeners</li>
+<li>Listeners can be added and removed</li>
+<li>Listenable enables custom observable objects</li>
+<li>Listenable is lightweight</li>
+<li>Listenable can be combined</li>
+<li>Listenable supports efficient UI updates</li>
+</ul>
 
 
 

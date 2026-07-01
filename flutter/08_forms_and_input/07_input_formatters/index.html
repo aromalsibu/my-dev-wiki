@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#input-formatters" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -6946,6 +6951,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,803 @@
 
 
 
-  <h1>Input Formatters</h1>
+<h1 id="input-formatters">Input Formatters</h1>
+<p>Understand how to format and restrict user input in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Input Formatters are a powerful feature in Flutter that allow you to control, restrict, and format user input as they type. They act as filters that process each keystroke, allowing you to enforce specific formats, limit character length, allow only certain characters, and automatically format the input. This is essential for creating user-friendly input fields.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Input Formatters exist to:</p>
+<ul>
+<li>Restrict input to specific characters (e.g., only digits)</li>
+<li>Enforce maximum character limits</li>
+<li>Auto-format input (e.g., phone numbers, dates)</li>
+<li>Prevent invalid input before submission</li>
+<li>Improve user experience with real-time formatting</li>
+<li>Reduce validation errors</li>
+<li>Handle specialized input formats</li>
+</ul>
+<hr />
+<h1 id="basic-input-formatters">Basic Input Formatters</h1>
+<blockquote>
+<p><strong>Using input formatters</strong> to restrict input.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/services.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// Basic input formatter example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BasicInputFormatterExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">BasicInputFormatterExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicInputFormatterExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_BasicInputFormatterExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_BasicInputFormatterExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicInputFormatterExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Controllers for each field</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_digitsController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_lettersController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_alphanumericController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_lengthController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_digitsController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_lettersController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_alphanumericController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_lengthController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Input Formatters&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">SingleChildScrollView</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. Only digits (0-9)</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_digitsController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Only Digits&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Enter numbers only&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Only 0-9 allowed&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">number</span><span class="p">,</span>
+<span class="w">              </span><span class="c1">// 1. FilteringTextInputFormatter restricts characters</span>
+<span class="w">              </span><span class="c1">// This allows only digits</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">digitsOnly</span><span class="p">,</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. Only letters (A-Z, a-z)</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_lettersController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Only Letters&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Enter letters only&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Only A-Z and a-z allowed&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="c1">// 2. Custom pattern for letters only</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">allow</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[a-zA-Z]&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Alphanumeric (letters and numbers)</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_alphanumericController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Alphanumeric&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Enter letters and numbers&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;A-Z, a-z, 0-9 allowed&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="c1">// 3. Custom pattern for alphanumeric</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">allow</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[a-zA-Z0-9]&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 4. Length limiting</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_lengthController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Max 10 Characters&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Type something...&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Maximum 10 characters&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="c1">// 4. LengthLimitingTextInputFormatter limits characters</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">10</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- FilteringTextInputFormatter.digitsOnly: Only digits
+- FilteringTextInputFormatter.allow: Custom allowed pattern
+- FilteringTextInputFormatter.deny: Block specific pattern
+- LengthLimitingTextInputFormatter: Max length</p>
+<hr />
+<h1 id="formatters-for-specific-formats">Formatters for Specific Formats</h1>
+<blockquote>
+<p><strong>Creating formatted</strong> input fields.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Phone number formatter</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">PhoneInputFormatter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TextInputFormatter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">formatEditUpdate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">oldValue</span><span class="p">,</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">newValue</span><span class="p">,</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Get the new text without formatting</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">text</span><span class="p">.</span><span class="n">replaceAll</span><span class="p">(</span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[\s\-()]&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Only allow digits</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">text</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Format as (XXX) XXX-XXXX</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StringBuffer</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Add opening parenthesis</span>
+<span class="w">    </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Add first 3 digits</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">firstThree</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">substring</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+<span class="w">    </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">firstThree</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Close parenthesis and add space after 3 digits</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">text</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;) &#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">remaining</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">substring</span><span class="p">(</span><span class="m">3</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">nextThree</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">remaining</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">remaining</span><span class="p">.</span><span class="n">length</span><span class="p">;</span>
+<span class="w">      </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">remaining</span><span class="p">.</span><span class="n">substring</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">nextThree</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Add dash and last 4 digits</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">text</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">6</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">remaining</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">substring</span><span class="p">(</span><span class="m">6</span><span class="p">);</span>
+<span class="w">      </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">remaining</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">text:</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">toString</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">selection:</span><span class="w"> </span><span class="n">TextSelection</span><span class="p">.</span><span class="n">collapsed</span><span class="p">(</span><span class="nl">offset:</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">length</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Credit card number formatter</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CreditCardInputFormatter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TextInputFormatter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">formatEditUpdate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">oldValue</span><span class="p">,</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">newValue</span><span class="p">,</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Remove all non-digits</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">text</span><span class="p">.</span><span class="n">replaceAll</span><span class="p">(</span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[^0-9]&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">text</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Format as XXXX XXXX XXXX XXXX</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StringBuffer</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">text:</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">toString</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">selection:</span><span class="w"> </span><span class="n">TextSelection</span><span class="p">.</span><span class="n">collapsed</span><span class="p">(</span><span class="nl">offset:</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">length</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 3. Date formatter (MM/DD/YYYY)</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">DateInputFormatter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TextInputFormatter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">formatEditUpdate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">oldValue</span><span class="p">,</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">newValue</span><span class="p">,</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Remove all non-digits</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">text</span><span class="p">.</span><span class="n">replaceAll</span><span class="p">(</span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[^0-9]&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">text</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Format as MM/DD/YYYY</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StringBuffer</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">8</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">4</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">text:</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">toString</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">selection:</span><span class="w"> </span><span class="n">TextSelection</span><span class="p">.</span><span class="n">collapsed</span><span class="p">(</span><span class="nl">offset:</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">length</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 4. Currency formatter</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CurrencyInputFormatter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TextInputFormatter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">formatEditUpdate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">oldValue</span><span class="p">,</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">newValue</span><span class="p">,</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Remove all non-digits</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">text</span><span class="p">.</span><span class="n">replaceAll</span><span class="p">(</span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[^0-9]&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">text</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Format as $X,XXX.XX</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">formatted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="p">(</span><span class="n">number</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Add commas and dollar sign</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">parts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">formatted</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">dollars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parts</span><span class="p">[</span><span class="m">0</span><span class="p">];</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">cents</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parts</span><span class="p">[</span><span class="m">1</span><span class="p">];</span>
+
+<span class="w">    </span><span class="c1">// Add commas to dollars</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StringBuffer</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\$</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">dollars</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">dollars</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">dollars</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;.</span><span class="si">$</span><span class="n">cents</span><span class="s1">&#39;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">text:</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">toString</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">selection:</span><span class="w"> </span><span class="n">TextSelection</span><span class="p">.</span><span class="n">collapsed</span><span class="p">(</span><span class="nl">offset:</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">length</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Using custom formatters</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CustomFormatterExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CustomFormatterExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CustomFormatterExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_CustomFormatterExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_CustomFormatterExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CustomFormatterExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Controllers for formatted fields</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_phoneController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_cardController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_dateController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_currencyController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_phoneController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_cardController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_dateController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_currencyController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Custom Formatters&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">SingleChildScrollView</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. Phone number with custom formatter</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_phoneController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Phone Number&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;(XXX) XXX-XXXX&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Format: (XXX) XXX-XXXX&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">phone</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">PhoneInputFormatter</span><span class="p">(),</span>
+<span class="w">                </span><span class="c1">// Also limit to 14 characters (with formatting)</span>
+<span class="w">                </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">14</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. Credit card with custom formatter</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_cardController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Credit Card&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;XXXX XXXX XXXX XXXX&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Format: XXXX XXXX XXXX XXXX&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">number</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">CreditCardInputFormatter</span><span class="p">(),</span>
+<span class="w">                </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">19</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Date with custom formatter</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_dateController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Date&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;MM/DD/YYYY&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Format: MM/DD/YYYY&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">number</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">DateInputFormatter</span><span class="p">(),</span>
+<span class="w">                </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">10</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 4. Currency with custom formatter</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_currencyController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Amount&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;$0.00&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Format: </span><span class="si">$</span><span class="n">X</span><span class="s1">,XXX.XX&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">number</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">CurrencyInputFormatter</span><span class="p">(),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Phone number formatting (XXX) XXX-XXXX
+- Credit card formatting XXXX XXXX XXXX XXXX
+- Date formatting MM/DD/YYYY
+- Currency formatting $X,XXX.XX</p>
+<hr />
+<h1 id="combining-formatters">Combining Formatters</h1>
+<blockquote>
+<p><strong>Using multiple</strong> formatters together.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Combining multiple formatters</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CombinedFormatterExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CombinedFormatterExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CombinedFormatterExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_CombinedFormatterExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_CombinedFormatterExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CombinedFormatterExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Controllers for combined formatters</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_controller1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_controller2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_controller3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller1</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller2</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller3</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Combined Formatters&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">SingleChildScrollView</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. Uppercase only with length limit</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller1</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Uppercase + Limit&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Uppercase only, max 10 chars&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;A-Z only, uppercase, max 10&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="c1">// 1. Allow only uppercase letters</span>
+<span class="w">                </span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">allow</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[A-Z]&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="c1">// 2. Limit length</span>
+<span class="w">                </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">10</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. Alphanumeric with formatting</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller2</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Alphanumeric + Format&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;ABC-123-XYZ&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Format: ABC-123-XYZ&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="c1">// 1. Allow alphanumeric</span>
+<span class="w">                </span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">allow</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[a-zA-Z0-9]&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="c1">// 2. Auto-capitalize</span>
+<span class="w">                </span><span class="n">TextInputFormatter</span><span class="p">.</span><span class="n">withFunction</span><span class="p">(</span>
+<span class="w">                  </span><span class="p">(</span><span class="n">oldValue</span><span class="p">,</span><span class="w"> </span><span class="n">newValue</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">text:</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">text</span><span class="p">.</span><span class="n">toUpperCase</span><span class="p">(),</span>
+<span class="w">                    </span><span class="p">);</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="c1">// 3. Length limit</span>
+<span class="w">                </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">11</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Price with formatters</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller3</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Price&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;$0.00&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Format: </span><span class="si">$</span><span class="n">X</span><span class="s1">,XXX.XX&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">number</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="c1">// 1. Allow digits and decimal</span>
+<span class="w">                </span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">allow</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[0-9.]&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="c1">// 2. Currency formatting</span>
+<span class="w">                </span><span class="n">CurrencyInputFormatter</span><span class="p">(),</span>
+<span class="w">                </span><span class="c1">// 3. Limit total length</span>
+<span class="w">                </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">12</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Combining allow and length limit
+- Auto-capitalization with formatters
+- Multiple filters for price input
+- Formatters execute in order</p>
+<hr />
+<h1 id="custom-textinputformatter">Custom TextInputFormatter</h1>
+<blockquote>
+<p><strong>Creating custom</strong> formatters.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Custom formatter for specific patterns</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">SSNInputFormatter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TextInputFormatter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">formatEditUpdate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">oldValue</span><span class="p">,</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">newValue</span><span class="p">,</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Remove all non-digits</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">text</span><span class="p">.</span><span class="n">replaceAll</span><span class="p">(</span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[^0-9]&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">text</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Format as XXX-XX-XXXX</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StringBuffer</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">9</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="n">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">text:</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">toString</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">selection:</span><span class="w"> </span><span class="n">TextSelection</span><span class="p">.</span><span class="n">collapsed</span><span class="p">(</span><span class="nl">offset:</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">length</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Custom formatter with validation</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ValidatingFormatter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TextInputFormatter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">pattern</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">errorMessage</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ValidatingFormatter</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">pattern</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">errorMessage</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">formatEditUpdate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">oldValue</span><span class="p">,</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">newValue</span><span class="p">,</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Check if the new value matches the pattern</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">newValue</span><span class="p">.</span><span class="n">text</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>
+<span class="w">        </span><span class="o">!</span><span class="n">RegExp</span><span class="p">(</span><span class="n">pattern</span><span class="p">).</span><span class="n">hasMatch</span><span class="p">(</span><span class="n">newValue</span><span class="p">.</span><span class="n">text</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Revert to old value if invalid</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">oldValue</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Custom formatter for hexadecimal input</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">HexInputFormatter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TextInputFormatter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">formatEditUpdate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">oldValue</span><span class="p">,</span>
+<span class="w">    </span><span class="n">TextEditingValue</span><span class="w"> </span><span class="n">newValue</span><span class="p">,</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Allow only hex characters</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">filtered</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">text</span><span class="p">.</span><span class="n">replaceAll</span><span class="p">(</span>
+<span class="w">      </span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[^0-9a-fA-F]&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Auto-uppercase</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">formatted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filtered</span><span class="p">.</span><span class="n">toUpperCase</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">newValue</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">text:</span><span class="w"> </span><span class="n">formatted</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">selection:</span><span class="w"> </span><span class="n">TextSelection</span><span class="p">.</span><span class="n">collapsed</span><span class="p">(</span><span class="nl">offset:</span><span class="w"> </span><span class="n">formatted</span><span class="p">.</span><span class="n">length</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Using custom formatters</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CustomTextInputFormatterExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CustomTextInputFormatterExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CustomTextInputFormatterExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_CustomTextInputFormatterExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_CustomTextInputFormatterExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CustomTextInputFormatterExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_ssnController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_hexController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_validatedController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_ssnController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_hexController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_validatedController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Custom Formatters&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">SingleChildScrollView</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. SSN formatter</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_ssnController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;SSN&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;XXX-XX-XXXX&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Format: XXX-XX-XXXX&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">number</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">SSNInputFormatter</span><span class="p">(),</span>
+<span class="w">                </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">11</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. Hex formatter</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_hexController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Hex Color&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;A1B2C3&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;Hex characters only (0-9, A-F)&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">HexInputFormatter</span><span class="p">(),</span>
+<span class="w">                </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">6</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Validating formatter</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_validatedController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Postal Code&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;12345 or 12345-6789&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="nl">helperText:</span><span class="w"> </span><span class="s1">&#39;US Postal Code format&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="c1">// Only allow digits and dash</span>
+<span class="w">                </span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">allow</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[0-9\-]&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="c1">// Format: 12345 or 12345-6789</span>
+<span class="w">                </span><span class="n">ValidatingFormatter</span><span class="p">(</span>
+<span class="w">                  </span><span class="s1">r&#39;^\d{5}(-\d{4})?$&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="s1">&#39;Invalid postal code format&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">10</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- SSN format XXX-XX-XXXX
+- Hexadecimal auto-uppercase
+- Validating formatter for postal codes
+- Custom formatting logic</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="use-appropriate-formatters">Use Appropriate Formatters</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Correct formatter for the input</span>
+<span class="n">TextField</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">digitsOnly</span><span class="p">,</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Age&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1">// Bad - Wrong formatter</span>
+<span class="n">TextField</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">allow</span><span class="p">(</span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[a-zA-Z]&#39;</span><span class="p">)),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Age&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="combine-formatters">Combine Formatters</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Multiple formatters</span>
+<span class="n">TextField</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">allow</span><span class="p">(</span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;[0-9]&#39;</span><span class="p">)),</span>
+<span class="w">    </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">10</span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1">// Bad - One formatter for everything</span>
+<span class="n">TextField</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="c1">// Trying to do everything in one formatter</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="test-formatters">Test Formatters</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Test custom formatters</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;Phone formatter formats correctly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">formatter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PhoneInputFormatter</span><span class="p">();</span>
+<span class="w">  </span><span class="c1">// Test various inputs</span>
+<span class="w">  </span><span class="n">expect</span><span class="p">(</span><span class="n">formatter</span><span class="p">.</span><span class="n">formatEditUpdate</span><span class="p">(...),</span><span class="w"> </span><span class="p">...);</span>
+<span class="p">});</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-considering-keyboard-type">Not Considering Keyboard Type</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Text keyboard with number formatter</span>
+<span class="n">TextField</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">text</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">digitsOnly</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Number keyboard with number formatter</span>
+<span class="n">TextField</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">number</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span><span class="n">FilteringTextInputFormatter</span><span class="p">.</span><span class="n">digitsOnly</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<h2 id="formatters-in-wrong-order">Formatters in Wrong Order</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Length limit before formatting</span>
+<span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">14</span><span class="p">),</span>
+<span class="w">  </span><span class="n">PhoneInputFormatter</span><span class="p">(),</span>
+<span class="p">]</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Formatting before length limit</span>
+<span class="nl">inputFormatters:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="n">PhoneInputFormatter</span><span class="p">(),</span>
+<span class="w">  </span><span class="n">LengthLimitingTextInputFormatter</span><span class="p">(</span><span class="m">14</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Input Formatters control and format user input as they type. Use filtering formatters for character restrictions, length limiters for max characters, and custom formatters for specific formats like phone numbers, credit cards, and dates. Combine formatters for complex formatting requirements.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="forms-input-overview.md">Forms &amp; Input Overview</a></li>
+<li><a href="texteditingcontroller.md">TextEditingController</a></li>
+<li><a href="form-validation.md">Form Validation</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Formatters process each keystroke</li>
+<li>Formatters execute in order</li>
+<li>Custom formatters can implement any logic</li>
+<li>Formatters can auto-format input</li>
+<li>Formatters can validate input</li>
+<li>Formatters work with any TextField</li>
+<li>Formatters can be combined</li>
+<li>Formatters improve user experience</li>
+</ul>
 
 
 

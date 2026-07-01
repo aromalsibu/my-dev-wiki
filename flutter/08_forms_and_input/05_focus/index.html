@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#focus" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -6890,6 +6895,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,884 @@
 
 
 
-  <h1>Focus</h1>
+<h1 id="focus">Focus</h1>
+<p>Understand how to manage keyboard focus in Flutter applications.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Focus is the system that manages which widget is currently receiving keyboard input in a Flutter application. When a TextField or other input widget has focus, it means the user can type into it. Focus management allows you to control where the keyboard appears, navigate between fields, and handle focus changes programmatically.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Focus exists to:</p>
+<ul>
+<li>Manage keyboard input focus</li>
+<li>Enable keyboard navigation</li>
+<li>Control input fields programmatically</li>
+<li>Handle focus transitions</li>
+<li>Support accessibility</li>
+<li>Improve user experience</li>
+<li>Manage form navigation</li>
+</ul>
+<hr />
+<h1 id="basic-focus-management">Basic Focus Management</h1>
+<blockquote>
+<p><strong>Managing focus</strong> with FocusNode.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// Basic focus management example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BasicFocusExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">BasicFocusExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicFocusExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_BasicFocusExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_BasicFocusExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicFocusExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Create FocusNodes for each field</span>
+<span class="w">  </span><span class="c1">// FocusNode tracks focus state for a specific widget</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_nameFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_emailFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_passwordFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Controllers for fields</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_nameController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_emailController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_passwordController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 2. Add listeners to focus nodes</span>
+<span class="w">    </span><span class="c1">// This is useful for reacting to focus changes</span>
+<span class="w">    </span><span class="n">_nameFocus</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Check if this field gained focus</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_nameFocus</span><span class="p">.</span><span class="n">hasFocus</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Name field focused&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Name field unfocused&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 3. Always dispose focus nodes</span>
+<span class="w">    </span><span class="c1">// This prevents memory leaks</span>
+<span class="w">    </span><span class="n">_nameFocus</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_emailFocus</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_passwordFocus</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">_nameController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_emailController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_passwordController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Focus Management&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 4. Name field with focus node</span>
+<span class="w">            </span><span class="c1">// The focus node controls focus for this field</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_nameController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_nameFocus</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Name&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Enter your name&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="c1">// 5. Handle submit action</span>
+<span class="w">              </span><span class="c1">// Called when user presses &quot;Next&quot; or &quot;Done&quot;</span>
+<span class="w">              </span><span class="nl">onSubmitted:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Move focus to next field</span>
+<span class="w">                </span><span class="c1">// This shows how to programmatically move focus</span>
+<span class="w">                </span><span class="n">_emailFocus</span><span class="p">.</span><span class="n">requestFocus</span><span class="p">();</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 6. Email field</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_emailController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_emailFocus</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Email&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Enter your email&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">emailAddress</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">onSubmitted:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Move focus to password field</span>
+<span class="w">                </span><span class="n">_passwordFocus</span><span class="p">.</span><span class="n">requestFocus</span><span class="p">();</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 7. Password field</span>
+<span class="w">            </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_passwordController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_passwordFocus</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Password&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Enter your password&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">obscureText:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">onSubmitted:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Submit the form</span>
+<span class="w">                </span><span class="c1">// Unfocus to dismiss keyboard</span>
+<span class="w">                </span><span class="n">_passwordFocus</span><span class="p">.</span><span class="n">unfocus</span><span class="p">();</span>
+<span class="w">                </span><span class="n">ScaffoldMessenger</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">showSnackBar</span><span class="p">(</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SnackBar</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Form submitted!&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 8. Focus control buttons</span>
+<span class="w">            </span><span class="c1">// These demonstrate programmatic focus control</span>
+<span class="w">            </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="c1">// Request focus on name field</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="c1">// requestFocus() moves focus to the field</span>
+<span class="w">                    </span><span class="n">_nameFocus</span><span class="p">.</span><span class="n">requestFocus</span><span class="p">();</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Focus Name&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+
+<span class="w">                </span><span class="c1">// Request focus on email field</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">_emailFocus</span><span class="p">.</span><span class="n">requestFocus</span><span class="p">();</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Focus Email&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+
+<span class="w">                </span><span class="c1">// Unfocus all fields (dismiss keyboard)</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="c1">// unfocus() removes focus from all fields</span>
+<span class="w">                    </span><span class="c1">// This dismisses the keyboard</span>
+<span class="w">                    </span><span class="n">FocusScope</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">unfocus</span><span class="p">();</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Dismiss Keyboard&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- FocusNode manages focus for a widget
+- requestFocus() moves focus to a field
+- unfocus() dismisses the keyboard
+- FocusScope manages focus scope
+- onSubmitted handles action</p>
+<hr />
+<h1 id="focusscope">FocusScope</h1>
+<blockquote>
+<p><strong>Managing groups</strong> of focus nodes.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// FocusScope example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">FocusScopeExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">FocusScopeExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">FocusScopeExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_FocusScopeExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_FocusScopeExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">FocusScopeExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Focus nodes for each field</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_field1Focus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_field2Focus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_field3Focus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// FocusScope node for the form</span>
+<span class="w">  </span><span class="c1">// This manages focus for all fields in the scope</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusScopeNode</span><span class="w"> </span><span class="n">_formScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusScopeNode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_field1Focus</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_field2Focus</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_field3Focus</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_formScope</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;FocusScope Example&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">FocusScope</span><span class="p">(</span>
+<span class="w">          </span><span class="c1">// 1. Assign the scope node to the FocusScope</span>
+<span class="w">          </span><span class="c1">// This groups all child focus nodes</span>
+<span class="w">          </span><span class="nl">node:</span><span class="w"> </span><span class="n">_formScope</span><span class="p">,</span>
+
+<span class="w">          </span><span class="c1">// 2. Child widgets</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">              </span><span class="c1">// Field 1</span>
+<span class="w">              </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_field1Focus</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Field 1&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">onSubmitted:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="c1">// 3. Move focus to next field in scope</span>
+<span class="w">                  </span><span class="c1">// This respects the focus order</span>
+<span class="w">                  </span><span class="n">_formScope</span><span class="p">.</span><span class="n">nextFocus</span><span class="p">();</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">              </span><span class="c1">// Field 2</span>
+<span class="w">              </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_field2Focus</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Field 2&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">onSubmitted:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="c1">// Move to next field</span>
+<span class="w">                  </span><span class="n">_formScope</span><span class="p">.</span><span class="n">nextFocus</span><span class="p">();</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">              </span><span class="c1">// Field 3</span>
+<span class="w">              </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_field3Focus</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Field 3&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">onSubmitted:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="c1">// If last field, unfocus</span>
+<span class="w">                  </span><span class="n">_formScope</span><span class="p">.</span><span class="n">unfocus</span><span class="p">();</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">              </span><span class="p">),</span>
+
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">              </span><span class="c1">// FocusScope control buttons</span>
+<span class="w">              </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="c1">// Focus first field</span>
+<span class="w">                  </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                      </span><span class="n">_formScope</span><span class="p">.</span><span class="n">requestFocus</span><span class="p">(</span><span class="n">_field1Focus</span><span class="p">);</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;First Field&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+
+<span class="w">                  </span><span class="c1">// Focus next field</span>
+<span class="w">                  </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                      </span><span class="c1">// Moves focus to the next field in scope</span>
+<span class="w">                      </span><span class="n">_formScope</span><span class="p">.</span><span class="n">nextFocus</span><span class="p">();</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Next Field&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+
+<span class="w">                  </span><span class="c1">// Unfocus all</span>
+<span class="w">                  </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                      </span><span class="c1">// Removes focus from all fields in scope</span>
+<span class="w">                      </span><span class="n">_formScope</span><span class="p">.</span><span class="n">unfocus</span><span class="p">();</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Unfocus&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- FocusScope groups focus nodes
+- nextFocus() moves to next field
+- requestFocus() focuses a specific field
+- unfocus() removes focus from all</p>
+<hr />
+<h1 id="focus-listeners">Focus Listeners</h1>
+<blockquote>
+<p><strong>Reacting to focus</strong> changes.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Focus listeners example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">FocusListenersExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">FocusListenersExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">FocusListenersExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_FocusListenersExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_FocusListenersExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">FocusListenersExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Focus nodes</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_field1Focus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_field2Focus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// State for focus tracking</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_field1HasFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_field2HasFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 1. Add listeners to focus nodes</span>
+<span class="w">    </span><span class="c1">// These listeners are called when focus changes</span>
+<span class="w">    </span><span class="n">_field1Focus</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Update state when focus changes</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_field1HasFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_field1Focus</span><span class="p">.</span><span class="n">hasFocus</span><span class="p">;</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">_field2Focus</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_field2HasFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_field2Focus</span><span class="p">.</span><span class="n">hasFocus</span><span class="p">;</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_field1Focus</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_field2Focus</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Focus Listeners&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 2. Field 1 with focus listener</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="c1">// Highlight when focused</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">Border</span><span class="p">.</span><span class="n">all</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">_field1HasFocus</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">transparent</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">width:</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_field1Focus</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Field 1&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Click to focus&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Field 2 with focus listener</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">Border</span><span class="p">.</span><span class="n">all</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">_field2HasFocus</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">transparent</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">width:</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_field2Focus</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Field 2&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Click to focus&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 4. Focus status display</span>
+<span class="w">            </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">50</span><span class="p">],</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                      </span><span class="s1">&#39;Field 1: </span><span class="si">${</span><span class="n">_field1HasFocus</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s2">&quot;Focused ✓&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Not Focused&quot;</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">color:</span><span class="w"> </span><span class="n">_field1HasFocus</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">,</span>
+<span class="w">                        </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                      </span><span class="s1">&#39;Field 2: </span><span class="si">${</span><span class="n">_field2HasFocus</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s2">&quot;Focused ✓&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Not Focused&quot;</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">color:</span><span class="w"> </span><span class="n">_field2HasFocus</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">,</span>
+<span class="w">                        </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- addListener tracks focus changes
+- hasFocus checks current focus state
+- Visual feedback on focus
+- Real-time focus status display</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common focus</strong> management patterns.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Login form with focus management</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">LoginFormFocus</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LoginFormFocus</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">LoginFormFocus</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_LoginFormFocusState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_LoginFormFocusState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">LoginFormFocus</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Focus nodes for form fields</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_usernameFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_passwordFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Form controllers</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_usernameController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_passwordController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Form key</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">GlobalKey</span><span class="o">&lt;</span><span class="n">FormState</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_formKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GlobalKey</span><span class="o">&lt;</span><span class="n">FormState</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Track focus states for styling</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_usernameHasFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_passwordHasFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Add focus listeners</span>
+<span class="w">    </span><span class="n">_usernameFocus</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_usernameHasFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_usernameFocus</span><span class="p">.</span><span class="n">hasFocus</span><span class="p">;</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">_passwordFocus</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_passwordHasFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_passwordFocus</span><span class="p">.</span><span class="n">hasFocus</span><span class="p">;</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_usernameFocus</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_passwordFocus</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_usernameController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_passwordController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_submitForm</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_formKey</span><span class="p">.</span><span class="n">currentState</span><span class="o">!</span><span class="p">.</span><span class="n">validate</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Form is valid</span>
+<span class="w">      </span><span class="n">ScaffoldMessenger</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">showSnackBar</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">SnackBar</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Login successful!&#39;</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">,</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Login Form&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">24</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Form</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">key:</span><span class="w"> </span><span class="n">_formKey</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">              </span><span class="c1">// Username field</span>
+<span class="w">              </span><span class="n">TextFormField</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_usernameController</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_usernameFocus</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Username&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Enter your username&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">prefixIcon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">person</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">12</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="c1">// Change border color when focused</span>
+<span class="w">                  </span><span class="nl">focusedBorder:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">12</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">borderSide:</span><span class="w"> </span><span class="n">BorderSide</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">_usernameHasFocus</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">width:</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="c1">// Move to password field on submit</span>
+<span class="w">                </span><span class="nl">onFieldSubmitted:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="n">_passwordFocus</span><span class="p">.</span><span class="n">requestFocus</span><span class="p">();</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nl">validator:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Please enter your username&#39;</span><span class="p">;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">                  </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">              </span><span class="c1">// Password field</span>
+<span class="w">              </span><span class="n">TextFormField</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_passwordController</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_passwordFocus</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">obscureText:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Password&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Enter your password&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">prefixIcon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">lock</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">12</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">focusedBorder:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">12</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">borderSide:</span><span class="w"> </span><span class="n">BorderSide</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">_passwordHasFocus</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">width:</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">onFieldSubmitted:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="c1">// Submit form when done is pressed</span>
+<span class="w">                  </span><span class="n">_submitForm</span><span class="p">();</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nl">validator:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Please enter your password&#39;</span><span class="p">;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">                  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">6</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Password must be at least 6 characters&#39;</span><span class="p">;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">                  </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">              </span><span class="c1">// Login button</span>
+<span class="w">              </span><span class="n">SizedBox</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">width:</span><span class="w"> </span><span class="kt">double</span><span class="p">.</span><span class="n">infinity</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">height:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_submitForm</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">style:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">.</span><span class="n">styleFrom</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">shape:</span><span class="w"> </span><span class="n">RoundedRectangleBorder</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">12</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;Login&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Autofocus and focus traversal</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">FocusTraversalExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">FocusTraversalExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">FocusTraversalExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_FocusTraversalExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_FocusTraversalExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">FocusTraversalExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Focus nodes for a grid of fields</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">FocusNode</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">_focusNodes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">TextEditingController</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">_controllers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Initialize focus nodes and controllers for a 3x3 grid</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">rowNodes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">FocusNode</span><span class="o">&gt;</span><span class="p">[];</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">rowControllers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">TextEditingController</span><span class="o">&gt;</span><span class="p">[];</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">3</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">rowNodes</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">FocusNode</span><span class="p">());</span>
+<span class="w">        </span><span class="n">rowControllers</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">TextEditingController</span><span class="p">());</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="n">_focusNodes</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">rowNodes</span><span class="p">);</span>
+<span class="w">      </span><span class="n">_controllers</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">rowControllers</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Dispose all focus nodes and controllers</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_focusNodes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">node</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_controllers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">controller</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Focus Traversal&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// Grid of fields</span>
+<span class="w">            </span><span class="p">...</span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">return</span><span class="w"> </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">                      </span><span class="nl">child:</span><span class="w"> </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controllers</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">],</span>
+<span class="w">                        </span><span class="nl">focusNode:</span><span class="w"> </span><span class="n">_focusNodes</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">],</span>
+<span class="w">                        </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">$</span><span class="n">row</span><span class="s1">,</span><span class="si">$</span><span class="n">col</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">border:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="c1">// Move focus to next field in row</span>
+<span class="w">                        </span><span class="nl">onEditingComplete:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                          </span><span class="c1">// Move to next field in same row</span>
+<span class="w">                          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">col</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="n">_focusNodes</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">].</span><span class="n">requestFocus</span><span class="p">();</span>
+<span class="w">                          </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">row</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="c1">// Move to first field in next row</span>
+<span class="w">                            </span><span class="n">_focusNodes</span><span class="p">[</span><span class="n">row</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">][</span><span class="m">0</span><span class="p">].</span><span class="n">requestFocus</span><span class="p">();</span>
+<span class="w">                          </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="c1">// Last field - unfocus</span>
+<span class="w">                            </span><span class="n">_focusNodes</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">].</span><span class="n">unfocus</span><span class="p">();</span>
+<span class="w">                          </span><span class="p">}</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">);</span>
+<span class="w">                </span><span class="p">}),</span>
+<span class="w">              </span><span class="p">);</span>
+<span class="w">            </span><span class="p">}),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// Navigation controls</span>
+<span class="w">            </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="c1">// Focus first field</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">_focusNodes</span><span class="p">[</span><span class="m">0</span><span class="p">][</span><span class="m">0</span><span class="p">].</span><span class="n">requestFocus</span><span class="p">();</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;First Field&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+
+<span class="w">                </span><span class="c1">// Focus last field</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">_focusNodes</span><span class="p">[</span><span class="m">2</span><span class="p">][</span><span class="m">2</span><span class="p">].</span><span class="n">requestFocus</span><span class="p">();</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Last Field&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+
+<span class="w">                </span><span class="c1">// Unfocus all</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">FocusScope</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">unfocus</span><span class="p">();</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Unfocus&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Login form with focus navigation
+- Visual focus indicators
+- Grid focus traversal
+- Autofocus and focus management</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="dispose-focus-nodes">Dispose Focus Nodes</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Dispose in dispose()</span>
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_focusNode</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Not disposing</span>
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Missing focus node dispose</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="use-focusscope-for-groups">Use FocusScope for Groups</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Group fields in FocusScope</span>
+<span class="n">FocusScope</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">node:</span><span class="w"> </span><span class="n">_formScope</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">    </span><span class="nl">children:</span><span class="w"> </span><span class="n">formFields</span><span class="p">,</span>
+<span class="w">  </span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1">// Bad - Individual focus management</span>
+<span class="c1">// Each field manages its own focus independently</span>
+</code></pre></div>
+<h2 id="handle-focus-changes">Handle Focus Changes</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - React to focus changes</span>
+<span class="n">_focusNode</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_focusNode</span><span class="p">.</span><span class="n">hasFocus</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Handle focus gained</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Handle focus lost</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-disposing-focus-nodes">Not Disposing Focus Nodes</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">MyWidget</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MyWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_MyWidgetState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_MyWidgetState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MyWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_focusNode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+<span class="w">  </span><span class="c1">// No dispose - memory leak</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">_MyWidgetState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MyWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">FocusNode</span><span class="w"> </span><span class="n">_focusNode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FocusNode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_focusNode</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="not-using-requestfocus">Not Using requestFocus</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Manually managing focus</span>
+<span class="n">_focusNode</span><span class="p">.</span><span class="n">hasFocus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// Doesn&#39;t work</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Using requestFocus</span>
+<span class="n">_focusNode</span><span class="p">.</span><span class="n">requestFocus</span><span class="p">();</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Focus management controls keyboard input focus in Flutter applications. Use FocusNode for individual fields, FocusScope for groups, and focus listeners for reacting to focus changes. Always dispose focus nodes to prevent memory leaks.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="keyboard-handling.md">Keyboard Handling</a></li>
+<li><a href="input-formatters.md">Input Formatters</a></li>
+<li><a href="forms-input-overview.md">Forms &amp; Input Overview</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>FocusNode must be disposed</li>
+<li>FocusScope groups focus nodes</li>
+<li>requestFocus() moves focus</li>
+<li>nextFocus() moves to next field</li>
+<li>Focus listeners track changes</li>
+<li>Autofocus sets initial focus</li>
+<li>Focus determines keyboard visibility</li>
+<li>Focus enables keyboard navigation</li>
+</ul>
 
 
 

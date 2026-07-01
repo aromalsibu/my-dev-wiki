@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#navigator" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -6248,6 +6253,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,717 @@
 
 
 
-  <h1>Navigator</h1>
+<h1 id="navigator">Navigator</h1>
+<p>Understand how to manage navigation between screens in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Navigator is the widget that manages a stack of routes (pages) in Flutter. It works like a stack data structure where you push new screens onto the stack and pop them off when going back. Navigator provides methods like push, pop, and pushReplacement to control navigation flow and manage the navigation history.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Navigator exists to:</p>
+<ul>
+<li>Manage navigation between screens</li>
+<li>Handle back navigation</li>
+<li>Maintain navigation history</li>
+<li>Support deep linking</li>
+<li>Enable passing data between screens</li>
+<li>Control navigation animations</li>
+<li>Manage app flow and user journeys</li>
+</ul>
+<hr />
+<h1 id="basic-navigation">Basic Navigation</h1>
+<blockquote>
+<p><strong>Navigator</strong> manages a stack of routes.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Basic navigation example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">HomeScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Home&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="c1">// Navigate to new screen</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DetailScreen</span><span class="p">(),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go to Detail&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="c1">// Navigate and replace</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushReplacement</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ReplacementScreen</span><span class="p">(),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Replace Current&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 
+<span class="kd">class</span><span class="w"> </span><span class="nc">DetailScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DetailScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Detail&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="c1">// Back button automatically added</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Detail Screen&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="c1">// Go back</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go Back&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Navigator methods:</span>
+<span class="c1">// 1. push() - Navigate to new screen</span>
+<span class="c1">// 2. pop() - Return to previous screen</span>
+<span class="c1">// 3. pushReplacement() - Replace current screen</span>
+<span class="c1">// 4. pushAndRemoveUntil() - Navigate and remove previous screens</span>
+<span class="c1">// 5. maybePop() - Pop if possible</span>
+<span class="c1">// 6. canPop() - Check if can pop</span>
+</code></pre></div>
+<p>What's happening here?
+- push: adds new screen to stack
+- pop: removes current screen
+- pushReplacement: replaces current screen
+- Stack manages navigation history</p>
+<hr />
+<h1 id="passing-data-between-screens">Passing Data Between Screens</h1>
+<blockquote>
+<p><strong>Passing data</strong> with navigation.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Passing data between screens</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">User</span><span class="p">({</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">age</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">email</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">DataHomeScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DataHomeScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Data Home&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Pass data to detail screen</span>
+<span class="w">            </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span>
+<span class="w">              </span><span class="n">context</span><span class="p">,</span>
+<span class="w">              </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">DataDetailScreen</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">user:</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">);</span>
+
+<span class="w">            </span><span class="c1">// Handle returned data</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">ScaffoldMessenger</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">showSnackBar</span><span class="p">(</span>
+<span class="w">                </span><span class="n">SnackBar</span><span class="p">(</span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Returned: </span><span class="si">$</span><span class="n">result</span><span class="s1">&#39;</span><span class="p">)),</span>
+<span class="w">              </span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Open Detail&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">DataDetailScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DataDetailScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">user</span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;User Detail&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Name: </span><span class="si">${</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Age: </span><span class="si">${</span><span class="n">user</span><span class="p">.</span><span class="n">age</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Email: </span><span class="si">${</span><span class="n">user</span><span class="p">.</span><span class="n">email</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Return data to previous screen</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Updated successfully&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Save and Return&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Return with no data</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Cancel&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Pass data in constructor
+- Use async/await for results
+- pop() returns data to previous screen
+- Handle returned data with await</p>
+<hr />
+<h1 id="named-routes">Named Routes</h1>
+<blockquote>
+<p><strong>Named routes</strong> for organized navigation.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Named routes configuration</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">runApp</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyApp</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">MyApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">MyApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Named Routes&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="c1">// Define routes</span>
+<span class="w">      </span><span class="nl">initialRoute:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">routes:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;/&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NamedHomeScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="s1">&#39;/detail&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NamedDetailScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="s1">&#39;/settings&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NamedSettingsScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="s1">&#39;/profile&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NamedProfileScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="c1">// Handle unknown routes</span>
+<span class="w">      </span><span class="nl">onUnknownRoute:</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NotFoundScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">NamedHomeScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">NamedHomeScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Home&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// Navigate using named route</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/detail&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go to Detail&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/settings&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go to Settings&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/profile&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go to Profile&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">NamedDetailScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">NamedDetailScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Detail&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go Back&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- routes map defines named routes
+- pushNamed() uses route name
+- initialRoute sets starting screen
+- onUnknownRoute handles invalid routes</p>
+<hr />
+<h1 id="named-routes-with-arguments">Named Routes with Arguments</h1>
+<blockquote>
+<p><strong>Passing arguments</strong> to named routes.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Named routes with arguments</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ArgHomeScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ArgHomeScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Arguments Home&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Pass arguments with named route</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="s1">&#39;/arg-detail&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">arguments:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">123</span><span class="p">,</span>
+<span class="w">                    </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Product Name&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="s1">&#39;price&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">99.99</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go with Arguments&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">ArgDetailScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ArgDetailScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Extract arguments</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModalRoute</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="o">?</span><span class="p">.</span><span class="n">settings</span><span class="p">.</span><span class="n">arguments</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Detail with Args&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;ID: </span><span class="si">${</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Name: </span><span class="si">${</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Price: </span><span class="se">\$</span><span class="si">${</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go Back&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Updating routes to handle arguments</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ArgApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ArgApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Arguments Demo&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">initialRoute:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">routes:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;/&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ArgHomeScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="s1">&#39;/arg-detail&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ArgDetailScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nl">onGenerateRoute:</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Handle routes with arguments</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;/arg-detail&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ArgDetailScreen</span><span class="p">(),</span>
+<span class="w">            </span><span class="nl">settings:</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- arguments parameter passes data
+- ModalRoute.of(context) extracts arguments
+- onGenerateRoute for advanced handling
+- Type-safe argument extraction</p>
+<hr />
+<h1 id="navigation-patterns">Navigation Patterns</h1>
+<blockquote>
+<p><strong>Common navigation patterns.</strong></p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 1. Replace and clear stack (login flow)</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">LoginFlow</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LoginFlow</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Login&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Remove all previous routes and go to home</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushAndRemoveUntil</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">(</span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="c1">// Remove all routes</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Login&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 2. Dialog navigation</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">DialogNavigation</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DialogNavigation</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Dialog Demo&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">showDialog</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">context:</span><span class="w"> </span><span class="n">context</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">barrierDismissible:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">AlertDialog</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Dialog Title&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">content:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Dialog content goes here.&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">actions:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="n">TextButton</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">                      </span><span class="p">},</span>
+<span class="w">                      </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Cancel&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                    </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Confirmed&#39;</span><span class="p">);</span>
+<span class="w">                      </span><span class="p">},</span>
+<span class="w">                      </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Confirm&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Show Dialog&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 3. Bottom sheet navigation</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BottomSheetNavigation</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">BottomSheetNavigation</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Bottom Sheet&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">showModalBottomSheet</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">context:</span><span class="w"> </span><span class="n">context</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">mainAxisSize:</span><span class="w"> </span><span class="n">MainAxisSize</span><span class="p">.</span><span class="n">min</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                      </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">leading:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">share</span><span class="p">),</span>
+<span class="w">                        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Share&#39;</span><span class="p">),</span>
+<span class="w">                        </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                          </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                      </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">leading:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">copy</span><span class="p">),</span>
+<span class="w">                        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Copy&#39;</span><span class="p">),</span>
+<span class="w">                        </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                          </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Show Bottom Sheet&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 4. Deep linking navigation</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">DeepLinkNavigation</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DeepLinkNavigation</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Deep Link&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Navigate to specific screen with data</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="s1">&#39;/product/123&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Open Product 123&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Advanced routing with parameters</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AdvancedApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">AdvancedApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Advanced Navigation&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">initialRoute:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">onGenerateRoute:</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Parse route patterns like /product/123</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Uri</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;product&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">1</span><span class="p">];</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ProductDetailScreen</span><span class="p">(</span><span class="nl">productId:</span><span class="w"> </span><span class="n">id</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">settings:</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Default routes</span>
+<span class="w">        </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="o">:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;/settings&#39;</span><span class="o">:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NamedSettingsScreen</span><span class="p">(),</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">ProductDetailScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ProductDetailScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">productId</span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">productId</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Product </span><span class="si">$</span><span class="n">productId</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Product ID: </span><span class="si">$</span><span class="n">productId</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- pushAndRemoveUntil: clear stack
+- showDialog: modal dialogs
+- showModalBottomSheet: bottom sheets
+- Deep linking with route patterns
+- onGenerateRoute for advanced routing</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="use-named-routes-for-complex-apps">Use Named Routes for Complex Apps</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Named routes for organization</span>
+<span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">&#39;/&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="s1">&#39;/profile&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="s1">&#39;/settings&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SettingsScreen</span><span class="p">(),</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="handle-return-data">Handle Return Data</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Handle returned data</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span>
+<span class="w">  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">  </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DetailScreen</span><span class="p">()),</span>
+<span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Handle result</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="use-pushandremoveuntil-for-login">Use PushAndRemoveUntil for Login</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Clear stack on login</span>
+<span class="n">Navigator</span><span class="p">.</span><span class="n">pushAndRemoveUntil</span><span class="p">(</span>
+<span class="w">  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">  </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">()),</span>
+<span class="w">  </span><span class="p">(</span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-handling-back-button">Not Handling Back Button</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// User can go back to login after login</span>
+<span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span>
+<span class="w">  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">  </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">()),</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Remove login from stack</span>
+<span class="n">Navigator</span><span class="p">.</span><span class="n">pushReplacement</span><span class="p">(</span>
+<span class="w">  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">  </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">()),</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<h2 id="not-using-await">Not Using await</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Missing await</span>
+<span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(...));</span>
+<span class="c1">// Data might not be handled</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Use await for results</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(...);</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Navigator manages screen navigation using a stack-based approach. Use push/pop for basic navigation, named routes for organization, and pass data between screens using constructor parameters or arguments. Handle navigation patterns like login flows, dialogs, and deep linking appropriately.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="routes.md">Routes</a></li>
+<li><a href="named-routes.md">Named Routes</a></li>
+<li><a href="router-api.md">Router API</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Navigator works like a stack</li>
+<li>push adds screens, pop removes them</li>
+<li>Named routes help organize navigation</li>
+<li>Arguments pass data between screens</li>
+<li>pushAndRemoveUntil clears the stack</li>
+<li>showDialog displays modal dialogs</li>
+<li>showModalBottomSheet shows bottom sheets</li>
+<li>onGenerateRoute handles advanced routing</li>
+</ul>
 
 
 

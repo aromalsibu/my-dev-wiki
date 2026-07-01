@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#navigation-patterns" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -6416,6 +6421,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,918 @@
 
 
 
-  <h1>Navigation Patterns</h1>
+<h1 id="navigation-patterns">Navigation Patterns</h1>
+<p>Understand common navigation patterns and best practices in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Navigation patterns are proven strategies for managing screen transitions, user flows, and navigation behavior in Flutter applications. They cover everything from basic push/pop navigation to complex flows like authentication, onboarding, tab navigation, and deep linking. Understanding these patterns helps you design intuitive and maintainable navigation structures.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Navigation patterns exist to:</p>
+<ul>
+<li>Provide consistent user experiences</li>
+<li>Handle common navigation scenarios</li>
+<li>Manage navigation state effectively</li>
+<li>Support different app architectures</li>
+<li>Improve code organization</li>
+<li>Enable complex navigation flows</li>
+<li>Follow platform conventions</li>
+</ul>
+<hr />
+<h1 id="authentication-flow">Authentication Flow</h1>
+<blockquote>
+<p><strong>Managing login and protected routes.</strong></p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Authentication flow pattern</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AuthFlowApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">AuthFlowApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ChangeNotifierProvider</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">create:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AuthProvider</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Auth Flow&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">theme:</span><span class="w"> </span><span class="n">ThemeData</span><span class="p">(</span><span class="nl">primarySwatch:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">home:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">AuthWrapper</span><span class="p">(),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 
+<span class="kd">class</span><span class="w"> </span><span class="nc">AuthProvider</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ChangeNotifier</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isAuthenticated</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isAuthenticated</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isLoading</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">AuthProvider</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_checkAuthStatus</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_checkAuthStatus</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+<span class="w">    </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">login</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+<span class="w">    </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">logout</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">));</span>
+<span class="w">    </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">AuthWrapper</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">AuthWrapper</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AuthProvider</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">auth</span><span class="p">.</span><span class="n">isLoading</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SplashScreen</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LoginScreen</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">LoginScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LoginScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Login&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">context</span><span class="p">.</span><span class="n">read</span><span class="o">&lt;</span><span class="n">AuthProvider</span><span class="o">&gt;</span><span class="p">().</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;test@email.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;password&#39;</span><span class="p">);</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Login&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">HomeScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Home&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">context</span><span class="p">.</span><span class="n">read</span><span class="o">&lt;</span><span class="n">AuthProvider</span><span class="o">&gt;</span><span class="p">().</span><span class="n">logout</span><span class="p">();</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Logout&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- AuthProvider manages auth state
+- AuthWrapper decides initial screen
+- Login screen sets authenticated
+- Logout clears auth state</p>
+<hr />
+<h1 id="onboarding-flow">Onboarding Flow</h1>
+<blockquote>
+<p><strong>Guiding new users</strong> through app introduction.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Onboarding flow pattern</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">OnboardingFlowApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">OnboardingFlowApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ChangeNotifierProvider</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">create:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">OnboardingProvider</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Onboarding Flow&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">theme:</span><span class="w"> </span><span class="n">ThemeData</span><span class="p">(</span><span class="nl">primarySwatch:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">home:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">OnboardingWrapper</span><span class="p">(),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">OnboardingProvider</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ChangeNotifier</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_hasCompletedOnboarding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">hasCompletedOnboarding</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_hasCompletedOnboarding</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">completeOnboarding</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_hasCompletedOnboarding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">resetOnboarding</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_hasCompletedOnboarding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">OnboardingWrapper</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">OnboardingWrapper</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">onboarding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">OnboardingProvider</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">onboarding</span><span class="p">.</span><span class="n">hasCompletedOnboarding</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">OnboardingScreen</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">OnboardingScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">OnboardingScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">OnboardingScreen</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_OnboardingScreenState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_OnboardingScreenState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">OnboardingScreen</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PageController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PageController</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_currentPage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">PageView</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">onPageChanged:</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_currentPage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">;</span>
+<span class="w">          </span><span class="p">});</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">_buildPage</span><span class="p">(</span><span class="s1">&#39;Welcome&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Get started with our amazing app&#39;</span><span class="p">),</span>
+<span class="w">          </span><span class="n">_buildPage</span><span class="p">(</span><span class="s1">&#39;Features&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Explore all the features we offer&#39;</span><span class="p">),</span>
+<span class="w">          </span><span class="n">_buildPage</span><span class="p">(</span><span class="s1">&#39;Ready&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;You</span><span class="se">\&#39;</span><span class="s1">re ready to begin!&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">bottomSheet:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">spaceBetween</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">TextButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">context</span><span class="p">.</span><span class="n">read</span><span class="o">&lt;</span><span class="n">OnboardingProvider</span><span class="o">&gt;</span><span class="p">().</span><span class="n">completeOnboarding</span><span class="p">();</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Skip&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">symmetric</span><span class="p">(</span><span class="nl">horizontal:</span><span class="w"> </span><span class="m">4</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">shape:</span><span class="w"> </span><span class="n">BoxShape</span><span class="p">.</span><span class="n">circle</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">color:</span><span class="w"> </span><span class="n">_currentPage</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">}),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_currentPage</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">.</span><span class="n">read</span><span class="o">&lt;</span><span class="n">OnboardingProvider</span><span class="o">&gt;</span><span class="p">().</span><span class="n">completeOnboarding</span><span class="p">();</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="n">_controller</span><span class="p">.</span><span class="n">nextPage</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">300</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">easeInOut</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="n">_currentPage</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;Get Started&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Next&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildPage</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">subtitle</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">32</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">star</span><span class="p">,</span><span class="w"> </span><span class="nl">size:</span><span class="w"> </span><span class="m">80</span><span class="p">),</span>
+<span class="w">          </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">32</span><span class="p">),</span>
+<span class="w">          </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">            </span><span class="n">title</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">32</span><span class="p">,</span><span class="w"> </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">          </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">            </span><span class="n">subtitle</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">textAlign:</span><span class="w"> </span><span class="n">TextAlign</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">18</span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- OnboardingProvider tracks completion
+- OnboardingWrapper decides screen
+- PageView for onboarding pages
+- Skip or complete onboarding</p>
+<hr />
+<h1 id="tab-navigation">Tab Navigation</h1>
+<blockquote>
+<p><strong>Bottom navigation and tabs.</strong></p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Tab navigation pattern</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">TabNavigationApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TabNavigationApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">TabNavigationApp</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_TabNavigationAppState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_TabNavigationAppState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">TabNavigationApp</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_currentIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Widget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_screens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">HomeTab</span><span class="p">(),</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SearchTab</span><span class="p">(),</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileTab</span><span class="p">(),</span>
+<span class="w">  </span><span class="p">];</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">_screens</span><span class="p">[</span><span class="n">_currentIndex</span><span class="p">],</span>
+<span class="w">      </span><span class="nl">bottomNavigationBar:</span><span class="w"> </span><span class="n">BottomNavigationBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">currentIndex:</span><span class="w"> </span><span class="n">_currentIndex</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_currentIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">;</span>
+<span class="w">          </span><span class="p">});</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nl">items:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">BottomNavigationBarItem</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">home</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Home&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">BottomNavigationBarItem</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">search</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Search&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">BottomNavigationBarItem</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">person</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Profile&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Tab navigation with Navigator (preserves state)</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">TabWithNavigatorApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TabWithNavigatorApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DefaultTabController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">length:</span><span class="w"> </span><span class="m">3</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">bottom:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TabBar</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">tabs:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">              </span><span class="n">Tab</span><span class="p">(</span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">home</span><span class="p">),</span><span class="w"> </span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;Home&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="n">Tab</span><span class="p">(</span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">search</span><span class="p">),</span><span class="w"> </span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;Search&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="n">Tab</span><span class="p">(</span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">person</span><span class="p">),</span><span class="w"> </span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;Profile&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">        </span><span class="nl">body:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TabBarView</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">HomeTab</span><span class="p">(),</span>
+<span class="w">            </span><span class="n">SearchTab</span><span class="p">(),</span>
+<span class="w">            </span><span class="n">ProfileTab</span><span class="p">(),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Nested tab navigation (tabs inside tabs)</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">NestedTabNavigation</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">NestedTabNavigation</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Nested Tabs&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">DefaultTabController</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">length:</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">TabBar</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">tabs:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">Tab</span><span class="p">(</span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;Posts&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="n">Tab</span><span class="p">(</span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;Videos&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">TabBarView</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="n">_buildPostTab</span><span class="p">(),</span>
+<span class="w">                  </span><span class="n">_buildVideoTab</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildPostTab</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DefaultTabController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">length:</span><span class="w"> </span><span class="m">3</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="k">const</span><span class="w"> </span><span class="n">TabBar</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">tabs:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">              </span><span class="n">Tab</span><span class="p">(</span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;All&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="n">Tab</span><span class="p">(</span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;Recent&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="n">Tab</span><span class="p">(</span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;Popular&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">TabBarView</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">10</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;All Post </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">));</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">10</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Recent Post </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">));</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">10</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Popular Post </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">));</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildVideoTab</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">leading:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">video_library</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Video </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- BottomNavigationBar for main tabs
+- TabBar with TabBarView for tabs
+- DefaultTabController manages state
+- Nested tabs for complex layouts</p>
+<hr />
+<h1 id="modal-navigation">Modal Navigation</h1>
+<blockquote>
+<p><strong>Dialogs, bottom sheets, and overlays.</strong></p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Modal navigation patterns</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ModalNavigation</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ModalNavigation</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Modal Navigation&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. Alert Dialog</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">showDialog</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">context:</span><span class="w"> </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AlertDialog</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Alert Dialog&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">content:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;This is an alert dialog&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">actions:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                      </span><span class="n">TextButton</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+<span class="w">                        </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Cancel&#39;</span><span class="p">),</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                      </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+<span class="w">                        </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Confirm&#39;</span><span class="p">),</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Alert Dialog&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. Custom Dialog</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">showDialog</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">context:</span><span class="w"> </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Dialog</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">mainAxisSize:</span><span class="w"> </span><span class="n">MainAxisSize</span><span class="p">.</span><span class="n">min</span><span class="p">,</span>
+<span class="w">                        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                          </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">star</span><span class="p">,</span><span class="w"> </span><span class="nl">size:</span><span class="w"> </span><span class="m">64</span><span class="p">),</span>
+<span class="w">                          </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                          </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Custom Dialog&#39;</span><span class="p">),</span>
+<span class="w">                          </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                          </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                            </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+<span class="w">                            </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Close&#39;</span><span class="p">),</span>
+<span class="w">                          </span><span class="p">),</span>
+<span class="w">                        </span><span class="p">],</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Custom Dialog&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Bottom Sheet</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">showModalBottomSheet</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">context:</span><span class="w"> </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">shape:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">RoundedRectangleBorder</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">vertical</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">top:</span><span class="w"> </span><span class="n">Radius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">mainAxisSize:</span><span class="w"> </span><span class="n">MainAxisSize</span><span class="p">.</span><span class="n">min</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                        </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">width:</span><span class="w"> </span><span class="m">40</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">height:</span><span class="w"> </span><span class="m">4</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">300</span><span class="p">],</span>
+<span class="w">                            </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">2</span><span class="p">),</span>
+<span class="w">                          </span><span class="p">),</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                        </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">leading:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">share</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Share&#39;</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">leading:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">copy</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Copy&#39;</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">leading:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">delete</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Delete&#39;</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                      </span><span class="p">],</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Bottom Sheet&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 4. Full-screen dialog</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">showDialog</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">context:</span><span class="w"> </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">barrierDismissible:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">FullScreenDialog</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Full Screen Dialog&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">FullScreenDialog</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">FullScreenDialog</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Dialog</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">insetPadding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">zero</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Full Screen Dialog&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">leading:</span><span class="w"> </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">close</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Full Screen Content&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+<span class="w">                      </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Close&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- AlertDialog for confirmations
+- Custom Dialog for content
+- ModalBottomSheet for options
+- Full screen dialog for complex content</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common navigation patterns in real apps.</strong></p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 1. E-commerce navigation flow</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">EcommerceNavigation</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">EcommerceNavigation</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">EcommerceNavigation</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_EcommerceNavigationState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_EcommerceNavigationState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">EcommerceNavigation</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_currentIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Widget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_tabs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">HomeTab</span><span class="p">(),</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SearchTab</span><span class="p">(),</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">CartTab</span><span class="p">(),</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileTab</span><span class="p">(),</span>
+<span class="w">  </span><span class="p">];</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">_tabs</span><span class="p">[</span><span class="n">_currentIndex</span><span class="p">],</span>
+<span class="w">      </span><span class="nl">bottomNavigationBar:</span><span class="w"> </span><span class="n">BottomNavigationBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">currentIndex:</span><span class="w"> </span><span class="n">_currentIndex</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_currentIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">;</span>
+<span class="w">          </span><span class="p">});</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nl">items:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">BottomNavigationBarItem</span><span class="p">(</span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">home</span><span class="p">),</span><span class="w"> </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Home&#39;</span><span class="p">),</span>
+<span class="w">          </span><span class="n">BottomNavigationBarItem</span><span class="p">(</span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">search</span><span class="p">),</span><span class="w"> </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Search&#39;</span><span class="p">),</span>
+<span class="w">          </span><span class="n">BottomNavigationBarItem</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">shopping_cart</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Cart&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">BottomNavigationBarItem</span><span class="p">(</span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">person</span><span class="p">),</span><span class="w"> </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Profile&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 2. Form wizard navigation</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">FormWizard</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">FormWizard</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">FormWizard</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_FormWizardState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_FormWizardState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">FormWizard</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_currentStep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Widget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_steps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Step1Screen</span><span class="p">(),</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Step2Screen</span><span class="p">(),</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Step3Screen</span><span class="p">(),</span>
+<span class="w">  </span><span class="p">];</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Form Wizard&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">LinearProgressIndicator</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">value:</span><span class="w"> </span><span class="p">(</span><span class="n">_currentStep</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">_steps</span><span class="p">.</span><span class="n">length</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">_steps</span><span class="p">[</span><span class="n">_currentStep</span><span class="p">],</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">spaceBetween</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_currentStep</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
+<span class="w">                  </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="n">_currentStep</span><span class="o">--</span><span class="p">;</span>
+<span class="w">                      </span><span class="p">});</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Back&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">)</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">.</span><span class="n">shrink</span><span class="p">(),</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_currentStep</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_steps</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                      </span><span class="c1">// Submit form</span>
+<span class="w">                      </span><span class="n">ScaffoldMessenger</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">showSnackBar</span><span class="p">(</span>
+<span class="w">                        </span><span class="k">const</span><span class="w"> </span><span class="n">SnackBar</span><span class="p">(</span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Form submitted!&#39;</span><span class="p">)),</span>
+<span class="w">                      </span><span class="p">);</span>
+<span class="w">                      </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">                    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="n">_currentStep</span><span class="o">++</span><span class="p">;</span>
+<span class="w">                      </span><span class="p">});</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="n">_currentStep</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_steps</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;Submit&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Next&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 3. Master-detail navigation (tablet)</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MasterDetailNavigation</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">MasterDetailNavigation</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">LayoutBuilder</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">constraints</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">constraints</span><span class="p">.</span><span class="n">maxWidth</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">600</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="c1">// Tablet: Master-Detail layout</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">              </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">flex:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">MasterList</span><span class="p">(),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="n">VerticalDivider</span><span class="p">(),</span>
+<span class="w">              </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">flex:</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">DetailView</span><span class="p">(),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="c1">// Phone: Navigation stack</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">MasterList</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">MasterList</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">MasterList</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Items&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Item </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span>
+<span class="w">                </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">DetailView</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">);</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">DetailView</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DetailView</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Detail&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Item Details&#39;</span><span class="p">)),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- E-commerce bottom navigation
+- Form wizard with steps
+- Master-detail for tablets
+- Responsive navigation patterns</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="manage-navigation-state">Manage Navigation State</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Centralized navigation</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">NavigationService</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">GlobalKey</span><span class="o">&lt;</span><span class="n">NavigatorState</span><span class="o">&gt;</span><span class="w"> </span><span class="n">navigatorKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GlobalKey</span><span class="o">&lt;</span><span class="n">NavigatorState</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">push</span><span class="p">(</span><span class="n">Widget</span><span class="w"> </span><span class="n">screen</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">navigatorKey</span><span class="p">.</span><span class="n">currentState</span><span class="o">?</span><span class="p">.</span><span class="n">push</span><span class="p">(</span>
+<span class="w">      </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">screen</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">pop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">navigatorKey</span><span class="p">.</span><span class="n">currentState</span><span class="o">?</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="use-named-routes-for-complex-apps">Use Named Routes for Complex Apps</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Named routes</span>
+<span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">&#39;/&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="s1">&#39;/profile&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="s1">&#39;/settings&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SettingsScreen</span><span class="p">(),</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="handle-back-navigation">Handle Back Navigation</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Custom back navigation</span>
+<span class="n">WillPopScope</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">onWillPop:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hasUnsavedChanges</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">showDialog</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">context:</span><span class="w"> </span><span class="n">context</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AlertDialog</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Discard changes?&#39;</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">actions:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">TextButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;No&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Yes&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">)</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Screen</span><span class="p">(),</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Navigation patterns provide proven strategies for managing app navigation. Use authentication flows for protected routes, onboarding for new users, tab navigation for main sections, and modals for temporary content. Choose patterns based on your app's needs and complexity.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="../state-management/local-state.md">Local State</a></li>
+<li><a href="../state-management/inheritedwidget.md">InheritedWidget</a></li>
+<li><a href="../state-management/provider.md">Provider</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Authentication flow uses wrappers</li>
+<li>Onboarding uses PageView</li>
+<li>Tab navigation preserves state</li>
+<li>Modal dialogs are transient</li>
+<li>Form wizards use step navigation</li>
+<li>Master-detail adapts to screen size</li>
+<li>Navigation patterns improve UX</li>
+<li>Patterns can be combined</li>
+</ul>
 
 
 

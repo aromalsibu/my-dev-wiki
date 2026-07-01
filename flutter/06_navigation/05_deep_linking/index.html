@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#deep-linking" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -6360,6 +6365,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,719 @@
 
 
 
-  <h1>Deep Linking</h1>
+<h1 id="deep-linking">Deep Linking</h1>
+<p>Understand how to handle deep linking in Flutter applications.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Deep linking is the ability to launch a Flutter app and navigate to a specific screen or state using a URL. It allows users to access specific content directly, such as a product page, profile, or specific section of your app. Deep links can be triggered from web links, push notifications, QR codes, or other apps.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Deep linking exists to:</p>
+<ul>
+<li>Direct users to specific content</li>
+<li>Improve user engagement</li>
+<li>Enable sharing of app content</li>
+<li>Support web-to-app transitions</li>
+<li>Handle push notification navigation</li>
+<li>Implement universal links</li>
+<li>Create seamless user experiences</li>
+</ul>
+<hr />
+<h1 id="deep-linking-basics">Deep Linking Basics</h1>
+<blockquote>
+<p><strong>Deep linking</strong> navigates to specific content.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Basic deep linking setup</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:go_router/go_router.dart&#39;</span><span class="p">;</span>
 
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">runApp</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyApp</span><span class="p">());</span>
+<span class="p">}</span>
 
+<span class="kd">class</span><span class="w"> </span><span class="nc">MyApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">MyApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">.</span><span class="n">router</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Deep Linking Demo&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">routerConfig:</span><span class="w"> </span><span class="n">_router</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">_router</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">initialLocation:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Product deep link: /product/123</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/product/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ProductScreen</span><span class="p">(</span><span class="nl">productId:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// User profile deep link: /profile/456</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/profile/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ProfileScreen</span><span class="p">(</span><span class="nl">userId:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Post deep link: /post/789</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/post/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">PostScreen</span><span class="p">(</span><span class="nl">postId:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">);</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">HomeScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Home&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Deep Linking Example&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="c1">// Simulate deep link navigation</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">context</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="s1">&#39;/product/123&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Open Product 123&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">context</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="s1">&#39;/profile/456&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Open Profile 456&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- GoRouter handles deep links
+- Path parameters extract IDs
+- Each screen receives specific data
+- Direct navigation to content</p>
+<hr />
+<h1 id="platform-configuration">Platform Configuration</h1>
+<blockquote>
+<p><strong>Configuring platforms</strong> for deep linking.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Android configuration (AndroidManifest.xml)</span>
+<span class="cm">/*</span>
+<span class="cm">&lt;activity android:name=&quot;.MainActivity&quot;&gt;</span>
+<span class="cm">  &lt;intent-filter&gt;</span>
+<span class="cm">    &lt;action android:name=&quot;android.intent.action.VIEW&quot; /&gt;</span>
+<span class="cm">    &lt;category android:name=&quot;android.intent.category.DEFAULT&quot; /&gt;</span>
+<span class="cm">    &lt;category android:name=&quot;android.intent.category.BROWSABLE&quot; /&gt;</span>
+<span class="cm">    &lt;data android:scheme=&quot;myapp&quot; /&gt;</span>
+<span class="cm">    &lt;data android:host=&quot;example.com&quot; /&gt;</span>
+<span class="cm">    &lt;data android:pathPrefix=&quot;/product&quot; /&gt;</span>
+<span class="cm">    &lt;data android:pathPrefix=&quot;/profile&quot; /&gt;</span>
+<span class="cm">  &lt;/intent-filter&gt;</span>
+<span class="cm">&lt;/activity&gt;</span>
+<span class="cm">*/</span>
+
+<span class="c1">// iOS configuration (Info.plist)</span>
+<span class="cm">/*</span>
+<span class="cm">&lt;key&gt;CFBundleURLTypes&lt;/key&gt;</span>
+<span class="cm">&lt;array&gt;</span>
+<span class="cm">  &lt;dict&gt;</span>
+<span class="cm">    &lt;key&gt;CFBundleURLSchemes&lt;/key&gt;</span>
+<span class="cm">    &lt;array&gt;</span>
+<span class="cm">      &lt;string&gt;myapp&lt;/string&gt;</span>
+<span class="cm">    &lt;/array&gt;</span>
+<span class="cm">  &lt;/dict&gt;</span>
+<span class="cm">&lt;/array&gt;</span>
+<span class="cm">&lt;key&gt;FlutterDeepLinkingEnabled&lt;/key&gt;</span>
+<span class="cm">&lt;true/&gt;</span>
+<span class="cm">*/</span>
+
+<span class="c1">// Web configuration (Web manifest)</span>
+<span class="cm">/*</span>
+<span class="cm">{</span>
+<span class="cm">  &quot;name&quot;: &quot;My App&quot;,</span>
+<span class="cm">  &quot;short_name&quot;: &quot;MyApp&quot;,</span>
+<span class="cm">  &quot;start_url&quot;: &quot;/&quot;,</span>
+<span class="cm">  &quot;display&quot;: &quot;standalone&quot;,</span>
+<span class="cm">  &quot;theme_color&quot;: &quot;#ffffff&quot;,</span>
+<span class="cm">  &quot;background_color&quot;: &quot;#ffffff&quot;,</span>
+<span class="cm">  &quot;scope&quot;: &quot;/&quot;,</span>
+<span class="cm">  &quot;icons&quot;: [...]</span>
+<span class="cm">}</span>
+<span class="cm">*/</span>
+</code></pre></div>
+<p>What's happening here?
+- Android: Intent filters
+- iOS: URL schemes
+- Web: Manifest configuration
+- Each platform requires specific setup</p>
+<hr />
+<h1 id="handling-deep-links">Handling Deep Links</h1>
+<blockquote>
+<p><strong>Processing</strong> deep link data.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Deep link handling with GoRouter</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">DeepLinkHandler</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DeepLinkHandler</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">.</span><span class="n">router</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">routerConfig:</span><span class="w"> </span><span class="n">_deepLinkRouter</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">_deepLinkRouter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">initialLocation:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="c1">// Parse deep link when app starts</span>
+<span class="w">  </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Check for deep link data</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">uri</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Handle specific deep links</span>
+<span class="w">      </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">.</span><span class="n">first</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;product&#39;</span><span class="o">:</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/product/</span><span class="si">${</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">;</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">          </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;profile&#39;</span><span class="o">:</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/profile/</span><span class="si">${</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">;</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">          </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;post&#39;</span><span class="o">:</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/post/</span><span class="si">${</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">;</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">          </span><span class="k">break</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/product/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">DeepLinkContentScreen</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">type:</span><span class="w"> </span><span class="s1">&#39;Product&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">id:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/profile/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">DeepLinkContentScreen</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">type:</span><span class="w"> </span><span class="s1">&#39;Profile&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">id:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/post/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">DeepLinkContentScreen</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">type:</span><span class="w"> </span><span class="s1">&#39;Post&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">id:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">);</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">DeepLinkContentScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DeepLinkContentScreen</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">type</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">type</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">$</span><span class="n">type</span><span class="s1"> Details&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;</span><span class="si">$</span><span class="n">type</span><span class="s1"> ID: </span><span class="si">$</span><span class="n">id</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;This content was opened via deep link&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">context</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go Back&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- redirect parses deep link
+- Path segments determine destination
+- Parameters extracted from path
+- Content screen displays data</p>
+<hr />
+<h1 id="deep-link-with-arguments">Deep Link with Arguments</h1>
+<blockquote>
+<p><strong>Passing complex data</strong> through deep links.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Deep links with arguments</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">DeepLinkWithArgs</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DeepLinkWithArgs</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">.</span><span class="n">router</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">routerConfig:</span><span class="w"> </span><span class="n">_argsRouter</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">_argsRouter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">initialLocation:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ArgsHomeScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Multiple path parameters</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/product/:id/:name&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;Unknown&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ProductArgsScreen</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">id:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">name:</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Query parameters</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/search&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">uri</span><span class="p">.</span><span class="n">queryParameters</span><span class="p">[</span><span class="s1">&#39;q&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">category</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">uri</span><span class="p">.</span><span class="n">queryParameters</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">SearchArgsScreen</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">query:</span><span class="w"> </span><span class="n">query</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">category:</span><span class="w"> </span><span class="n">category</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Extra data</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/checkout&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">extra</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;?</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">CheckoutArgsScreen</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">items:</span><span class="w"> </span><span class="n">data</span><span class="o">?</span><span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">          </span><span class="nl">total:</span><span class="w"> </span><span class="n">data</span><span class="o">?</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">);</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">ArgsHomeScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ArgsHomeScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Deep Link Args&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// Path params</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">context</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="s1">&#39;/product/123/Laptop&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Product (Path Params)&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="c1">// Query params</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">context</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="s1">&#39;/search?q=phone&amp;category=electronics&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Search (Query Params)&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="c1">// Extra data</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">context</span><span class="p">.</span><span class="n">push</span><span class="p">(</span>
+<span class="w">                  </span><span class="s1">&#39;/checkout&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">extra:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="s1">&#39;items&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;Item 1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Item 2&#39;</span><span class="p">],</span>
+<span class="w">                    </span><span class="s1">&#39;total&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">99.99</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Checkout (Extra)&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Path params: /product/:id/:name
+- Query params: ?q=search&amp;category=...
+- Extra: complex data objects
+- Multiple ways to pass data</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common deep linking patterns.</strong></p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 1. E-commerce product sharing</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ProductDeepLinkApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ProductDeepLinkApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">.</span><span class="n">router</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">routerConfig:</span><span class="w"> </span><span class="n">_productRouter</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">_productRouter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">initialLocation:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EcommerceHomeScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Product detail with deep link</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/product/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ProductDeepScreen</span><span class="p">(</span><span class="nl">productId:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Category with filters</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/category/:name&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">sort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">uri</span><span class="p">.</span><span class="n">queryParameters</span><span class="p">[</span><span class="s1">&#39;sort&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;popular&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">CategoryDeepScreen</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">categoryName:</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">sortBy:</span><span class="w"> </span><span class="n">sort</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">);</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">ProductDeepScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ProductDeepScreen</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">productId</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">productId</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Product </span><span class="si">$</span><span class="n">productId</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">actions:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">share</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="c1">// Share deep link</span>
+<span class="w">              </span><span class="c1">// final url = &#39;https://example.com/product/$productId&#39;;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">shopping_bag</span><span class="p">,</span><span class="w"> </span><span class="nl">size:</span><span class="w"> </span><span class="m">64</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Product </span><span class="si">$</span><span class="n">productId</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">24</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;</span><span class="se">\$</span><span class="si">${</span><span class="m">19.99</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">productId</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">10</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">context</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Back to Home&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 2. Social media post sharing</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">SocialDeepLinkApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">SocialDeepLinkApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">.</span><span class="n">router</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">routerConfig:</span><span class="w"> </span><span class="n">_socialRouter</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">_socialRouter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">initialLocation:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SocialHomeScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// User profile deep link</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/user/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">UserProfileDeepScreen</span><span class="p">(</span><span class="nl">userId:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Post deep link</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/post/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">PostDeepScreen</span><span class="p">(</span><span class="nl">postId:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Notification deep link</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/notification/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">NotificationDeepScreen</span><span class="p">(</span><span class="nl">notificationId:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">);</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">PostDeepScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PostDeepScreen</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">postId</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">postId</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Post&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">article</span><span class="p">,</span><span class="w"> </span><span class="nl">size:</span><span class="w"> </span><span class="m">64</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Post #</span><span class="si">$</span><span class="n">postId</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">24</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Lorem ipsum dolor sit amet, consectetur adipiscing elit.&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">textAlign:</span><span class="w"> </span><span class="n">TextAlign</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">favorite_border</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;25&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">comment_outlined</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;8&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">share</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">context</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Back&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Product sharing with deep link
+- Social media post sharing
+- Notification deep linking
+- Share button generates deep link</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="use-gorouter-for-deep-links">Use GoRouter for Deep Links</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - GoRouter handles deep links</span>
+<span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/product/:id&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ProductScreen</span><span class="p">(</span><span class="nl">productId:</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="handle-missing-data">Handle Missing Data</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Handle missing parameters</span>
+<span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/product/:id&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">pathParameters</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">];</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NotFoundScreen</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ProductScreen</span><span class="p">(</span><span class="nl">productId:</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="support-multiple-link-formats">Support Multiple Link Formats</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Multiple link formats</span>
+<span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/product/:id&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ProductScreen</span><span class="p">(...),</span>
+<span class="p">),</span>
+<span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/p/:id&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ProductScreen</span><span class="p">(...),</span>
+<span class="p">),</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-testing-deep-links">Not Testing Deep Links</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Not testing deep links</span>
+<span class="c1">// Build and test with different URLs</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Test deep links</span>
+<span class="c1">// Android: adb shell am start -a android.intent.action.VIEW -d &quot;myapp://product/123&quot;</span>
+<span class="c1">// iOS: xcrun simctl openurl booted &quot;myapp://product/123&quot;</span>
+<span class="c1">// Web: http://localhost:8080/#/product/123</span>
+</code></pre></div></p>
+<h2 id="missing-platform-configuration">Missing Platform Configuration</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Only implementing app-side</span>
+<span class="c1">// Forgot platform-specific configuration</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Configure all platforms</span>
+<span class="c1">// Android: AndroidManifest.xml</span>
+<span class="c1">// iOS: Info.plist</span>
+<span class="c1">// Web: manifest.json</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Deep linking allows users to navigate directly to specific content in your app. Use GoRouter for handling deep links, configure each platform appropriately, and handle all edge cases like missing data. Deep links improve user engagement and enable content sharing.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="route-guards.md">Route Guards</a></li>
+<li><a href="navigation-patterns.md">Navigation Patterns</a></li>
+<li><a href="../state-management/local-state.md">State Management</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Deep links can be triggered from web, notifications, QR codes</li>
+<li>GoRouter handles deep links automatically</li>
+<li>Path parameters extract data from URLs</li>
+<li>Query parameters provide additional context</li>
+<li>Platform-specific configuration is required</li>
+<li>Deep links improve user engagement</li>
+<li>Deep links enable content sharing</li>
+<li>Deep links can carry complex data</li>
+</ul>
 
 
 

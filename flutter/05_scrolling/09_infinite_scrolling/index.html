@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#infinite-scrolling" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -6165,6 +6170,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,807 @@
 
 
 
-  <h1>Infinite Scrolling</h1>
+<h1 id="infinite-scrolling">Infinite Scrolling</h1>
+<p>Understand how to implement infinite scrolling (endless scrolling) in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Infinite scrolling is a technique where new content is loaded automatically as the user approaches the end of the current content. This creates a seamless, endless scrolling experience commonly seen in social media feeds, search results, and product lists. When the user scrolls to the bottom, more data is loaded, providing a continuous stream of content.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Infinite scrolling exists to:</p>
+<ul>
+<li>Load content on demand as the user scrolls</li>
+<li>Improve performance by loading small batches</li>
+<li>Create seamless user experiences</li>
+<li>Handle large datasets efficiently</li>
+<li>Implement feeds and timelines</li>
+<li>Reduce initial load time</li>
+<li>Enable smooth browsing without pagination</li>
+</ul>
+<hr />
+<h1 id="basic-infinite-scrolling">Basic Infinite Scrolling</h1>
+<blockquote>
+<p><strong>Loading more content</strong> as user scrolls.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Basic infinite scrolling example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BasicInfiniteScroll</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">BasicInfiniteScroll</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicInfiniteScroll</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_BasicInfiniteScrollState</span><span class="p">();</span>
+<span class="p">}</span>
 
+<span class="kd">class</span><span class="w"> </span><span class="nc">_BasicInfiniteScrollState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicInfiniteScroll</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_items</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">200</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">_hasMore</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Simulate network request</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">newItems</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_page</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">      </span><span class="n">_items</span><span class="p">.</span><span class="n">addAll</span><span class="p">(</span><span class="n">newItems</span><span class="p">);</span>
+<span class="w">      </span><span class="n">_page</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">      </span><span class="c1">// Simulate end of data (after 5 pages)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_page</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">          </span><span class="c1">// Handle error</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Infinite Scroll&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">itemCount:</span><span class="w"> </span><span class="n">_items</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_items</span><span class="p">.</span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">symmetric</span><span class="p">(</span><span class="nl">vertical:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">()),</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">height:</span><span class="w"> </span><span class="m">60</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">_items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)],</span>
+<span class="w">            </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                </span><span class="s1">&#39;Item </span><span class="si">${</span><span class="n">_items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Load more when near bottom
+- Show loading indicator
+- Track loading state
+- _hasMore controls whether to load more
+- Uses ScrollController to detect scroll position</p>
+<hr />
+<h1 id="infinite-scrolling-with-data-models">Infinite Scrolling with Data Models</h1>
+<blockquote>
+<p><strong>Loading structured data</strong> with infinite scroll.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Infinite scrolling with data models</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">Post</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">title</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">body</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">author</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Post</span><span class="p">({</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">title</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">body</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">author</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">InfiniteScrollWithData</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">InfiniteScrollWithData</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">InfiniteScrollWithData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_InfiniteScrollWithDataState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_InfiniteScrollWithDataState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">InfiniteScrollWithData</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Post</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_posts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">200</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">_hasMore</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Simulate API call</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">newPosts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">_page</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">index</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Post</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">id:</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Post </span><span class="si">${</span><span class="n">id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">body:</span><span class="w"> </span><span class="s1">&#39;This is the body of post </span><span class="si">${</span><span class="n">id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">. It contains some content.&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">author:</span><span class="w"> </span><span class="s1">&#39;User </span><span class="si">${</span><span class="n">id</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">});</span>
+
+<span class="w">      </span><span class="n">_posts</span><span class="p">.</span><span class="n">addAll</span><span class="p">(</span><span class="n">newPosts</span><span class="p">);</span>
+<span class="w">      </span><span class="n">_page</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_page</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Feed&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">itemCount:</span><span class="w"> </span><span class="n">_posts</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_posts</span><span class="p">.</span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">()),</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">}</span>
+
+<span class="w">          </span><span class="kd">final</span><span class="w"> </span><span class="n">post</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_posts</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">crossAxisAlignment:</span><span class="w"> </span><span class="n">CrossAxisAlignment</span><span class="p">.</span><span class="n">start</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                      </span><span class="n">CircleAvatar</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="p">],</span>
+<span class="w">                        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="n">post</span><span class="p">.</span><span class="n">author</span><span class="p">[</span><span class="m">0</span><span class="p">]),</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                      </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">12</span><span class="p">),</span>
+<span class="w">                      </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">crossAxisAlignment:</span><span class="w"> </span><span class="n">CrossAxisAlignment</span><span class="p">.</span><span class="n">start</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                            </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                              </span><span class="n">post</span><span class="p">.</span><span class="n">author</span><span class="p">,</span>
+<span class="w">                              </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                                </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                              </span><span class="p">),</span>
+<span class="w">                            </span><span class="p">),</span>
+<span class="w">                            </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                              </span><span class="s1">&#39;Post </span><span class="si">${</span><span class="n">post</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">600</span><span class="p">],</span>
+<span class="w">                                </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">12</span><span class="p">,</span>
+<span class="w">                              </span><span class="p">),</span>
+<span class="w">                            </span><span class="p">),</span>
+<span class="w">                          </span><span class="p">],</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">12</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="n">post</span><span class="p">.</span><span class="n">title</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">18</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="n">post</span><span class="p">.</span><span class="n">body</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">700</span><span class="p">],</span>
+<span class="w">                      </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">14</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">height:</span><span class="w"> </span><span class="m">1.5</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">12</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                      </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">favorite_border</span><span class="p">),</span>
+<span class="w">                        </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                      </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;25&#39;</span><span class="p">),</span>
+<span class="w">                      </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                      </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">comment_outlined</span><span class="p">),</span>
+<span class="w">                        </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                      </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;8&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Structured data (Post model)
+- Cards with rich content
+- User avatar, title, body
+- Interactive buttons
+- Page-based loading</p>
+<hr />
+<h1 id="infinite-scrolling-with-error-handling">Infinite Scrolling with Error Handling</h1>
+<blockquote>
+<p><strong>Handling errors</strong> in infinite scrolling.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Infinite scrolling with error handling</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">InfiniteScrollWithError</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">InfiniteScrollWithError</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">InfiniteScrollWithError</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_InfiniteScrollWithErrorState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_InfiniteScrollWithErrorState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">InfiniteScrollWithError</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_items</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">_error</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_initialLoad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">200</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">_hasMore</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">      </span><span class="n">_error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Simulate API with random errors</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+
+<span class="w">      </span><span class="c1">// Randomly fail</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_page</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to load data&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">newItems</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="m">15</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_page</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">15</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">      </span><span class="n">_items</span><span class="p">.</span><span class="n">addAll</span><span class="p">(</span><span class="n">newItems</span><span class="p">);</span>
+<span class="w">      </span><span class="n">_page</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_page</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">6</span><span class="p">)</span><span class="w"> </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">          </span><span class="n">_initialLoad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">          </span><span class="n">_error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">toString</span><span class="p">();</span>
+<span class="w">          </span><span class="n">_initialLoad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_retry</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_error</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_initialLoad</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">_isLoading</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">()),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Infinite Scroll with Error&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">actions:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_error</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span>
+<span class="w">            </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">refresh</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_retry</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_error</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">[</span><span class="m">50</span><span class="p">],</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">error</span><span class="p">,</span><span class="w"> </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                      </span><span class="s1">&#39;Error: </span><span class="si">$</span><span class="n">_error</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="n">TextButton</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_retry</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Retry&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">itemCount:</span><span class="w"> </span><span class="n">_items</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_items</span><span class="p">.</span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">()),</span>
+<span class="w">                  </span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">height:</span><span class="w"> </span><span class="m">60</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">_items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)],</span>
+<span class="w">                  </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                      </span><span class="s1">&#39;Item </span><span class="si">${</span><span class="n">_items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Error handling with retry
+- Error banner at top
+- Retry button in app bar
+- Graceful error recovery
+- Initial loading state</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> for infinite scrolling.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 1. Search with infinite scrolling</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">SearchWithInfiniteScroll</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">SearchWithInfiniteScroll</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">SearchWithInfiniteScroll</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_SearchWithInfiniteScrollState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_SearchWithInfiniteScrollState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">SearchWithInfiniteScroll</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_searchController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">200</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_searchMore</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_searchController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_searchMore</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">_hasMore</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">_query</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">newResults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span>
+<span class="w">        </span><span class="m">10</span><span class="p">,</span>
+<span class="w">        </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_query</span><span class="si">}</span><span class="s1"> result </span><span class="si">${</span><span class="n">_page</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="n">_results</span><span class="p">.</span><span class="n">addAll</span><span class="p">(</span><span class="n">newResults</span><span class="p">);</span>
+<span class="w">      </span><span class="n">_page</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_page</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_performSearch</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">query</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">query</span><span class="p">;</span>
+<span class="w">      </span><span class="n">_results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">      </span><span class="n">_page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">      </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">query</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_searchMore</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Search&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_searchController</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Search...&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">prefixIcon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">search</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">suffixIcon:</span><span class="w"> </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">clear</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">_searchController</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">                    </span><span class="n">_performSearch</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">onChanged:</span><span class="w"> </span><span class="n">_performSearch</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">_results</span><span class="p">.</span><span class="n">isEmpty</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">_isLoading</span>
+<span class="w">                </span><span class="o">?</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                      </span><span class="n">_query</span><span class="p">.</span><span class="n">isEmpty</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;Search for something&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;No results found&#39;</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">600</span><span class="p">],</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">)</span>
+<span class="w">                </span><span class="o">:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">itemCount:</span><span class="w"> </span><span class="n">_results</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_results</span><span class="p">.</span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">()),</span>
+<span class="w">                        </span><span class="p">);</span>
+<span class="w">                      </span><span class="p">}</span>
+<span class="w">                      </span><span class="k">return</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">leading:</span><span class="w"> </span><span class="n">CircleAvatar</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">${</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="n">_results</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span>
+<span class="w">                        </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                      </span><span class="p">);</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 2. Grid with infinite scrolling (Instagram-like)</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">InfiniteGridScroll</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">InfiniteGridScroll</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">InfiniteGridScroll</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_InfiniteGridScrollState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_InfiniteGridScrollState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">InfiniteGridScroll</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_items</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">200</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">_hasMore</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">newItems</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_page</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">    </span><span class="n">_items</span><span class="p">.</span><span class="n">addAll</span><span class="p">(</span><span class="n">newItems</span><span class="p">);</span>
+<span class="w">    </span><span class="n">_page</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_page</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="n">_hasMore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Photo Grid&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">GridView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">gridDelegate:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SliverGridDelegateWithFixedCrossAxisCount</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">crossAxisCount:</span><span class="w"> </span><span class="m">3</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">crossAxisSpacing:</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">mainAxisSpacing:</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">        </span><span class="nl">itemCount:</span><span class="w"> </span><span class="n">_items</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_items</span><span class="p">.</span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">());</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">_items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)],</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Search with pagination
+- Grid view infinite scrolling
+- Real-world social media patterns
+- Search and filter functionality</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="use-controller-for-scroll-detection">Use Controller for Scroll Detection</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Listen to scroll events</span>
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">  </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">200</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="show-loading-indicator">Show Loading Indicator</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Show loading state</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_items</span><span class="p">.</span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">    </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">()),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="handle-errors-gracefully">Handle Errors Gracefully</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Error handling</span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">await</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">toString</span><span class="p">();</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-checking-loading-state">Not Checking Loading State</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Multiple simultaneous requests</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// No loading check</span>
+<span class="w">  </span><span class="n">loadData</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Check loading state</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="w">  </span><span class="c1">// Load data</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="not-handling-end-of-data">Not Handling End of Data</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Infinite loading even when no data</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// No end check</span>
+<span class="w">  </span><span class="n">loadMoreData</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Check for end of data</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">_hasMore</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="w">  </span><span class="n">loadMoreData</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Infinite scrolling loads content automatically as the user scrolls down. Use ScrollController to detect when the user approaches the end of the list, show loading indicators, handle errors gracefully, and stop loading when no more data exists.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="scrollcontroller.md">ScrollController</a></li>
+<li><a href="scrollphysics.md">ScrollPhysics</a></li>
+<li><a href="nestedscrolling.md">Nested Scrolling</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Infinite scrolling improves UX by reducing pagination</li>
+<li>ScrollController detects scroll position</li>
+<li>Loading state prevents duplicate requests</li>
+<li>Error handling is essential for reliability</li>
+<li>Grid views also support infinite scrolling</li>
+<li>Search results use infinite scrolling</li>
+<li>Social media feeds use infinite scrolling</li>
+<li>Infinite scrolling is common in modern apps</li>
+</ul>
 
 
 

@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#route-guards" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -6388,6 +6393,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,724 @@
 
 
 
-  <h1>Route Guards</h1>
+<h1 id="route-guards">Route Guards</h1>
+<p>Understand how to protect routes with authentication and authorization checks.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Route guards are mechanisms that control access to specific routes based on certain conditions like authentication status, user roles, or other business logic. They act as gatekeepers that determine whether a user can navigate to a particular screen, redirecting them to appropriate destinations if they don't meet the requirements.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Route guards exist to:</p>
+<ul>
+<li>Protect routes from unauthorized access</li>
+<li>Implement authentication requirements</li>
+<li>Enforce role-based access control</li>
+<li>Redirect users to appropriate screens</li>
+<li>Handle session validation</li>
+<li>Prevent route access in invalid states</li>
+<li>Implement authorization logic</li>
+</ul>
+<hr />
+<h1 id="authentication-guards">Authentication Guards</h1>
+<blockquote>
+<p><strong>Protecting routes</strong> with authentication checks.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Authentication guard with GoRouter</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:go_router/go_router.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:provider/provider.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">// Auth state management</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AuthState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ChangeNotifier</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">_userToken</span><span class="p">;</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isAuthenticated</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isAuthenticated</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_userToken</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">login</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Simulate login</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+<span class="w">    </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">_userToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;fake-token-123&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">logout</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">_userToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">AuthGuardApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">AuthGuardApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ChangeNotifierProvider</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">create:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AuthState</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">.</span><span class="n">router</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">routerConfig:</span><span class="w"> </span><span class="n">_authGuardRouter</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">_authGuardRouter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">initialLocation:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="c1">// Global redirect for authentication</span>
+<span class="w">  </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">isLoginRoute</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">matchedLocation</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// If not authenticated and not on login, go to login</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isAuthenticated</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isLoginRoute</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// If authenticated and on login, go to home</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isAuthenticated</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">isLoginRoute</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span><span class="w"> </span><span class="c1">// No redirect</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="c1">// Public routes</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LoginScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+
+<span class="w">    </span><span class="c1">// Protected routes (requires auth)</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;profile&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">        </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;settings&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SettingsScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">        </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;dashboard&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DashboardScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nl">errorBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ErrorScreen</span><span class="p">(),</span>
+<span class="p">);</span>
+</code></pre></div>
+<p>What's happening here?
+- AuthState manages authentication
+- Global redirect checks auth status
+- Login route is public
+- All other routes require auth
+- Redirects to login if not authenticated</p>
+<hr />
+<h1 id="role-based-guards">Role-Based Guards</h1>
+<blockquote>
+<p><strong>Controlling access</strong> based on user roles.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Role-based access control</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">UserState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ChangeNotifier</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;guest&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">role</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_role</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isAdmin</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_role</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isManager</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_role</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;manager&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isUser</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_role</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;user&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">setRole</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">role</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">role</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">RoleGuardApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">RoleGuardApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ChangeNotifierProvider</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">create:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UserState</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">.</span><span class="n">router</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">routerConfig:</span><span class="w"> </span><span class="n">_roleGuardRouter</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">_roleGuardRouter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">initialLocation:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">UserState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if route requires specific role</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">matchedLocation</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Admin only routes</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">location</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s1">&#39;/admin&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isAdmin</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/unauthorized&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Manager routes</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">location</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s1">&#39;/manager&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isManager</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isAdmin</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/unauthorized&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// User routes (any authenticated user)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">location</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s1">&#39;/dashboard&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">user</span><span class="p">.</span><span class="n">role</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;guest&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="c1">// Public</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PublicHomeScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LoginScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/unauthorized&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UnauthorizedScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+
+<span class="w">    </span><span class="c1">// User routes</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/dashboard&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DashboardScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+
+<span class="w">    </span><span class="c1">// Manager routes</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/manager/reports&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ReportsScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+
+<span class="w">    </span><span class="c1">// Admin routes</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/admin/users&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UsersManagementScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/admin/settings&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">AdminSettingsScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">);</span>
+</code></pre></div>
+<p>What's happening here?
+- UserState manages user role
+- Role-based redirect logic
+- Admin, manager, user roles
+- Unauthorized screen for access denied</p>
+<hr />
+<h1 id="route-level-guards">Route-Level Guards</h1>
+<blockquote>
+<p><strong>Protecting individual</strong> routes with guards.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Route-level guards</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">RouteGuardApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">RouteGuardApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ChangeNotifierProvider</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">create:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AuthState</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">.</span><span class="n">router</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">routerConfig:</span><span class="w"> </span><span class="n">_routeGuardRouter</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">_routeGuardRouter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">initialLocation:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LoginScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Route with guard</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/profile&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="c1">// Route-level redirect</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="c1">// Route with specific conditions</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/settings&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SettingsScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">UserState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isAdmin</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/unauthorized&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">);</span>
+
+<span class="c1">// Custom guard for specific features</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">FeatureGuard</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">checkAccess</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">feature</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">UserState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Feature-specific checks</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">feature</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isAdmin</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/unauthorized&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">feature</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;premium&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isPremium</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/upgrade&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Using custom guard</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">FeatureRoutes</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">routes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/admin&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">AdminPanelScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">FeatureGuard</span><span class="p">.</span><span class="n">checkAccess</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/premium&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PremiumContentScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">FeatureGuard</span><span class="p">.</span><span class="n">checkAccess</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;premium&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Route-level redirects
+- Multiple condition checks
+- Custom guard classes
+- Feature-based access control</p>
+<hr />
+<h1 id="guard-with-async-checks">Guard with Async Checks</h1>
+<blockquote>
+<p><strong>Asynchronous</strong> route guards.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Async route guards</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AsyncGuardApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">AsyncGuardApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ChangeNotifierProvider</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">create:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AsyncAuthState</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">.</span><span class="n">router</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">routerConfig:</span><span class="w"> </span><span class="n">_asyncGuardRouter</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">AsyncAuthState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ChangeNotifier</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isLoading</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isAuthenticated</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isAuthenticated</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">AsyncAuthState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_checkAuth</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_checkAuth</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Simulate async auth check</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">2</span><span class="p">));</span>
+<span class="w">    </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">login</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+<span class="w">    </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">_asyncGuardRouter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">initialLocation:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AsyncAuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Show loading while checking auth</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">auth</span><span class="p">.</span><span class="n">isLoading</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/splash&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Redirect based on auth status</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/splash&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SplashScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LoginScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">);</span>
+
+<span class="c1">// Custom AsyncGuard</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AsyncGuard</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">check</span><span class="p">(</span>
+<span class="w">    </span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">route</span><span class="p">,</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AsyncAuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Simulate async validation</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Async auth state checking
+- Loading screen during auth check
+- Async guard class
+- Simulated network delays</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> with route guards.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 1. Complete auth guard implementation</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AuthGuard</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">check</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">UserState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check authentication</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Check session timeout</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">auth</span><span class="p">.</span><span class="n">isSessionExpired</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/session-expired&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Check account status</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isVerified</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/verify-email&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Check subscription status</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">route</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s1">&#39;/premium&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isSubscribed</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/pricing&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 2. Role-based guard with redirects</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">RoleGuard</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">check</span><span class="p">(</span>
+<span class="w">    </span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">route</span><span class="p">,</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">allowedRoles</span><span class="p">,</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">UserState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">route</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;/admin&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">isAdmin</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">isManager</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/manager/dashboard&#39;</span><span class="p">;</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/unauthorized&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">allowedRoles</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">role</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/unauthorized&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 3. Multi-factor guard</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MfaGuard</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">check</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">mfa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">MfaState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">auth</span><span class="p">.</span><span class="n">requiresMfa</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">mfa</span><span class="p">.</span><span class="n">isVerified</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/mfa-verify&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 4. Registration flow guard</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">RegistrationFlowGuard</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">check</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">flow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">RegistrationState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">route</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;/register/step1&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">flow</span><span class="p">.</span><span class="n">step</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/register/step</span><span class="si">${</span><span class="n">flow</span><span class="p">.</span><span class="n">step</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">route</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;/register/step2&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">flow</span><span class="p">.</span><span class="n">step</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/register/step1&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">route</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;/register/complete&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">flow</span><span class="p">.</span><span class="n">step</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/register/step</span><span class="si">${</span><span class="n">flow</span><span class="p">.</span><span class="n">step</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Router with all guards</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">_fullGuardRouter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GoRouter</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">initialLocation:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">routes:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="c1">// Public routes</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LoginScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/verify-email&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">VerifyEmailScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/mfa-verify&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">MfaVerifyScreen</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">),</span>
+
+<span class="w">    </span><span class="c1">// Registration flow</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/register/step1&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">RegisterStep1Screen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">RegistrationFlowGuard</span><span class="p">.</span><span class="n">check</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">matchedLocation</span><span class="p">),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/register/step2&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">RegisterStep2Screen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">RegistrationFlowGuard</span><span class="p">.</span><span class="n">check</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">matchedLocation</span><span class="p">),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/register/complete&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">RegisterCompleteScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">RegistrationFlowGuard</span><span class="p">.</span><span class="n">check</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">matchedLocation</span><span class="p">),</span>
+<span class="w">    </span><span class="p">),</span>
+
+<span class="w">    </span><span class="c1">// Protected routes</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AuthGuard</span><span class="p">.</span><span class="n">check</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">matchedLocation</span><span class="p">),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/profile&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AuthGuard</span><span class="p">.</span><span class="n">check</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">matchedLocation</span><span class="p">),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/admin&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">AdminScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">RoleGuard</span><span class="p">.</span><span class="n">check</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">matchedLocation</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;admin&#39;</span><span class="p">]),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">    </span><span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/premium&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PremiumScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AuthGuard</span><span class="p">.</span><span class="n">check</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">matchedLocation</span><span class="p">),</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="p">);</span>
+</code></pre></div>
+<p>What's happening here?
+- Complete auth guard implementation
+- Role-based guard with redirects
+- Multi-factor authentication guard
+- Registration flow guard
+- Multiple guards combined</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="centralize-guard-logic">Centralize Guard Logic</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Centralized guards</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AppGuards</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">authCheck</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">adminCheck</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">UserState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isAdmin</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/unauthorized&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Scattered guard logic</span>
+<span class="n">GoRoute</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">path:</span><span class="w"> </span><span class="s1">&#39;/profile&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="use-redirects-for-invalid-states">Use Redirects for Invalid States</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Redirect to appropriate screens</span>
+<span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isVerified</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/verify-email&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Letting users access invalid states</span>
+<span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span><span class="w"> </span><span class="c1">// Shows protected screen</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="provide-feedback-for-guard-failures">Provide Feedback for Guard Failures</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Show why access was denied</span>
+<span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">user</span><span class="p">.</span><span class="n">isAdmin</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ScaffoldMessenger</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">showSnackBar</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">SnackBar</span><span class="p">(</span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Admin access required&#39;</span><span class="p">)),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/unauthorized&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-handling-guard-failures">Not Handling Guard Failures</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Guard fails silently</span>
+<span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// User stays on protected route</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Redirect on failure</span>
+<span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="overcomplicating-guards">Overcomplicating Guards</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Too complex</span>
+<span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">AuthState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">UserState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">SettingsState</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">  </span><span class="c1">// Too many conditions</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">user</span><span class="p">.</span><span class="n">isVerified</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="n">featureEnabled</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="c1">// Complex logic</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Simplified guards</span>
+<span class="nl">redirect:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">AuthGuard</span><span class="p">.</span><span class="n">check</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">matchedLocation</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Route guards protect routes from unauthorized access using authentication, authorization, and business logic checks. Use GoRouter's redirect functionality to implement guards, manage authentication state, and provide appropriate feedback to users when access is denied.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="navigation-patterns.md">Navigation Patterns</a></li>
+<li><a href="../state-management/local-state.md">State Management</a></li>
+<li><a href="../state-management/provider.md">Provider</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Guards can be global or route-specific</li>
+<li>Authentication guards protect routes</li>
+<li>Role-based guards control permissions</li>
+<li>Async guards handle network checks</li>
+<li>Guards can redirect to login or error screens</li>
+<li>Multiple guards can be combined</li>
+<li>Guards provide user feedback</li>
+<li>Guards improve app security</li>
+</ul>
 
 
 

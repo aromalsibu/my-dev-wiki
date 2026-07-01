@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#scrollcontroller" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -6081,6 +6086,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,657 @@
 
 
 
-  <h1>ScrollController</h1>
+<h1 id="scrollcontroller">ScrollController</h1>
+<p>Understand how to programmatically control scrolling in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>ScrollController is a controller that manages and controls scrolling behavior in scrollable widgets. It allows you to read the current scroll position, animate to specific positions, listen to scroll events, and control multiple scrollable widgets. ScrollController is essential for implementing features like scroll-to-top, infinite scrolling, and synchronized scrolling.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>ScrollController exists to:</p>
+<ul>
+<li>Control scroll position programmatically</li>
+<li>Read current scroll offset</li>
+<li>Animate scrolling to positions</li>
+<li>Listen to scroll events</li>
+<li>Synchronize multiple scrollable widgets</li>
+<li>Implement infinite scrolling</li>
+<li>Create custom scroll behaviors</li>
+</ul>
+<hr />
+<h1 id="basic-scrollcontroller">Basic ScrollController</h1>
+<blockquote>
+<p><strong>ScrollController</strong> controls scrolling programmatically.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Basic ScrollController usage</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BasicScrollControllerExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">BasicScrollControllerExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicScrollControllerExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_BasicScrollControllerExampleState</span><span class="p">();</span>
+<span class="p">}</span>
 
+<span class="kd">class</span><span class="w"> </span><span class="nc">_BasicScrollControllerExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicScrollControllerExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Listen to scroll events</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Scroll position: </span><span class="si">${</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Clean up controller</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_scrollToTop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Animate to top</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">animateTo</span><span class="p">(</span>
+<span class="w">      </span><span class="m">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">easeInOut</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_scrollToBottom</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Animate to bottom</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">animateTo</span><span class="p">(</span>
+<span class="w">      </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">easeInOut</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_jumpToMiddle</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Jump to middle instantly</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">jumpTo</span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;ScrollController&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">actions:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">TextButton</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Position: </span><span class="si">${</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="p">.</span><span class="n">toInt</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="c1">// Control buttons</span>
+<span class="w">          </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_scrollToTop</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Top&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_jumpToMiddle</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Middle&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_scrollToBottom</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Bottom&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+
+<span class="w">          </span><span class="c1">// Scrollable content</span>
+<span class="w">          </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">height:</span><span class="w"> </span><span class="m">60</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)],</span>
+<span class="w">                  </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">symmetric</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">horizontal:</span><span class="w"> </span><span class="m">8</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">vertical:</span><span class="w"> </span><span class="m">4</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                      </span><span class="s1">&#39;Item </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Controller tracks scroll position
+- animateTo: animated scroll to position
+- jumpTo: instant scroll to position
+- position.pixels: current scroll offset
+- position.maxScrollExtent: maximum scroll</p>
+<hr />
+<h1 id="scrollcontroller-properties">ScrollController Properties</h1>
+<blockquote>
+<p><strong>Key properties</strong> of ScrollController.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// ScrollController properties</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ScrollControllerProperties</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ScrollControllerProperties</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">ScrollControllerProperties</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_ScrollControllerPropertiesState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_ScrollControllerPropertiesState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">ScrollControllerProperties</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Controller Properties&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="c1">// Display controller info</span>
+<span class="w">          </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">crossAxisAlignment:</span><span class="w"> </span><span class="n">CrossAxisAlignment</span><span class="p">.</span><span class="n">start</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Has Clients: </span><span class="si">${</span><span class="n">_controller</span><span class="p">.</span><span class="n">hasClients</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Has Listeners: </span><span class="si">${</span><span class="n">_controller</span><span class="p">.</span><span class="n">hasListeners</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">hasClients</span><span class="p">)</span><span class="w"> </span><span class="p">...[</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Position: </span><span class="si">${</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Min: </span><span class="si">${</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">minScrollExtent</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Max: </span><span class="si">${</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Viewport: </span><span class="si">${</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">viewportDimension</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+
+<span class="w">          </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">30</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">height:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)],</span>
+<span class="w">                  </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Item </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">)),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// ScrollController properties:</span>
+<span class="c1">// 1. hasClients - Whether attached to scrollable</span>
+<span class="c1">// 2. hasListeners - Whether has listeners</span>
+<span class="c1">// 3. position - Current scroll position</span>
+<span class="c1">// 4. offset - Current scroll offset (deprecated)</span>
+</code></pre></div>
+<p>What's happening here?
+- hasClients: controller attached?
+- position.pixels: current offset
+- position.minScrollExtent: minimum scroll
+- position.maxScrollExtent: maximum scroll
+- position.viewportDimension: visible area</p>
+<hr />
+<h1 id="multiple-scrollcontrollers">Multiple ScrollControllers</h1>
+<blockquote>
+<p><strong>Using multiple</strong> controllers for synchronized scrolling.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Multiple controllers example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MultipleControllersExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">MultipleControllersExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MultipleControllersExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_MultipleControllersExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_MultipleControllersExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MultipleControllersExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Synchronize scrolling</span>
+<span class="w">    </span><span class="n">_controller1</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller1</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">_controller2</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_controller2</span><span class="p">.</span><span class="n">jumpTo</span><span class="p">(</span><span class="n">_controller1</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller1</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller2</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Synchronized Scrolling&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="c1">// First list</span>
+<span class="w">          </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller1</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">30</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">height:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)],</span>
+<span class="w">                  </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;List 1 - </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">)),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+
+<span class="w">          </span><span class="k">const</span><span class="w"> </span><span class="n">VerticalDivider</span><span class="p">(),</span>
+
+<span class="w">          </span><span class="c1">// Second list (synchronized)</span>
+<span class="w">          </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller2</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">30</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">height:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">[</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)],</span>
+<span class="w">                  </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;List 2 - </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">)),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Two lists with separate controllers
+- Synchronized scrolling between lists
+- Controller listeners track positions
+- jumpTo synchronizes positions</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> using ScrollController.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 1. Infinite scrolling with pagination</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">InfiniteScrollExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">InfiniteScrollExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">InfiniteScrollExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_InfiniteScrollExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_InfiniteScrollExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">InfiniteScrollExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_items</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Load more when near bottom</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">200</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_loadMore</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_loadMore</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Simulate network request</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_items</span><span class="p">.</span><span class="n">length</span><span class="p">;</span>
+<span class="w">    </span><span class="n">_items</span><span class="p">.</span><span class="n">addAll</span><span class="p">(</span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">));</span>
+<span class="w">    </span><span class="n">_page</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Infinite Scroll&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">itemCount:</span><span class="w"> </span><span class="n">_items</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_items</span><span class="p">.</span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">()),</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">height:</span><span class="w"> </span><span class="m">60</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">_items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)],</span>
+<span class="w">            </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                </span><span class="s1">&#39;Item </span><span class="si">${</span><span class="n">_items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 2. Scroll to top button</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ScrollToTopExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ScrollToTopExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">ScrollToTopExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_ScrollToTopExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_ScrollToTopExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">ScrollToTopExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_showButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_showButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">200</span><span class="p">;</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_scrollToTop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">animateTo</span><span class="p">(</span>
+<span class="w">      </span><span class="m">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">easeInOut</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Scroll to Top&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Stack</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">height:</span><span class="w"> </span><span class="m">60</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)],</span>
+<span class="w">                </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;Item </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">);</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_showButton</span><span class="p">)</span>
+<span class="w">            </span><span class="n">Positioned</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">bottom:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">right:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">FloatingActionButton</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_scrollToTop</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">arrow_upward</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 3. Scroll position indicator</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ScrollIndicatorExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ScrollIndicatorExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">ScrollIndicatorExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_ScrollIndicatorExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_ScrollIndicatorExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">ScrollIndicatorExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_scrollProgress</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_scrollProgress</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">pixels</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">position</span><span class="p">.</span><span class="n">maxScrollExtent</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Scroll Progress&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">bottom:</span><span class="w"> </span><span class="n">PreferredSize</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">preferredSize:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">.</span><span class="n">fromHeight</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">height:</span><span class="w"> </span><span class="m">4</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">300</span><span class="p">],</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">width:</span><span class="w"> </span><span class="n">_scrollProgress</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">MediaQuery</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">height:</span><span class="w"> </span><span class="m">4</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">itemCount:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">height:</span><span class="w"> </span><span class="m">60</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">)],</span>
+<span class="w">            </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                </span><span class="s1">&#39;Item </span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Infinite scrolling with pagination
+- Scroll to top button with animation
+- Scroll progress indicator in app bar
+- Controller listeners for updates</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="dispose-controller">Dispose Controller</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Always dispose</span>
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Memory leak</span>
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="use-animateto-for-smooth-scrolling">Use animateTo for Smooth Scrolling</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Smooth scrolling</span>
+<span class="n">_controller</span><span class="p">.</span><span class="n">animateTo</span><span class="p">(</span>
+<span class="w">  </span><span class="m">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">),</span>
+<span class="w">  </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">easeInOut</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="c1">// Bad - Jumping instantly</span>
+<span class="n">_controller</span><span class="p">.</span><span class="n">jumpTo</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="check-hasclients">Check HasClients</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Safe access</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">hasClients</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_controller</span><span class="p">.</span><span class="n">animateTo</span><span class="p">(...);</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Risk of error</span>
+<span class="n">_controller</span><span class="p">.</span><span class="n">animateTo</span><span class="p">(...);</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-disposing-controller">Not Disposing Controller</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">MyWidget</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MyWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_MyWidgetState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_MyWidgetState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MyWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+<span class="w">  </span><span class="c1">// No dispose - memory leak!</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">_MyWidgetState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MyWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ScrollController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScrollController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="accessing-position-before-client-attached">Accessing Position Before Client Attached</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Error if no client attached</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">_scrollToTop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_controller</span><span class="p">.</span><span class="n">animateTo</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="nl">duration:</span><span class="w"> </span><span class="p">...);</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Check hasClients</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">_scrollToTop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">hasClients</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">animateTo</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="nl">duration:</span><span class="w"> </span><span class="p">...);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>ScrollController provides programmatic control over scrolling. Use it to read scroll position, animate to positions, listen to scroll events, and synchronize multiple scrollable widgets. Always dispose controllers to prevent memory leaks.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="scrollphysics.md">ScrollPhysics</a></li>
+<li><a href="nestedscrolling.md">Nested Scrolling</a></li>
+<li><a href="infinitescrolling.md">Infinite Scrolling</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>ScrollController must be disposed</li>
+<li>animateTo provides smooth scrolling</li>
+<li>jumpTo provides instant scrolling</li>
+<li>position.pixels gives current offset</li>
+<li>position.maxScrollExtent gives max scroll</li>
+<li>Controllers can be synchronized</li>
+<li>Controllers enable infinite scrolling</li>
+<li>Controllers can be shared between widgets</li>
+</ul>
 
 
 

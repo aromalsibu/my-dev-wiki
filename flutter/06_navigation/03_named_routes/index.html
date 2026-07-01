@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#named-routes" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -6304,6 +6309,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,773 @@
 
 
 
-  <h1>Named Routes</h1>
+<h1 id="named-routes">Named Routes</h1>
+<p>Understand how to organize navigation with named routes in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Named Routes are a way to define and navigate to screens using string identifiers instead of building routes directly. They provide a centralized way to manage navigation, making your code more organized, maintainable, and easier to handle deep linking and complex navigation flows.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Named Routes exist to:</p>
+<ul>
+<li>Centralize route definitions</li>
+<li>Simplify navigation code</li>
+<li>Support deep linking</li>
+<li>Enable dynamic route generation</li>
+<li>Organize app navigation</li>
+<li>Handle unknown routes</li>
+<li>Pass data with navigation</li>
+</ul>
+<hr />
+<h1 id="defining-named-routes">Defining Named Routes</h1>
+<blockquote>
+<p><strong>Named routes</strong> are defined in MaterialApp.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Defining named routes</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">runApp</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyApp</span><span class="p">());</span>
+<span class="p">}</span>
 
+<span class="kd">class</span><span class="w"> </span><span class="nc">MyApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">MyApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Named Routes&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="c1">// 1. Define initial route</span>
+<span class="w">      </span><span class="nl">initialRoute:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+
+<span class="w">      </span><span class="c1">// 2. Define routes map</span>
+<span class="w">      </span><span class="nl">routes:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;/&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="s1">&#39;/profile&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="s1">&#39;/settings&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SettingsScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="s1">&#39;/about&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">AboutScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="p">},</span>
+
+<span class="w">      </span><span class="c1">// 3. Handle unknown routes</span>
+<span class="w">      </span><span class="nl">onUnknownRoute:</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NotFoundScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Using named routes</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">HomeScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Home&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// Navigate using pushNamed</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/profile&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go to Profile&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// Navigate and replace</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushReplacementNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/settings&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Replace with Settings&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// Navigate and remove all</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamedAndRemoveUntil</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="s1">&#39;/about&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">(</span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go to About (Clear Stack)&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- routes map defines named routes
+- initialRoute sets starting screen
+- pushNamed navigates to named route
+- pushReplacementNamed replaces current
+- pushNamedAndRemoveUntil clears stack</p>
+<hr />
+<h1 id="named-routes-with-arguments">Named Routes with Arguments</h1>
+<blockquote>
+<p><strong>Passing data</strong> to named routes.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Named routes with arguments</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">NamedRoutesWithArgs</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">NamedRoutesWithArgs</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Named Routes with Args&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">initialRoute:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">routes:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;/&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NamedHome</span><span class="p">(),</span>
+<span class="w">        </span><span class="s1">&#39;/user&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UserDetailScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="s1">&#39;/product&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ProductDetailScreen</span><span class="p">(),</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="c1">// Handle routes with arguments</span>
+<span class="w">      </span><span class="nl">onGenerateRoute:</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;/user&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="kd">final</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="n">arguments</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;?</span><span class="p">;</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UserDetailScreen</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">userId:</span><span class="w"> </span><span class="n">args</span><span class="o">?</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="m">0</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">userName:</span><span class="w"> </span><span class="n">args</span><span class="o">?</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;/product&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="kd">final</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="n">arguments</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">ProductArgs</span><span class="o">?</span><span class="p">;</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ProductDetailScreen</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">product:</span><span class="w"> </span><span class="n">args</span><span class="o">!</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">NamedHome</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">NamedHome</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Home&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// Pass arguments as map</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="s1">&#39;/user&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">arguments:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">123</span><span class="p">,</span>
+<span class="w">                    </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go to User (Map)&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// Pass arguments as object</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="s1">&#39;/product&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">arguments:</span><span class="w"> </span><span class="n">ProductArgs</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">id:</span><span class="w"> </span><span class="m">456</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;Laptop&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">price:</span><span class="w"> </span><span class="m">999.99</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go to Product (Object)&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">UserDetailScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">UserDetailScreen</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">userId</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">userName</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">userId</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">userName</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;User </span><span class="si">$</span><span class="n">userId</span><span class="s1">&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;ID: </span><span class="si">$</span><span class="n">userId</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Name: </span><span class="si">$</span><span class="n">userName</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go Back&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Type-safe arguments object</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ProductArgs</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">price</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ProductArgs</span><span class="p">({</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">price</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">ProductDetailScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ProductDetailScreen</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">product</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ProductArgs</span><span class="w"> </span><span class="n">product</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Product </span><span class="si">${</span><span class="n">product</span><span class="p">.</span><span class="n">id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;ID: </span><span class="si">${</span><span class="n">product</span><span class="p">.</span><span class="n">id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Name: </span><span class="si">${</span><span class="n">product</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Price: </span><span class="se">\$</span><span class="si">${</span><span class="n">product</span><span class="p">.</span><span class="n">price</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go Back&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- arguments parameter passes data
+- onGenerateRoute extracts arguments
+- Type-safe arguments objects
+- Map for dynamic arguments</p>
+<hr />
+<h1 id="ongenerateroute">onGenerateRoute</h1>
+<blockquote>
+<p><strong>Advanced route generation</strong> with onGenerateRoute.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Using onGenerateRoute for dynamic routing</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">DynamicRoutesApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DynamicRoutesApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Dynamic Routes&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">initialRoute:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">onGenerateRoute:</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Parse route name</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Uri</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">pathSegments</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// Handle dynamic routes</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pathSegments</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="c1">// /user/123</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;user&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pathSegments</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">tryParse</span><span class="p">(</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">DynamicUserScreen</span><span class="p">(</span><span class="nl">userId:</span><span class="w"> </span><span class="n">id</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">settings:</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">}</span>
+
+<span class="w">          </span><span class="c1">// /product/123/detail</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;product&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pathSegments</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">tryParse</span><span class="p">(</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">            </span><span class="kd">final</span><span class="w"> </span><span class="n">action</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pathSegments</span><span class="p">[</span><span class="m">2</span><span class="p">];</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">DynamicProductScreen</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">productId:</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">action:</span><span class="w"> </span><span class="n">action</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">settings:</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Static routes</span>
+<span class="w">        </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="o">:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DynamicHomeScreen</span><span class="p">(),</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;/about&#39;</span><span class="o">:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">AboutScreen</span><span class="p">(),</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Unknown route</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NotFoundScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nl">onUnknownRoute:</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NotFoundScreen</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">DynamicHomeScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DynamicHomeScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Dynamic Routes&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Navigate to /user/123</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/user/123&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go to User 123&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Navigate to /product/456/detail</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/product/456/detail&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go to Product 456 Detail&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/about&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;About&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">DynamicUserScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DynamicUserScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">userId</span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">userId</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;User </span><span class="si">$</span><span class="n">userId</span><span class="s1">&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;User ID: </span><span class="si">$</span><span class="n">userId</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go Back&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">DynamicProductScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DynamicProductScreen</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">productId</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">action</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">productId</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">action</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Product </span><span class="si">$</span><span class="n">productId</span><span class="s1">&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Product ID: </span><span class="si">$</span><span class="n">productId</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Action: </span><span class="si">$</span><span class="n">action</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Go Back&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Parse URI for dynamic paths
+- Extract parameters from path
+- Handle complex routing patterns
+- Support deep linking</p>
+<hr />
+<h1 id="navigation-with-named-routes">Navigation with Named Routes</h1>
+<blockquote>
+<p><strong>Advanced navigation</strong> using named routes.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Advanced navigation with named routes</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AdvancedNamedNavigation</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">AdvancedNamedNavigation</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Advanced Navigation&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. Push named route</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/next&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Push Named&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. Push named and remove all</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamedAndRemoveUntil</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="s1">&#39;/home&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">(</span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Push Named and Remove All&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Push named with predicate</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamedAndRemoveUntil</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="s1">&#39;/profile&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">(</span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">route</span><span class="p">.</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;/home&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Push Named (Keep Home)&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 4. Pop until named route</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Navigator</span><span class="p">.</span><span class="n">popUntil</span><span class="p">(</span>
+<span class="w">                  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">(</span><span class="n">route</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">route</span><span class="p">.</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;/home&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Pop Until Home&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 5. Check if can pop</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Navigator</span><span class="p">.</span><span class="n">canPop</span><span class="p">(</span><span class="n">context</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Pop if Possible&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- pushNamedAndRemoveUntil: clear stack
+- popUntil: pop to specific route
+- canPop: check if can pop
+- Route settings for identification</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> with named routes.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 1. Route constants and organization</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AppRoutes</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">home</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">login</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/login&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">register</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/register&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">forgotPassword</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/forgot-password&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/profile&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/settings&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/product&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">cart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/cart&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">checkout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/checkout&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">orderConfirmation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/order-confirmation&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Dynamic routes</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">productDetail</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s1">&#39;/product/</span><span class="si">$</span><span class="n">id</span><span class="s1">&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">userProfile</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s1">&#39;/user/</span><span class="si">$</span><span class="n">id</span><span class="s1">&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">orderDetails</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s1">&#39;/order/</span><span class="si">$</span><span class="n">id</span><span class="s1">&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 2. App with organized routes</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">OrganizedApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">OrganizedApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Organized Routes&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">initialRoute:</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="n">home</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">onGenerateRoute:</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="nl">home:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">());</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="nl">login:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LoginScreen</span><span class="p">());</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="nl">register:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">RegisterScreen</span><span class="p">());</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="nl">profile:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileScreen</span><span class="p">());</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="nl">settings:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SettingsScreen</span><span class="p">());</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="nl">cart:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">CartScreen</span><span class="p">());</span>
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="nl">checkout:</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">CheckoutScreen</span><span class="p">());</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Dynamic routes</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Uri</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;product&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">tryParse</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ProductDetailScreen</span><span class="p">(</span><span class="nl">productId:</span><span class="w"> </span><span class="n">id</span><span class="p">),</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;user&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">int</span><span class="p">.</span><span class="n">tryParse</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="n">pathSegments</span><span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UserProfileScreen</span><span class="p">(</span><span class="nl">userId:</span><span class="w"> </span><span class="n">id</span><span class="p">),</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NotFoundScreen</span><span class="p">());</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 3. Using route constants</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">RouteUsageExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">RouteUsageExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Route Usage&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">ListView</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Home&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="n">home</span><span class="p">);</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Profile&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="n">profile</span><span class="p">);</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Settings&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">AppRoutes</span><span class="p">.</span><span class="n">settings</span><span class="p">);</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Product 123&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span>
+<span class="w">                </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                </span><span class="n">AppRoutes</span><span class="p">.</span><span class="n">productDetail</span><span class="p">(</span><span class="m">123</span><span class="p">),</span>
+<span class="w">              </span><span class="p">);</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;User 456&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span>
+<span class="w">                </span><span class="n">context</span><span class="p">,</span>
+<span class="w">                </span><span class="n">AppRoutes</span><span class="p">.</span><span class="n">userProfile</span><span class="p">(</span><span class="m">456</span><span class="p">),</span>
+<span class="w">              </span><span class="p">);</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Route constants for organization
+- Dynamic route generation
+- Centralized route management
+- Type-safe navigation</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="use-route-constants">Use Route Constants</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Centralized route names</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">Routes</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">home</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/profile&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/settings&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Hardcoded strings</span>
+<span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/profile&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// Hardcoded</span>
+</code></pre></div>
+<h2 id="organize-route-definitions">Organize Route Definitions</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Centralized route generation</span>
+<span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">onGenerateRoute:</span><span class="w"> </span><span class="n">RouteGenerator</span><span class="p">.</span><span class="n">generateRoute</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">RouteGenerator</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Route</span><span class="o">&lt;</span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">generateRoute</span><span class="p">(</span><span class="n">RouteSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// All route logic here</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="use-type-safe-navigation">Use Type-Safe Navigation</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Type-safe navigation</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">NavigationService</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">navigateToUser</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">userId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span>
+<span class="w">      </span><span class="n">context</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Routes</span><span class="p">.</span><span class="n">user</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">arguments:</span><span class="w"> </span><span class="n">UserArgs</span><span class="p">(</span><span class="nl">id:</span><span class="w"> </span><span class="n">userId</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Unstructured navigation</span>
+<span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span>
+<span class="w">  </span><span class="n">context</span><span class="p">,</span>
+<span class="w">  </span><span class="s1">&#39;/user&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">arguments:</span><span class="w"> </span><span class="n">userId</span><span class="p">,</span><span class="w"> </span><span class="c1">// Unclear what&#39;s expected</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="duplicate-route-names">Duplicate Route Names</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Duplicate definitions</span>
+<span class="nl">routes:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="s1">&#39;/profile&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileScreen</span><span class="p">(),</span>
+<span class="w">  </span><span class="s1">&#39;/profile&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">AnotherScreen</span><span class="p">(),</span><span class="w"> </span><span class="c1">// Duplicate</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Unique routes</span>
+<span class="nl">routes:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="s1">&#39;/profile&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ProfileScreen</span><span class="p">(),</span>
+<span class="w">  </span><span class="s1">&#39;/settings&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SettingsScreen</span><span class="p">(),</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="missing-route-handler">Missing Route Handler</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Route not defined</span>
+<span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/missing&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// Error</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Handle unknown routes</span>
+<span class="nl">onUnknownRoute:</span><span class="w"> </span><span class="p">(</span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<span class="w">    </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">NotFoundScreen</span><span class="p">(),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">},</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Named routes provide centralized navigation management using string identifiers. Define routes in MaterialApp, pass arguments with navigation, and use onGenerateRoute for dynamic routing. Organize route names in constants for maintainability.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="router-api.md">Router API</a></li>
+<li><a href="deep-linking.md">Deep Linking</a></li>
+<li><a href="route-guards.md">Route Guards</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Named routes are defined in MaterialApp</li>
+<li>pushNamed navigates to named routes</li>
+<li>arguments pass data to routes</li>
+<li>onGenerateRoute handles dynamic routes</li>
+<li>Route constants improve maintainability</li>
+<li>onUnknownRoute handles missing routes</li>
+<li>Named routes support deep linking</li>
+<li>Routes can be nested for complex flows</li>
+</ul>
 
 
 
