@@ -1,25 +1,25 @@
 # Summary
 
-Date : 2026-07-02 00:04:54
+Date : 2026-07-03 14:50:33
 
 Directory d:\\mydocs\\dev_wiki\\docs
 
-Total : 499 files,  133529 codes, 14 comments, 35942 blanks, all 169485 lines
+Total : 500 files,  192061 codes, 14 comments, 47309 blanks, all 239384 lines
 
 Summary / [Details](details.md) / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
 
 ## Languages
 | language | files | code | comment | blank | total |
 | :--- | ---: | ---: | ---: | ---: | ---: |
-| Markdown | 497 | 133,436 | 0 | 35,914 | 169,350 |
+| Markdown | 498 | 191,968 | 0 | 47,281 | 239,249 |
 | PostCSS | 1 | 76 | 14 | 21 | 111 |
 | YAML | 1 | 17 | 0 | 7 | 24 |
 
 ## Directories
 | path | files | code | comment | blank | total |
 | :--- | ---: | ---: | ---: | ---: | ---: |
-| . | 499 | 133,529 | 14 | 35,942 | 169,485 |
-| . (Files) | 1 | 126 | 0 | 63 | 189 |
+| . | 500 | 192,061 | 14 | 47,309 | 239,384 |
+| . (Files) | 1 | 11 | 0 | 5 | 16 |
 | .github | 1 | 17 | 0 | 7 | 24 |
 | .github\\workflow | 1 | 17 | 0 | 7 | 24 |
 | dart | 121 | 25,095 | 0 | 8,031 | 33,126 |
@@ -37,26 +37,26 @@ Summary / [Details](details.md) / [Diff Summary](diff.md) / [Diff Details](diff-
 | dart\\12_best_practices | 7 | 0 | 0 | 7 | 7 |
 | dart\\13_comparisons | 9 | 0 | 0 | 9 | 9 |
 | dart\\14_api_cheat_sheet | 6 | 0 | 0 | 6 | 6 |
-| drift | 113 | 31,235 | 0 | 7,188 | 38,423 |
+| drift | 114 | 56,573 | 0 | 13,071 | 69,644 |
 | drift\\01_getting_started | 5 | 2,386 | 0 | 694 | 3,080 |
 | drift\\02_database | 6 | 4,322 | 0 | 1,129 | 5,451 |
 | drift\\03_tables | 10 | 6,359 | 0 | 1,624 | 7,983 |
 | drift\\04_data_classes | 5 | 4,207 | 0 | 814 | 5,021 |
 | drift\\05_crud_operations | 8 | 6,378 | 0 | 1,257 | 7,635 |
 | drift\\06_query_builder | 9 | 6,672 | 0 | 1,409 | 8,081 |
-| drift\\07_relationships | 8 | 0 | 0 | 8 | 8 |
-| drift\\08_streams | 5 | 0 | 0 | 5 | 5 |
-| drift\\09_transactions | 4 | 911 | 0 | 195 | 1,106 |
-| drift\\10_sql_features | 8 | 0 | 0 | 8 | 8 |
-| drift\\11_migrations | 6 | 0 | 0 | 6 | 6 |
-| drift\\12_type_converters | 6 | 0 | 0 | 6 | 6 |
-| drift\\13_daos | 5 | 0 | 0 | 5 | 5 |
+| drift\\07_relationships | 9 | 6,330 | 0 | 1,498 | 7,828 |
+| drift\\08_streams | 5 | 3,610 | 0 | 710 | 4,320 |
+| drift\\09_transactions | 4 | 2,993 | 0 | 671 | 3,664 |
+| drift\\10_sql_features | 8 | 5,322 | 0 | 1,025 | 6,347 |
+| drift\\11_migrations | 6 | 2,997 | 0 | 846 | 3,843 |
+| drift\\12_type_converters | 6 | 3,078 | 0 | 825 | 3,903 |
+| drift\\13_daos | 5 | 1,919 | 0 | 541 | 2,460 |
 | drift\\14_performance | 6 | 0 | 0 | 6 | 6 |
 | drift\\15_testing | 5 | 0 | 0 | 5 | 5 |
 | drift\\16_best_practices | 6 | 0 | 0 | 6 | 6 |
 | drift\\17_comparisons | 6 | 0 | 0 | 6 | 6 |
 | drift\\18_api_cheat_sheet | 5 | 0 | 0 | 5 | 5 |
-| flutter | 156 | 51,505 | 0 | 8,608 | 60,113 |
+| flutter | 156 | 84,814 | 0 | 14,150 | 98,964 |
 | flutter\\01_getting_started | 5 | 1,480 | 0 | 487 | 1,967 |
 | flutter\\02_architecture | 9 | 5,604 | 0 | 1,263 | 6,867 |
 | flutter\\03_widgets | 8 | 5,876 | 0 | 1,078 | 6,954 |
@@ -65,15 +65,15 @@ Summary / [Details](details.md) / [Diff Summary](diff.md) / [Diff Details](diff-
 | flutter\\06_navigation | 7 | 4,956 | 0 | 742 | 5,698 |
 | flutter\\07_state_management | 8 | 7,124 | 0 | 1,180 | 8,304 |
 | flutter\\08_forms_and_input | 7 | 6,812 | 0 | 883 | 7,695 |
-| flutter\\09_animation | 9 | 838 | 0 | 109 | 947 |
-| flutter\\10_gestures | 5 | 0 | 0 | 5 | 5 |
-| flutter\\11_rendering | 7 | 0 | 0 | 7 | 7 |
-| flutter\\12_images_and_assets | 6 | 0 | 0 | 6 | 6 |
+| flutter\\09_animation | 9 | 7,205 | 0 | 1,138 | 8,343 |
+| flutter\\10_gestures | 5 | 4,032 | 0 | 537 | 4,569 |
+| flutter\\11_rendering | 7 | 4,665 | 0 | 885 | 5,550 |
+| flutter\\12_images_and_assets | 6 | 3,956 | 0 | 591 | 4,547 |
 | flutter\\13_theming | 7 | 0 | 0 | 7 | 7 |
-| flutter\\14_platform_integration | 6 | 0 | 0 | 6 | 6 |
-| flutter\\15_async_ui | 5 | 0 | 0 | 5 | 5 |
-| flutter\\16_performance | 8 | 0 | 0 | 8 | 8 |
-| flutter\\17_testing | 5 | 0 | 0 | 5 | 5 |
+| flutter\\14_platform_integration | 6 | 3,256 | 0 | 600 | 3,856 |
+| flutter\\15_async_ui | 5 | 3,417 | 0 | 529 | 3,946 |
+| flutter\\16_performance | 8 | 5,566 | 0 | 948 | 6,514 |
+| flutter\\17_testing | 5 | 2,050 | 0 | 465 | 2,515 |
 | flutter\\18_accessibility | 4 | 0 | 0 | 4 | 4 |
 | flutter\\19_best_practices | 7 | 0 | 0 | 7 | 7 |
 | flutter\\20_comparisons | 9 | 0 | 0 | 9 | 9 |

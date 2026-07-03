@@ -1,284 +1,243 @@
-
-
 # What is Drift?
 
-**Understand the reactive SQLite ORM for Flutter & Dart**
+Drift is a reactive persistence library for Dart and Flutter that provides a type-safe API for working with SQLite databases.
 
 ---
 
 # What is it?
 
-**Drift** (formerly known as `moor`) is a **reactive persistence library** for Dart and Flutter that provides a type-safe way to work with SQLite databases. It combines the power of raw SQL with the safety and convenience of modern Dart features.
+Drift is an Object Relational Mapping (ORM) library built on top of SQLite. It allows you to define your database schema in Dart, generate strongly typed APIs, and interact with your database without writing most SQL manually.
 
-> **Think of Drift as your database "superpower"** – it catches SQL errors at compile-time, automatically generates boilerplate code, and turns your database into reactive streams that update your UI automatically.
+Instead of dealing with raw SQL strings and manually mapping query results, Drift generates Dart classes and query builders that are checked at compile time.
 
-```dart
-// Without Drift (raw SQLite)
-final result = await database.rawQuery(
-  'SELECT * FROM users WHERE age > ?',
-  [18]
-);
-final name = result[0]['name'] as String; // Manual casting 😰
-
-// With Drift (type-safe)
-final users = await (select(users)
-  ..where((u) => u.age > const Variable(18)))
-  .get();
-final name = users.first.name; // Type-safe! 🎯
-```
-
-> **What's happening here?**
-> - **Raw SQLite**: Returns `List<Map<String, dynamic>>` – no type safety, manual casting required
-> - **Drift**: Returns `List<User>` – fully typed, auto-generated data classes
-> - **Compile-time safety**: SQL errors are caught during development, not at runtime
-> - **Automatic mapping**: Drift handles the conversion between SQL rows and Dart objects
+Drift combines the reliability of SQLite with the productivity of modern Dart development.
 
 ---
 
 # Why does it exist?
 
-- **Type Safety** – Catch SQL syntax and type errors at compile-time, not runtime. No more `type 'int' is not a subtype of 'String'` crashes!
+Working directly with SQLite can become repetitive and error-prone.
 
-- **Reactive Queries** – Turn any query into a `Stream` that automatically emits new results when the database changes. Your UI stays in sync without manual refresh logic.
+Without Drift, developers often need to:
 
-- **Boilerplate Reduction** – Drift generates all the boring CRUD code, data classes, and table mappings for you. Write less code, do more.
+- Write SQL queries as strings
+- Manually convert database rows into Dart objects
+- Handle database updates manually
+- Maintain SQL and Dart code separately
 
-- **SQL Flexibility** – Write complex SQL queries with JOINs, CTEs, and window functions, but with Dart's type safety and autocomplete.
+Drift solves these problems by providing:
 
-- **Dart-First Design** – Everything is designed to feel natural in Dart – use Dart syntax for queries, streams for reactivity, and Futures for async operations.
+- Type-safe queries
+- Automatic code generation
+- Generated data classes
+- Reactive query streams
+- Compile-time validation for many database operations
 
-- **Platform Agnostic** – Works everywhere Dart runs: Flutter (iOS, Android, Web, Desktop), pure Dart CLI apps, and server-side applications.
-
----
-
-# Core Architecture
-
-> **[Understanding the building blocks of Drift]**
-
-```dart
-// 1. Define your tables
-class Users extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
-  IntColumn get age => integer()();
-}
-
-// 2. Create the database
-@DriftDatabase(tables: [Users])
-class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
-  
-  @override
-  int get schemaVersion => 1;
-}
-
-// 3. Write type-safe queries
-Future<List<User>> getAdultUsers() async {
-  return await (select(users)
-    ..where((u) => u.age > const Variable(18)))
-    .get();
-}
-
-// 4. Reactive streams
-Stream<List<User>> watchAllUsers() {
-  return select(users).watch();
-}
-```
-
-> **Key insights:**
-> - **Tables are Dart classes** extending `Table` – each column is a property
-> - **Database class** uses `@DriftDatabase` annotation to generate all the code
-> - **Queries are composable** – you chain methods like `where()`, `orderBy()`, `limit()`
-> - **Streams are built-in** – every query can become a reactive stream with `.watch()`
-> - **Code generation** happens at build time – zero runtime reflection
+This results in cleaner, safer, and more maintainable database code.
 
 ---
 
-# Real-World Example
+# Syntax
 
-> **Practical use case: A Todo App with real-time updates**
+A simple Drift database starts with defining tables and creating a database class.
 
 ```dart
-// todos.dart - Table definition
-import 'package:drift/drift.dart';
-
-class Todos extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get title => text()();
-  TextColumn get content => text().nullable()();
-  BoolColumn get isCompleted => boolean().withDefault(const Constant(false))();
-  DateTimeColumn get createdAt => dateTime()();
-}
-
-// database.dart - Database setup
 @DriftDatabase(tables: [Todos])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
-  
+  AppDatabase(super.executor);
+
   @override
   int get schemaVersion => 1;
-  
-  // Insert a new todo
-  Future<int> insertTodo(Insertable<Todo> todo) {
-    return into(todos).insert(todo);
-  }
-  
-  // Watch all incomplete todos (reactive!)
-  Stream<List<Todo>> watchIncompleteTodos() {
-    return (select(todos)
-      ..where((t) => t.isCompleted.equals(false))
-      ..orderBy([(t) => OrderingTerm(expression: t.createdAt)]))
-    .watch();
-  }
-  
-  // Mark todo as complete
-  Future<void> completeTodo(int id) async {
-    await (update(todos)..where((t) => t.id.equals(id)))
-      .write(TodosCompanion(isCompleted: const Value(true)));
-  }
-}
-
-// main.dart - Usage in Flutter
-class TodoList extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final db = Provider.of<AppDatabase>(context);
-    
-    return StreamBuilder<List<Todo>>(
-      stream: db.watchIncompleteTodos(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return CircularProgressIndicator();
-        
-        final todos = snapshot.data!;
-        return ListView.builder(
-          itemCount: todos.length,
-          itemBuilder: (context, index) {
-            final todo = todos[index];
-            return ListTile(
-              title: Text(todo.title),
-              subtitle: Text(todo.content ?? 'No content'),
-              trailing: Checkbox(
-                value: todo.isCompleted,
-                onChanged: (_) => db.completeTodo(todo.id),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 }
 ```
 
-> **Benefits of this approach:**
-> - **Auto-updating UI** – The `StreamBuilder` rebuilds whenever todos change
-> - **No manual refresh** – Drift handles all the reactive wiring
-> - **Type-safe everywhere** – `Todo` objects have proper types
-> - **Separation of concerns** – Database logic stays in its own layer
-> - **Testable** – Database can be mocked or use in-memory for tests
+Explanation:
+
+- `@DriftDatabase` tells Drift which tables belong to the database.
+- `tables` lists all table definitions.
+- `_$AppDatabase` is generated during code generation.
+- `schemaVersion` specifies the current database schema version.
+
+---
+
+# Mental Model
+
+Think of Drift as a translator between your Dart code and SQLite.
+
+```
+Flutter App
+      │
+      ▼
+   Drift APIs
+      │
+      ▼
+Generated Code
+      │
+      ▼
+   SQLite Database
+```
+
+You interact with Dart objects and query builders.
+
+Drift generates the SQL needed to communicate with SQLite.
+
+This allows you to work in Dart while still benefiting from SQLite's performance and reliability.
+
+---
+
+# Examples
+
+## Simple Example
+
+Suppose you have a table of users.
+
+Instead of writing SQL manually, you can query it using Drift's generated APIs.
+
+```dart
+final users = await db.select(db.users).get();
+```
+
+Explanation:
+
+- `select()` creates a type-safe query.
+- `get()` executes the query and returns all matching rows.
+
+---
+
+## Real-World Example
+
+Imagine a notes application.
+
+You might have tables for:
+
+- Notes
+- Categories
+- Attachments
+
+Drift can:
+
+- Generate data classes for each table.
+- Build type-safe queries.
+- Automatically update the UI when notes change.
+- Handle relationships between tables.
+- Support database migrations as the app evolves.
+
+This allows you to build complex local databases without managing SQL manually.
+
+---
+
+# When to Use
+
+Use Drift when:
+
+- Building offline-first applications.
+- Using SQLite in Flutter.
+- You want type-safe database access.
+- Your project contains complex queries.
+- Your application requires relationships between tables.
+- You need reactive database updates.
+- You expect your database schema to evolve over time.
+
+---
+
+# When NOT to Use
+
+Drift may not be the best choice when:
+
+- Your app only stores a few simple key-value pairs.
+- No relational data is required.
+- You don't need SQL features.
+
+In those cases, simpler storage solutions may be sufficient.
 
 ---
 
 # Best Practices
 
-- **Use `@DriftDatabase`** – Let Drift generate the boilerplate for you
-- **Keep tables in separate files** – Better organization and maintainability
-- **Use `Companion` objects for inserts** – They handle optional fields properly
-- **Prefer streams over `get()` for UI** – Streams keep your UI reactive
-- **Name your tables and columns clearly** – Good names make queries self-documenting
-- **Use `Value<T>` for nullable fields** – It clearly distinguishes null vs absent values
+- Organize tables into separate files.
+- Keep queries inside DAOs.
+- Prefer Drift's query builder over raw SQL.
+- Use migrations when changing schemas.
+- Watch queries only when reactive updates are needed.
+- Keep generated files out of manual edits.
 
 ---
 
 # Common Mistakes
 
-## Mistake 1: Forgetting to run `build_runner`
+## Writing unnecessary raw SQL
 
-Wrong:
-```bash
-# Nothing happens, code not generated
-flutter run
-```
+**Wrong**
 
-Correct:
-```bash
-# Generate the code first
-flutter pub run build_runner build
-# Or watch for changes
-flutter pub run build_runner watch
-```
-
-## Mistake 2: Using `get()` when you need `watch()`
-
-Wrong:
 ```dart
-// UI won't update when data changes
-final todos = await select(users).get();
+customSelect('SELECT * FROM users');
 ```
 
-Correct:
+Explanation:
+
+- Raw SQL bypasses many of Drift's type-safe APIs.
+
+**Correct**
+
 ```dart
-// UI updates automatically
-final stream = select(users).watch();
+select(users).get();
 ```
 
-## Mistake 3: Not handling schema migrations
+Explanation:
 
-Wrong:
+- Drift generates safer, strongly typed queries.
+
+---
+
+## Editing generated files
+
+**Wrong**
+
 ```dart
-@override
-int get schemaVersion => 2; // Changed version, no migration
+// Editing app_database.g.dart
 ```
 
-Correct:
-```dart
-@override
-int get schemaVersion => 2;
+Explanation:
 
-@override
-MigrationStrategy get migration => MigrationStrategy(
-  onUpgrade: (migrator, from, to) async {
-    if (from == 1) {
-      await migrator.addColumn(users, users.age);
-    }
-  },
-);
-```
+- Generated files are overwritten during code generation.
+
+**Correct**
+
+Modify your table or database definitions instead and regenerate the code.
+
+---
+
+## Ignoring schema versions
+
+**Wrong**
+
+Changing tables without updating the schema version.
+
+Explanation:
+
+- Drift cannot apply migrations correctly.
+
+**Correct**
+
+Increase the schema version and provide the appropriate migration.
+
+---
+
+# Related APIs
+
+- Installation
+- Setting Up a Database
+- GeneratedDatabase
+- Defining Tables
+- Code Generation
+- Generated Data Classes
+- Select
+- Watching Queries
+- Transactions
+- Migration Strategy
 
 ---
 
 # Summary
 
-| Concept | Key Takeaway |
-|---------|--------------|
-| **What is Drift?** | A type-safe, reactive ORM for SQLite in Dart |
-| **Why use it?** | Compile-time safety, reactive streams, less boilerplate |
-| **Core features** | Type-safe queries, reactive streams, code generation |
-| **Best for** | Flutter apps needing local data with real-time UI updates |
-| **Not for** | Very simple apps where raw SQLite is sufficient |
-
----
-
-# Next Steps
-
-Now that you understand what Drift is, let's get it installed and running:
-
-- [Installation](link) – Add Drift to your project
-- [Setting Up a Database](link) – Create your first database
-- [Code Generation](link) – Set up build_runner
-
----
-
-# Did You Know?
-
-- **Drift was originally called "moor"** – named after the moorland in the UK, but renamed to Drift in 2021 to avoid confusion with the Moor testing framework
-
-- **Drift supports SQLite, Postgres, and MySQL** – though SQLite is the most popular for Flutter
-
-- **The reactive streams are powered by `StreamController`** – Drift uses a clever system to detect changes and only emit new results when data actually changes
-
-- **Drift can generate CRUD operations automatically** – with `@UseRowClass`, you don't even need to write queries for basic operations
-
-- **Drift uses `sqlite3` under the hood** – not the built-in SQLite in Flutter, giving you more features and better performance
-
----
+Drift is a type-safe SQLite ORM for Dart and Flutter. It generates strongly typed database APIs, supports reactive queries, simplifies CRUD operations, and provides migration support, making it easier to build reliable and maintainable local databases.

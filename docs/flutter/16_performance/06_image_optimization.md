@@ -375,32 +375,34 @@ What's happening here?
 
 ```dart
 /// Memory optimization example
+
 class MemoryOptimizationExample extends StatefulWidget {
   const MemoryOptimizationExample({super.key});
 
   @override
-  State<MemoryOptimizationExample> createState() => _MemoryOptimizationExampleState();
+  State<MemoryOptimizationExample> createState() =>
+      _MemoryOptimizationExampleState();
 }
 
 class _MemoryOptimizationExampleState extends State<MemoryOptimizationExample> {
-  // 1. Track memory usage
-  String _memoryUsage = 'Unknown';
+  String _memoryUsage = '0.0 MB';
   int _imageCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _checkMemoryUsage();
+    // Schedule a check right after the first frame renders
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkMemoryUsage());
   }
 
   void _checkMemoryUsage() {
-    // Check image cache size
-    final cacheSize = PaintingBinding.instance.imageCache.currentSize;
-    final cacheSizeBytes = PaintingBinding.instance.imageCache.currentSizeBytes;
-    
+    final cache = PaintingBinding.instance.imageCache;
+    final cacheSize = cache.currentSize;
+    final cacheSizeBytes = cache.currentSizeBytes;
+
     setState(() {
       _imageCount = cacheSize;
-      _memoryUsage = '${(cacheSizeBytes / 1024 / 1024).toStringAsFixed(1)} MB';
+      _memoryUsage = '${(cacheSizeBytes / 1024 / 1024).toStringAsFixed(2)} MB';
     });
   }
 
@@ -420,7 +422,7 @@ class _MemoryOptimizationExampleState extends State<MemoryOptimizationExample> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // 1. Memory usage display
+            // 1. Memory display card
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -448,42 +450,61 @@ class _MemoryOptimizationExampleState extends State<MemoryOptimizationExample> {
                         'Memory Used',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(
-                        _memoryUsage,
-                        style: const TextStyle(fontSize: 20),
-                      ),
+                      Text(_memoryUsage, style: const TextStyle(fontSize: 20)),
                     ],
                   ),
                 ],
               ),
             ),
-            
-            const SizedBox(height: 16),
-            
-            // 2. Memory optimized images
+            const SizedBox(height: 24),
+
             const Text(
               'Optimized Image Loading',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            _buildOptimizedImage(),
-            
-            const SizedBox(height: 16),
-            
-            // 3. Clear cache button
+
+            // 2. The optimized image frame
+            Container(
+              width: 200,
+              height: 150,
+              color: Colors.grey[200],
+              child: Image.network(
+                // Added a timestamp to break the browser/CDN cache so it downloads fresh
+                'https://picsum.photos/1200/800?cb=${DateTime.now().millisecondsSinceEpoch}',
+                width: 200,
+                height: 150,
+                fit: BoxFit.cover,
+                cacheWidth:
+                    200, // Truncates image matrix calculation down to layout dimensions
+                cacheHeight: 150,
+                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                  if (frame != null) {
+                    // CRITICAL: Trigger layout state recalculation when the image actually finishes rendering
+                    WidgetsBinding.instance.addPostFrameCallback(
+                      (_) => _checkMemoryUsage(),
+                    );
+                  }
+                  return child;
+                },
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 3. Destructive state modification action
             ElevatedButton(
               onPressed: () {
                 PaintingBinding.instance.imageCache.clear();
+                PaintingBinding.instance.imageCache
+                    .clearLiveImages(); // Clears running engine references
                 _checkMemoryUsage();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Image cache cleared'),
+                    content: Text('Image cache cleared completely'),
                   ),
                 );
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child: const Text(
                 'Clear Image Cache',
                 style: TextStyle(color: Colors.white),
@@ -494,20 +515,8 @@ class _MemoryOptimizationExampleState extends State<MemoryOptimizationExample> {
       ),
     );
   }
-
-  Widget _buildOptimizedImage() {
-    // Load with cache optimization
-    return Image.network(
-      'https://picsum.photos/300/200',
-      width: 200,
-      height: 150,
-      fit: BoxFit.cover,
-      // 2. Cache optimized size
-      cacheWidth: 200,
-      cacheHeight: 150,
-    );
-  }
 }
+
 ```
 
 What's happening here?
