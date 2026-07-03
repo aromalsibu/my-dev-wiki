@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#physics-animations" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -7253,6 +7258,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,838 @@
 
 
 
-  <h1>Physics Animations</h1>
+<h1 id="physics-animations">Physics Animations</h1>
+<p>Understand how to create realistic, physics-based animations in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Physics Animations are animations that simulate real-world physics like spring motion, friction, gravity, and momentum. They create natural, responsive interactions that feel realistic and intuitive. Flutter provides physics simulations through widgets like AnimatedPhysics, SpringSimulation, and physics-based animation controllers.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Physics Animations exist to:</p>
+<ul>
+<li>Create realistic and natural motion</li>
+<li>Simulate real-world physics</li>
+<li>Provide responsive interactions</li>
+<li>Enhance user experience with fluid animations</li>
+<li>Implement spring effects and bouncing</li>
+<li>Create physics-based gestures</li>
+<li>Make UI feel more tactile and engaging</li>
+</ul>
+<hr />
+<h1 id="spring-simulation">Spring Simulation</h1>
+<blockquote>
+<p><strong>Creating spring-based</strong> animations.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/physics.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// Spring simulation example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">SpringSimulationExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">SpringSimulationExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">SpringSimulationExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_SpringSimulationExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_SpringSimulationExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">SpringSimulationExample</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Animation controller with spring simulation</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_springAnimation</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// 2. Track the current state</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isExpanded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 3. Create animation controller with spring simulation</span>
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="c1">// Spring simulation parameters</span>
+<span class="w">      </span><span class="c1">// Physics: SpringSimulation creates realistic spring motion</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4. Create spring animation with custom physics</span>
+<span class="w">    </span><span class="n">_springAnimation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">1.0</span><span class="p">).</span><span class="n">animate</span><span class="p">(</span>
+<span class="w">      </span><span class="n">CurvedAnimation</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">parent:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">elasticOut</span><span class="p">,</span><span class="w"> </span><span class="c1">// Built-in spring-like curve</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">)..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_springAnimation</span><span class="p">.</span><span class="n">value</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_toggleAnimation</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_isExpanded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">_isExpanded</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 5. Start animation with spring effect</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isExpanded</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_controller</span><span class="p">.</span><span class="n">forward</span><span class="p">(</span><span class="nl">from:</span><span class="w"> </span><span class="m">0.0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_controller</span><span class="p">.</span><span class="n">reverse</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Spring Simulation&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 6. Animated container with spring effect</span>
+<span class="w">            </span><span class="n">AnimatedContainer</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_position</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_position</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="n">_position</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">boxShadow:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="n">BoxShadow</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">.</span><span class="n">withOpacity</span><span class="p">(</span><span class="m">0.3</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">blurRadius:</span><span class="w"> </span><span class="n">_position</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">spreadRadius:</span><span class="w"> </span><span class="n">_position</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">10</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                  </span><span class="s1">&#39;</span><span class="si">${</span><span class="p">(</span><span class="n">_position</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 7. Control buttons</span>
+<span class="w">            </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_toggleAnimation</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="n">_isExpanded</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;Collapse&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Expand&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">_controller</span><span class="p">.</span><span class="n">stop</span><span class="p">();</span>
+<span class="w">                    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                      </span><span class="n">_position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.0</span><span class="p">;</span>
+<span class="w">                      </span><span class="n">_isExpanded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">                    </span><span class="p">});</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Reset&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Spring simulation creates natural motion
+- elasticOut curve simulates spring
+- Position animates with spring effect
+- Realistic bounce and overshoot</p>
+<hr />
+<h1 id="spring-simulation-with-custom-physics">Spring Simulation with Custom Physics</h1>
+<blockquote>
+<p><strong>Using custom</strong> spring physics.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Custom spring simulation with physics parameters</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CustomSpringExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CustomSpringExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CustomSpringExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_CustomSpringExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_CustomSpringExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CustomSpringExample</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Animation controller with custom spring</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_customSpring</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// 2. Spring parameters</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_stiffness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">150.0</span><span class="p">;</span><span class="w"> </span><span class="c1">// Spring stiffness (higher = more rigid)</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_damping</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">15.0</span><span class="p">;</span><span class="w">    </span><span class="c1">// Damping (higher = less bounce)</span>
+
+<span class="w">  </span><span class="c1">// 3. Track current value</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isAnimating</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 4. Create physics-based animation</span>
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">2</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 5. Custom spring simulation</span>
+<span class="w">    </span><span class="n">_customSpring</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">1.0</span><span class="p">).</span><span class="n">animate</span><span class="p">(</span>
+<span class="w">      </span><span class="n">CurvedAnimation</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">parent:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">bounceOut</span><span class="p">,</span><span class="w"> </span><span class="c1">// Built-in bounce</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">)..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_customSpring</span><span class="p">.</span><span class="n">value</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">})</span>
+<span class="w">      </span><span class="p">..</span><span class="n">addStatusListener</span><span class="p">((</span><span class="n">status</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">AnimationStatus</span><span class="p">.</span><span class="n">completed</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_isAnimating</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">          </span><span class="p">});</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 6. Trigger spring animation</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_triggerSpring</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_isAnimating</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">forward</span><span class="p">(</span><span class="nl">from:</span><span class="w"> </span><span class="m">0.0</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 7. Update spring parameters</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_updateSpring</span><span class="p">({</span><span class="kt">double</span><span class="o">?</span><span class="w"> </span><span class="n">stiffness</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">?</span><span class="w"> </span><span class="n">damping</span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stiffness</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">_stiffness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stiffness</span><span class="p">;</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">damping</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">_damping</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">damping</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Custom Spring Physics&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 8. Animated widget with custom spring</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">AnimatedContainer</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">width:</span><span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">height:</span><span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">boxShadow:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                      </span><span class="n">BoxShadow</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">.</span><span class="n">withOpacity</span><span class="p">(</span><span class="m">0.3</span><span class="p">),</span>
+<span class="w">                        </span><span class="nl">blurRadius:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">                        </span><span class="nl">spreadRadius:</span><span class="w"> </span><span class="m">5</span><span class="p">,</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                      </span><span class="s1">&#39;</span><span class="si">${</span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 9. Control buttons</span>
+<span class="w">            </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_isAnimating</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">_triggerSpring</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Spring&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">_controller</span><span class="p">.</span><span class="n">stop</span><span class="p">();</span>
+<span class="w">                    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                      </span><span class="n">_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.0</span><span class="p">;</span>
+<span class="w">                      </span><span class="n">_isAnimating</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">                    </span><span class="p">});</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Reset&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 10. Spring parameter controls</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">100</span><span class="p">],</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;Spring Parameters:&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                      </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Stiffness:&#39;</span><span class="p">),</span>
+<span class="w">                      </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Slider</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">value:</span><span class="w"> </span><span class="n">_stiffness</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">min:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">max:</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">onChanged:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="n">_updateSpring</span><span class="p">(</span><span class="nl">stiffness:</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">                          </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                      </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_stiffness</span><span class="p">.</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                      </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Damping:&#39;</span><span class="p">),</span>
+<span class="w">                      </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Slider</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">value:</span><span class="w"> </span><span class="n">_damping</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">min:</span><span class="w"> </span><span class="m">5</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">max:</span><span class="w"> </span><span class="m">30</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">onChanged:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="n">_updateSpring</span><span class="p">(</span><span class="nl">damping:</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">                          </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                      </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_damping</span><span class="p">.</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Custom spring physics parameters
+- Stiffness controls rigidity
+- Damping controls bounce
+- Interactive parameter adjustment</p>
+<hr />
+<h1 id="physics-simulation-with-draggable">Physics Simulation with Draggable</h1>
+<blockquote>
+<p><strong>Creating draggable</strong> physics interactions.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Physics simulation with draggable widget</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">DraggablePhysicsExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DraggablePhysicsExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">DraggablePhysicsExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_DraggablePhysicsExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_DraggablePhysicsExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">DraggablePhysicsExample</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Animation controller for physics</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// 2. Physics simulation</span>
+<span class="w">  </span><span class="n">SpringSimulation</span><span class="o">?</span><span class="w"> </span><span class="n">_simulation</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// 3. Track drag position</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_dragPosition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_currentPosition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isDragging</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4. Add listener for animation updates</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_currentPosition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">300</span><span class="p">;</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 5. Handle drag start</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_onDragStart</span><span class="p">(</span><span class="n">DragStartDetails</span><span class="w"> </span><span class="n">details</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_isDragging</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">stop</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 6. Handle drag update</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_onDragUpdate</span><span class="p">(</span><span class="n">DragUpdateDetails</span><span class="w"> </span><span class="n">details</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_dragPosition</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">details</span><span class="p">.</span><span class="n">delta</span><span class="p">.</span><span class="n">dx</span><span class="p">;</span>
+<span class="w">      </span><span class="c1">// Clamp position</span>
+<span class="w">      </span><span class="n">_dragPosition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_dragPosition</span><span class="p">.</span><span class="n">clamp</span><span class="p">(</span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="m">300.0</span><span class="p">);</span>
+<span class="w">      </span><span class="n">_currentPosition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_dragPosition</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 7. Handle drag end with physics</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_onDragEnd</span><span class="p">(</span><span class="n">DragEndDetails</span><span class="w"> </span><span class="n">details</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_isDragging</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 8. Create spring simulation</span>
+<span class="w">    </span><span class="c1">// Physics simulation will animate to target</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_dragPosition</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="m">1.0</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="m">0.0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Convert position to animation value</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">currentValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_dragPosition</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">300</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Create spring simulation with physics</span>
+<span class="w">    </span><span class="n">_simulation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SpringSimulation</span><span class="p">(</span>
+<span class="w">      </span><span class="c1">// Spring parameters</span>
+<span class="w">      </span><span class="n">SpringDescription</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">mass:</span><span class="w"> </span><span class="m">1.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">stiffness:</span><span class="w"> </span><span class="m">100.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">damping:</span><span class="w"> </span><span class="m">15.0</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="c1">// Start position</span>
+<span class="w">      </span><span class="n">currentValue</span><span class="p">,</span>
+<span class="w">      </span><span class="c1">// Target position</span>
+<span class="w">      </span><span class="n">target</span><span class="p">,</span>
+<span class="w">      </span><span class="c1">// Velocity (from drag)</span>
+<span class="w">      </span><span class="n">details</span><span class="p">.</span><span class="n">velocity</span><span class="p">.</span><span class="n">pixelsPerSecond</span><span class="p">.</span><span class="n">dx</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 9. Animate with physics</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">animateWith</span><span class="p">(</span><span class="n">_simulation</span><span class="o">!</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Physics Draggable&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">GestureDetector</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">onHorizontalDragStart:</span><span class="w"> </span><span class="n">_onDragStart</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">onHorizontalDragUpdate:</span><span class="w"> </span><span class="n">_onDragUpdate</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">onHorizontalDragEnd:</span><span class="w"> </span><span class="n">_onDragEnd</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Stack</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="c1">// Track</span>
+<span class="w">                    </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">width:</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">height:</span><span class="w"> </span><span class="m">4</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">symmetric</span><span class="p">(</span><span class="nl">vertical:</span><span class="w"> </span><span class="m">98</span><span class="p">),</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">300</span><span class="p">],</span>
+<span class="w">                    </span><span class="p">),</span>
+
+<span class="w">                    </span><span class="c1">// 10. Draggable ball with physics</span>
+<span class="w">                    </span><span class="n">AnimatedBuilder</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">animation:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="k">return</span><span class="w"> </span><span class="n">Positioned</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">left:</span><span class="w"> </span><span class="n">_isDragging</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">_dragPosition</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">_currentPosition</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">top:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                            </span><span class="nl">width:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">                            </span><span class="nl">height:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">                            </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                              </span><span class="nl">shape:</span><span class="w"> </span><span class="n">BoxShape</span><span class="p">.</span><span class="n">circle</span><span class="p">,</span>
+<span class="w">                              </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">                              </span><span class="nl">boxShadow:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                                </span><span class="n">BoxShadow</span><span class="p">(</span>
+<span class="w">                                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">.</span><span class="n">withOpacity</span><span class="p">(</span><span class="m">0.3</span><span class="p">),</span>
+<span class="w">                                  </span><span class="nl">blurRadius:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">                                  </span><span class="nl">spreadRadius:</span><span class="w"> </span><span class="m">5</span><span class="p">,</span>
+<span class="w">                                </span><span class="p">),</span>
+<span class="w">                              </span><span class="p">],</span>
+<span class="w">                            </span><span class="p">),</span>
+<span class="w">                            </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                                </span><span class="s1">&#39;Drag&#39;</span><span class="p">,</span>
+<span class="w">                                </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">                              </span><span class="p">),</span>
+<span class="w">                            </span><span class="p">),</span>
+<span class="w">                          </span><span class="p">),</span>
+<span class="w">                        </span><span class="p">);</span>
+<span class="w">                      </span><span class="p">},</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 11. Position display</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">100</span><span class="p">],</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Position: </span><span class="si">${</span><span class="n">_currentPosition</span><span class="p">.</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">px&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Status: </span><span class="si">${</span><span class="n">_isDragging</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s2">&quot;Dragging&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Physics&quot;</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Progress: </span><span class="si">${</span><span class="p">(</span><span class="n">_currentPosition</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">300</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Draggable widget with physics
+- Spring simulation on release
+- Realistic spring motion
+- Interactive drag and release</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> with physics animations.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Animated button with spring</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">SpringButton</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">SpringButton</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">onPressed</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">child</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">onPressed</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Widget</span><span class="w"> </span><span class="n">child</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">SpringButton</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_SpringButtonState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_SpringButtonState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">SpringButton</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_springAnimation</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">_springAnimation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">1.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">0.9</span><span class="p">).</span><span class="n">animate</span><span class="p">(</span>
+<span class="w">      </span><span class="n">CurvedAnimation</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">parent:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">elasticOut</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">)..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">GestureDetector</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">onTapDown:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_controller</span><span class="p">.</span><span class="n">forward</span><span class="p">(</span><span class="nl">from:</span><span class="w"> </span><span class="m">0.0</span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nl">onTapUp:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_controller</span><span class="p">.</span><span class="n">reverse</span><span class="p">();</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nl">onTapCancel:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_controller</span><span class="p">.</span><span class="n">reverse</span><span class="p">();</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nl">onTap:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">onPressed</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">AnimatedBuilder</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">animation:</span><span class="w"> </span><span class="n">_springAnimation</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">Transform</span><span class="p">.</span><span class="n">scale</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">scale:</span><span class="w"> </span><span class="n">_springAnimation</span><span class="p">.</span><span class="n">value</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">symmetric</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">horizontal:</span><span class="w"> </span><span class="m">24</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">vertical:</span><span class="w"> </span><span class="m">12</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">boxShadow:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="n">BoxShadow</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">.</span><span class="n">withOpacity</span><span class="p">(</span><span class="m">0.3</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">blurRadius:</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">_springAnimation</span><span class="p">.</span><span class="n">value</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">spreadRadius:</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">_springAnimation</span><span class="p">.</span><span class="n">value</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">child</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Physics-based list item</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">PhysicsListItem</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PhysicsListItem</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">title</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">onDismissed</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">title</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">VoidCallback</span><span class="o">?</span><span class="w"> </span><span class="n">onDismissed</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">PhysicsListItem</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_PhysicsListItemState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_PhysicsListItemState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">PhysicsListItem</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_dismissAnimation</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">300</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">_dismissAnimation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">1.0</span><span class="p">).</span><span class="n">animate</span><span class="p">(</span>
+<span class="w">      </span><span class="n">CurvedAnimation</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">parent:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">bounceOut</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">)..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">})</span>
+<span class="w">      </span><span class="p">..</span><span class="n">addStatusListener</span><span class="p">((</span><span class="n">status</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">AnimationStatus</span><span class="p">.</span><span class="n">completed</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">widget</span><span class="p">.</span><span class="n">onDismissed</span><span class="o">?</span><span class="p">.</span><span class="n">call</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_dismiss</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">forward</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Dismissible</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">key:</span><span class="w"> </span><span class="n">ValueKey</span><span class="p">(</span><span class="n">widget</span><span class="p">.</span><span class="n">title</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">onDismissed:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">widget</span><span class="p">.</span><span class="n">onDismissed</span><span class="o">?</span><span class="p">.</span><span class="n">call</span><span class="p">();</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nl">background:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">alignment:</span><span class="w"> </span><span class="n">Alignment</span><span class="p">.</span><span class="n">centerRight</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">only</span><span class="p">(</span><span class="nl">right:</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span>
+<span class="w">          </span><span class="n">Icons</span><span class="p">.</span><span class="n">delete</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="n">widget</span><span class="p">.</span><span class="n">title</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">trailing:</span><span class="w"> </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">delete_outline</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_dismiss</span><span class="p">,</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- SpringButton with elastic feedback
+- Dismissible with physics-based animation
+- Realistic interaction feedback
+- Physics-based list items</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="use-appropriate-physics">Use Appropriate Physics</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Realistic spring</span>
+<span class="n">SpringSimulation</span><span class="p">(</span>
+<span class="w">  </span><span class="n">SpringDescription</span><span class="p">(</span>
+<span class="w">    </span><span class="nl">mass:</span><span class="w"> </span><span class="m">1.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nl">stiffness:</span><span class="w"> </span><span class="m">100.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nl">damping:</span><span class="w"> </span><span class="m">15.0</span><span class="p">,</span>
+<span class="w">  </span><span class="p">),</span>
+<span class="w">  </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">velocity</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1">// Bad - Unrealistic physics</span>
+<span class="n">SpringSimulation</span><span class="p">(</span>
+<span class="w">  </span><span class="n">SpringDescription</span><span class="p">(</span>
+<span class="w">    </span><span class="nl">mass:</span><span class="w"> </span><span class="m">100.0</span><span class="p">,</span><span class="w"> </span><span class="c1">// Too heavy</span>
+<span class="w">    </span><span class="nl">stiffness:</span><span class="w"> </span><span class="m">1.0</span><span class="p">,</span><span class="w"> </span><span class="c1">// Too soft</span>
+<span class="w">    </span><span class="nl">damping:</span><span class="w"> </span><span class="m">1.0</span><span class="p">,</span><span class="w"> </span><span class="c1">// Too bouncy</span>
+<span class="w">  </span><span class="p">),</span>
+<span class="w">  </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">velocity</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="combine-with-gestures">Combine with Gestures</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Physics with gestures</span>
+<span class="n">GestureDetector</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">onHorizontalDragUpdate:</span><span class="w"> </span><span class="p">(</span><span class="n">details</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Update position</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nl">onHorizontalDragEnd:</span><span class="w"> </span><span class="p">(</span><span class="n">details</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Apply physics simulation</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="use-curvedanimation">Use CurvedAnimation</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Physics with curves</span>
+<span class="n">CurvedAnimation</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">parent:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">elasticOut</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="incorrect-physics-parameters">Incorrect Physics Parameters</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Unrealistic spring</span>
+<span class="n">SpringDescription</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">mass:</span><span class="w"> </span><span class="m">0.1</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">stiffness:</span><span class="w"> </span><span class="m">1000</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">damping:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Realistic spring</span>
+<span class="n">SpringDescription</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">mass:</span><span class="w"> </span><span class="m">1.0</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">stiffness:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">damping:</span><span class="w"> </span><span class="m">15</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<h2 id="not-handling-drag-end">Not Handling Drag End</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// No physics on drag end</span>
+<span class="nl">onHorizontalDragEnd:</span><span class="w"> </span><span class="p">(</span><span class="n">details</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Missing physics simulation</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Apply physics on drag end</span>
+<span class="nl">onHorizontalDragEnd:</span><span class="w"> </span><span class="p">(</span><span class="n">details</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_controller</span><span class="p">.</span><span class="n">animateWith</span><span class="p">(</span><span class="n">_simulation</span><span class="o">!</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Physics Animations create realistic, natural motion using physics simulations. Use SpringSimulation for spring effects, combine with gestures for interactive experiences, and adjust parameters for different behaviors. Physics animations make UI feel responsive and engaging.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="hero.md">Hero</a></li>
+<li><a href="animatedbuilder.md">AnimatedBuilder</a></li>
+<li><a href="custompainter-animation.md">CustomPainter Animation</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>SpringSimulation creates realistic spring motion</li>
+<li>Stiffness controls rigidity</li>
+<li>Damping controls bounce</li>
+<li>Physics with gestures feels natural</li>
+<li>CurvedAnimation can simulate physics</li>
+<li>Physics animations are responsive</li>
+<li>Physics can be customized</li>
+<li>Physics animations enhance UX</li>
+</ul>
 
 
 

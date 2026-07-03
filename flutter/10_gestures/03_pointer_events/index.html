@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#pointer-events" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -7392,6 +7397,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,775 @@
 
 
 
-  <h1>Pointer Events</h1>
+<h1 id="pointer-events">Pointer Events</h1>
+<p>Understand how to handle low-level pointer events in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Pointer Events are the lowest level of input handling in Flutter. They represent raw touch, mouse, or stylus events that occur when a user interacts with the screen. Pointer events include information about the pointer's position, pressure, velocity, and button states. They provide fine-grained control over user input.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Pointer Events exist to:</p>
+<ul>
+<li>Handle raw input events</li>
+<li>Support custom gesture recognition</li>
+<li>Detect touch pressure and velocity</li>
+<li>Handle mouse and stylus input</li>
+<li>Support advanced interaction patterns</li>
+<li>Enable drawing and painting apps</li>
+<li>Provide low-level input control</li>
+</ul>
+<hr />
+<h1 id="basic-pointer-events">Basic Pointer Events</h1>
+<blockquote>
+<p><strong>Handling raw</strong> pointer events.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// Basic pointer events example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BasicPointerEventsExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">BasicPointerEventsExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicPointerEventsExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_BasicPointerEventsExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_BasicPointerEventsExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicPointerEventsExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Track pointer state</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isPointerDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isPointerHover</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Offset</span><span class="w"> </span><span class="n">_pointerPosition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Offset</span><span class="p">.</span><span class="n">zero</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_eventType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;None&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Pointer Events&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Listener</span><span class="p">(</span>
+<span class="w">          </span><span class="c1">// 2. Pointer down event</span>
+<span class="w">          </span><span class="nl">onPointerDown:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_isPointerDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_pointerPosition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">position</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_eventType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Down&#39;</span><span class="p">;</span>
+<span class="w">              </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Pointer Down: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">position</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Device: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">kind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Pressure: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">pressure</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">              </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Buttons: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">buttons</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 3. Pointer up event</span>
+<span class="w">          </span><span class="nl">onPointerUp:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_isPointerDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_eventType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Up&#39;</span><span class="p">;</span>
+<span class="w">              </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Pointer Up: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">position</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 4. Pointer move event</span>
+<span class="w">          </span><span class="nl">onPointerMove:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_pointerPosition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">position</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_eventType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Move&#39;</span><span class="p">;</span>
+
+<span class="w">              </span><span class="c1">// Check if the pointer is pressed (dragging)</span>
+<span class="w">              </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isPointerDown</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_eventType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Drag&#39;</span><span class="p">;</span>
+<span class="w">              </span><span class="p">}</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 5. Pointer hover event (mouse only)</span>
+<span class="w">          </span><span class="nl">onPointerHover:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_isPointerHover</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_pointerPosition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">position</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_eventType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Hover&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 6. Pointer cancel event</span>
+<span class="w">          </span><span class="nl">onPointerCancel:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_isPointerDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_eventType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Cancel&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 7. Pointer signal event (scroll wheel)</span>
+<span class="w">          </span><span class="nl">onPointerSignal:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">PointerScrollEvent</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_eventType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Scroll: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">scrollDelta</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">;</span>
+<span class="w">              </span><span class="p">});</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 8. Child widget</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">width:</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">height:</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">color:</span><span class="w"> </span><span class="n">_isPointerDown</span><span class="w"> </span>
+<span class="w">                  </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="w"> </span>
+<span class="w">                  </span><span class="o">:</span><span class="w"> </span><span class="n">_isPointerHover</span><span class="w"> </span>
+<span class="w">                      </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="w"> </span>
+<span class="w">                      </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">boxShadow:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isPointerDown</span><span class="p">)</span>
+<span class="w">                  </span><span class="n">BoxShadow</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">.</span><span class="n">withOpacity</span><span class="p">(</span><span class="m">0.3</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">blurRadius:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">spreadRadius:</span><span class="w"> </span><span class="m">5</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="c1">// 9. Event type display</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;Event: </span><span class="si">$</span><span class="n">_eventType</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+
+<span class="w">                  </span><span class="c1">// 10. Position display</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;Position: (</span><span class="si">${</span><span class="n">_pointerPosition</span><span class="p">.</span><span class="n">dx</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="si">}</span><span class="s1">, &#39;</span>
+<span class="w">                    </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_pointerPosition</span><span class="p">.</span><span class="n">dy</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white70</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">16</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="n">_isPointerDown</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;⬇️ Pressed&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;🖱️ Released&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white70</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">16</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- onPointerDown: Touch/mouse press
+- onPointerUp: Touch/mouse release
+- onPointerMove: Movement tracking
+- onPointerHover: Mouse hover
+- onPointerCancel: Interrupted events
+- onPointerSignal: Scroll wheel events</p>
+<hr />
+<h1 id="pointer-event-details">Pointer Event Details</h1>
+<blockquote>
+<p><strong>Accessing detailed</strong> pointer information.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Pointer event details example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">PointerDetailsExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PointerDetailsExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">PointerDetailsExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_PointerDetailsExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_PointerDetailsExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">PointerDetailsExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Track detailed pointer information</span>
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_eventInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Move your pointer over the area&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_pressure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_force</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_buttons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_kind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;None&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Pointer Details&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Listener</span><span class="p">(</span>
+<span class="w">        </span><span class="c1">// 2. Pointer down with details</span>
+<span class="w">        </span><span class="nl">onPointerDown:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_eventInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Pointer Down&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_pressure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">pressure</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_force</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">pressure</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_buttons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">buttons</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_kind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">kind</span><span class="p">.</span><span class="n">toString</span><span class="p">();</span>
+<span class="w">            </span><span class="n">_velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">          </span><span class="p">});</span>
+
+<span class="w">          </span><span class="c1">// 3. Access detailed event properties</span>
+<span class="w">          </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Pointer ID: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">pointer</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">          </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Device Kind: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">kind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">          </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Pressure: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">pressure</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">          </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Buttons: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">buttons</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">          </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Position: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">position</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">          </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Delta: </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">delta</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="p">},</span>
+
+<span class="w">        </span><span class="c1">// 4. Pointer move with velocity</span>
+<span class="w">        </span><span class="nl">onPointerMove:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_eventInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Pointer Move&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_pressure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">pressure</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_buttons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">buttons</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_calculateVelocity</span><span class="p">(</span><span class="n">event</span><span class="p">);</span>
+<span class="w">          </span><span class="p">});</span>
+<span class="w">        </span><span class="p">},</span>
+
+<span class="w">        </span><span class="c1">// 5. Pointer up</span>
+<span class="w">        </span><span class="nl">onPointerUp:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_eventInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Pointer Up&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_pressure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">          </span><span class="p">});</span>
+<span class="w">        </span><span class="p">},</span>
+
+<span class="w">        </span><span class="c1">// 6. Pointer hover</span>
+<span class="w">        </span><span class="nl">onPointerHover:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_eventInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Pointer Hover&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_buttons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">          </span><span class="p">});</span>
+<span class="w">        </span><span class="p">},</span>
+
+<span class="w">        </span><span class="c1">// 7. Display pointer information</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">              </span><span class="c1">// 8. Interactive area</span>
+<span class="w">              </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">                    </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                      </span><span class="n">_eventInfo</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                        </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">24</span><span class="p">,</span>
+<span class="w">                        </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+
+<span class="w">              </span><span class="c1">// 9. Detailed info display</span>
+<span class="w">              </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">boxShadow:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="n">BoxShadow</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span><span class="p">.</span><span class="n">withOpacity</span><span class="p">(</span><span class="m">0.1</span><span class="p">),</span>
+<span class="w">                      </span><span class="nl">blurRadius:</span><span class="w"> </span><span class="m">8</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="n">_buildInfoRow</span><span class="p">(</span><span class="s1">&#39;Event&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">_eventInfo</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">_buildInfoRow</span><span class="p">(</span><span class="s1">&#39;Device Kind&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">_kind</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">_buildInfoRow</span><span class="p">(</span><span class="s1">&#39;Pressure&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">_pressure</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">2</span><span class="p">)),</span>
+<span class="w">                    </span><span class="n">_buildInfoRow</span><span class="p">(</span><span class="s1">&#39;Buttons&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;0x</span><span class="si">${</span><span class="n">_buttons</span><span class="p">.</span><span class="n">toRadixString</span><span class="p">(</span><span class="m">16</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">_buildInfoRow</span><span class="p">(</span><span class="s1">&#39;Velocity&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_velocity</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="si">}</span><span class="s1"> px/s&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Helper to build info rows</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildInfoRow</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">label</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">symmetric</span><span class="p">(</span><span class="nl">vertical:</span><span class="w"> </span><span class="m">4</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">spaceBetween</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">            </span><span class="n">label</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="n">Text</span><span class="p">(</span><span class="n">value</span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Calculate velocity from pointer event</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">_calculateVelocity</span><span class="p">(</span><span class="n">PointerMoveEvent</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Calculate velocity based on delta</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">delta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">delta</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">timeStamp</span><span class="p">.</span><span class="n">inMilliseconds</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">1000.0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">delta</span><span class="p">.</span><span class="n">distance</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">dt</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- pressure: Touch pressure
+- buttons: Button state
+- kind: Device type
+- delta: Movement delta
+- velocity: Movement speed</p>
+<hr />
+<h1 id="mouse-events">Mouse Events</h1>
+<blockquote>
+<p><strong>Handling mouse</strong> specific events.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Mouse events example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MouseEventsExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">MouseEventsExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MouseEventsExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_MouseEventsExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_MouseEventsExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MouseEventsExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Track mouse state</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isHovering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isPrimaryDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isSecondaryDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isMiddleDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Offset</span><span class="w"> </span><span class="n">_position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Offset</span><span class="p">.</span><span class="n">zero</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Mouse Events&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">MouseRegion</span><span class="p">(</span>
+<span class="w">          </span><span class="c1">// 2. Enter event</span>
+<span class="w">          </span><span class="nl">onEnter:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_isHovering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 3. Exit event</span>
+<span class="w">          </span><span class="nl">onExit:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_isHovering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_isPrimaryDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_isSecondaryDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_isMiddleDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 4. Hover event</span>
+<span class="w">          </span><span class="nl">onHover:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">position</span><span class="p">;</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 5. Mouse down event</span>
+<span class="w">          </span><span class="nl">onMouseDown:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="c1">// Check which button was pressed</span>
+<span class="w">              </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">buttons</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">kPrimaryButton</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_isPrimaryDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">              </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">buttons</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">kSecondaryButton</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_isSecondaryDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">              </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">buttons</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">kMiddleButton</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_isMiddleDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">              </span><span class="p">}</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 6. Mouse up event</span>
+<span class="w">          </span><span class="nl">onMouseUp:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_isPrimaryDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_isSecondaryDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_isMiddleDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">},</span>
+
+<span class="w">          </span><span class="c1">// 7. Child with visual feedback</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">width:</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">height:</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">color:</span><span class="w"> </span><span class="n">_getBackgroundColor</span><span class="p">(),</span>
+<span class="w">              </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">boxShadow:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isHovering</span><span class="p">)</span>
+<span class="w">                  </span><span class="n">BoxShadow</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">.</span><span class="n">withOpacity</span><span class="p">(</span><span class="m">0.3</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">blurRadius:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">spreadRadius:</span><span class="w"> </span><span class="m">5</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="c1">// 8. Status text</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="n">_getStatusText</span><span class="p">(),</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">                  </span><span class="c1">// 9. Position display</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;Position: (</span><span class="si">${</span><span class="n">_position</span><span class="p">.</span><span class="n">dx</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="si">}</span><span class="s1">, &#39;</span>
+<span class="w">                    </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_position</span><span class="p">.</span><span class="n">dy</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white70</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">16</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+
+<span class="w">                  </span><span class="c1">// 10. Mouse buttons status</span>
+<span class="w">                  </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                      </span><span class="n">_buildButtonIndicator</span><span class="p">(</span><span class="s1">&#39;Left&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">_isPrimaryDown</span><span class="p">),</span>
+<span class="w">                      </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                      </span><span class="n">_buildButtonIndicator</span><span class="p">(</span><span class="s1">&#39;Right&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">_isSecondaryDown</span><span class="p">),</span>
+<span class="w">                      </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                      </span><span class="n">_buildButtonIndicator</span><span class="p">(</span><span class="s1">&#39;Middle&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">_isMiddleDown</span><span class="p">),</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Helper to get background color</span>
+<span class="w">  </span><span class="n">Color</span><span class="w"> </span><span class="n">_getBackgroundColor</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isPrimaryDown</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isSecondaryDown</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isMiddleDown</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isHovering</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">purple</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Helper to get status text</span>
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_getStatusText</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isPrimaryDown</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Left Click&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isSecondaryDown</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Right Click&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isMiddleDown</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Middle Click&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isHovering</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Hovering&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Move Mouse Here&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Helper to build button indicator</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildButtonIndicator</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">label</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isPressed</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">width:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">height:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">isPressed</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white38</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">shape:</span><span class="w"> </span><span class="n">BoxShape</span><span class="p">.</span><span class="n">circle</span><span class="p">,</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">4</span><span class="p">),</span>
+<span class="w">        </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">          </span><span class="n">label</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white70</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">12</span><span class="p">,</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- onEnter/Exit: Hover state
+- onMouseDown/Up: Button press
+- Button detection: Primary, secondary, middle
+- Visual feedback for mouse state</p>
+<hr />
+<h1 id="pointer-event-with-canvas">Pointer Event with Canvas</h1>
+<blockquote>
+<p><strong>Drawing with</strong> pointer events.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Pointer events with canvas drawing</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CanvasDrawingExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CanvasDrawingExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CanvasDrawingExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_CanvasDrawingExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_CanvasDrawingExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CanvasDrawingExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Track drawing state</span>
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Offset</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">_strokes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Offset</span><span class="o">&gt;?</span><span class="w"> </span><span class="n">_currentStroke</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isDrawing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Canvas Drawing&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">actions:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="c1">// 2. Clear button</span>
+<span class="w">          </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">clear</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_strokes</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">                </span><span class="n">_currentStroke</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">              </span><span class="p">});</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Listener</span><span class="p">(</span>
+<span class="w">        </span><span class="c1">// 3. Pointer down - start drawing</span>
+<span class="w">        </span><span class="nl">onPointerDown:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_isDrawing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_currentStroke</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">event</span><span class="p">.</span><span class="n">localPosition</span><span class="p">];</span>
+<span class="w">          </span><span class="p">});</span>
+<span class="w">        </span><span class="p">},</span>
+
+<span class="w">        </span><span class="c1">// 4. Pointer move - continue drawing</span>
+<span class="w">        </span><span class="nl">onPointerMove:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isDrawing</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">_currentStroke</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_currentStroke</span><span class="o">!</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">localPosition</span><span class="p">);</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+
+<span class="w">        </span><span class="c1">// 5. Pointer up - finish stroke</span>
+<span class="w">        </span><span class="nl">onPointerUp:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_currentStroke</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">_currentStroke</span><span class="o">!</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">_strokes</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">_currentStroke</span><span class="o">!</span><span class="p">);</span>
+<span class="w">              </span><span class="n">_currentStroke</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">              </span><span class="n">_isDrawing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+
+<span class="w">        </span><span class="c1">// 6. Pointer cancel - cancel drawing</span>
+<span class="w">        </span><span class="nl">onPointerCancel:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_currentStroke</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_isDrawing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">          </span><span class="p">});</span>
+<span class="w">        </span><span class="p">},</span>
+
+<span class="w">        </span><span class="c1">// 7. Custom paint for drawing</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">CustomPaint</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">painter:</span><span class="w"> </span><span class="n">DrawingPainter</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">strokes:</span><span class="w"> </span><span class="n">_strokes</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">currentStroke:</span><span class="w"> </span><span class="n">_currentStroke</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="nl">size:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">.</span><span class="n">infinite</span><span class="p">,</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Custom painter for drawing</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">DrawingPainter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CustomPainter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">DrawingPainter</span><span class="p">({</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">strokes</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">currentStroke</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Offset</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">strokes</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Offset</span><span class="o">&gt;?</span><span class="w"> </span><span class="n">currentStroke</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 8. Paint for completed strokes</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">paint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeCap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StrokeCap</span><span class="p">.</span><span class="n">round</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeJoin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StrokeJoin</span><span class="p">.</span><span class="n">round</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 9. Draw completed strokes</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">stroke</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">strokes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stroke</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">();</span>
+<span class="w">        </span><span class="n">path</span><span class="p">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">stroke</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">stroke</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">dy</span><span class="p">);</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">stroke</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">path</span><span class="p">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">stroke</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">stroke</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">dy</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">paint</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 10. Draw current stroke</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">currentStroke</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">currentStroke</span><span class="o">!</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">paint2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">        </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span>
+<span class="w">        </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span>
+<span class="w">        </span><span class="p">..</span><span class="n">strokeCap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StrokeCap</span><span class="p">.</span><span class="n">round</span>
+<span class="w">        </span><span class="p">..</span><span class="n">strokeJoin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StrokeJoin</span><span class="p">.</span><span class="n">round</span>
+<span class="w">        </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span><span class="p">;</span>
+
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">();</span>
+<span class="w">      </span><span class="n">path</span><span class="p">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">currentStroke</span><span class="o">!</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">currentStroke</span><span class="o">!</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">dy</span><span class="p">);</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">currentStroke</span><span class="o">!</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">path</span><span class="p">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">currentStroke</span><span class="o">!</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">dx</span><span class="p">,</span><span class="w"> </span><span class="n">currentStroke</span><span class="o">!</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">dy</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">paint2</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">shouldRepaint</span><span class="p">(</span><span class="n">DrawingPainter</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">strokes</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">strokes</span><span class="w"> </span><span class="o">||</span>
+<span class="w">           </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">currentStroke</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">currentStroke</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Pointer events for drawing
+- onPointerDown: Start stroke
+- onPointerMove: Continue stroke
+- onPointerUp: End stroke
+- CustomPaint for rendering</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="handle-multiple-pointers">Handle Multiple Pointers</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Track multiple pointers</span>
+<span class="n">Map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">Offset</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_pointers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+
+<span class="nl">onPointerDown:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_pointers</span><span class="p">[</span><span class="n">event</span><span class="p">.</span><span class="n">pointer</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">position</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nl">onPointerUp:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_pointers</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">pointer</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="use-appropriate-hit-testing">Use Appropriate Hit Testing</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Control hit testing</span>
+<span class="n">Listener</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">behavior:</span><span class="w"> </span><span class="n">HitTestBehavior</span><span class="p">.</span><span class="n">opaque</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">onPointerDown:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Always receives events</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="handle-cancellation">Handle Cancellation</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Handle pointer cancel</span>
+<span class="nl">onPointerCancel:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Clean up state</span>
+<span class="w">  </span><span class="n">_resetState</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="ignoring-pointer-cancel">Ignoring Pointer Cancel</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// No cancellation handling</span>
+<span class="n">Listener</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">onPointerDown:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">startInteraction</span><span class="p">(),</span>
+<span class="w">  </span><span class="nl">onPointerUp:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">endInteraction</span><span class="p">(),</span>
+<span class="w">  </span><span class="c1">// Missing onPointerCancel</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Handle cancellation</span>
+<span class="n">Listener</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">onPointerDown:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">startInteraction</span><span class="p">(),</span>
+<span class="w">  </span><span class="nl">onPointerUp:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">endInteraction</span><span class="p">(),</span>
+<span class="w">  </span><span class="nl">onPointerCancel:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cancelInteraction</span><span class="p">(),</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<h2 id="not-checking-button-state">Not Checking Button State</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Can&#39;t distinguish between left/right click</span>
+<span class="nl">onPointerDown:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Same behavior for all buttons</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Check buttons</span>
+<span class="nl">onPointerDown:</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">buttons</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">kPrimaryButton</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Left click</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">buttons</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">kSecondaryButton</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Right click</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Pointer Events provide low-level input handling with detailed information about touch, mouse, and stylus interactions. Use Listener for raw pointer events, MouseRegion for mouse-specific events, and access detailed properties like pressure, velocity, and button states.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="drag-drop.md">Drag &amp; Drop</a></li>
+<li><a href="hit-testing.md">Hit Testing</a></li>
+<li><a href="inkwell.md">InkWell</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Pointer events are the lowest level of input</li>
+<li>onPointerDown/Up track touch state</li>
+<li>MouseRegion handles mouse-specific events</li>
+<li>pressure provides touch sensitivity</li>
+<li>buttons identifies mouse buttons</li>
+<li>delta tracks movement</li>
+<li>velocity calculates speed</li>
+<li>Pointer events support stylus input</li>
+</ul>
 
 
 

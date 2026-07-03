@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#eventchannel" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -8312,6 +8317,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,539 @@
 
 
 
-  <h1>EventChannel</h1>
+<h1 id="eventchannel">EventChannel</h1>
+<p>Understand how to receive continuous streams of events from native platform code in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>EventChannel is a type of platform channel that enables receiving streams of data from native platform code (Android/iOS) to Flutter. Unlike MethodChannel which handles discrete method calls, EventChannel is designed for continuous streams of events like sensor data, location updates, battery level changes, or other real-time data.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>EventChannel exists to:</p>
+<ul>
+<li>Receive continuous data streams from native</li>
+<li>Handle real-time sensor data</li>
+<li>Process location updates</li>
+<li>Monitor battery and system events</li>
+<li>Listen to hardware events</li>
+<li>Receive broadcast notifications</li>
+<li>Support streaming data</li>
+</ul>
+<hr />
+<h1 id="basic-eventchannel">Basic EventChannel</h1>
+<blockquote>
+<p><strong>Creating and using</strong> EventChannel.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/services.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// Basic EventChannel example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BasicEventChannelExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">BasicEventChannelExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicEventChannelExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_BasicEventChannelExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_BasicEventChannelExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicEventChannelExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Create EventChannel with unique name</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventChannel</span><span class="w"> </span><span class="n">_eventChannel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EventChannel</span><span class="p">(</span><span class="s1">&#39;com.example.app/events&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// 2. Create a stream subscription</span>
+<span class="w">  </span><span class="n">StreamSubscription</span><span class="o">?</span><span class="w"> </span><span class="n">_subscription</span><span class="p">;</span>
+<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_events</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_lastEvent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;No events&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_eventCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 3. Start listening to events</span>
+<span class="w">    </span><span class="n">_startListening</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 4. Cancel subscription to prevent memory leaks</span>
+<span class="w">    </span><span class="n">_subscription</span><span class="o">?</span><span class="p">.</span><span class="n">cancel</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_startListening</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 5. Receive broadcast stream of events</span>
+<span class="w">    </span><span class="n">_subscription</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_eventChannel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">().</span><span class="n">listen</span><span class="p">(</span>
+<span class="w">      </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 6. Handle received event</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="kd">final</span><span class="w"> </span><span class="n">eventString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">toString</span><span class="p">();</span>
+<span class="w">          </span><span class="n">_events</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">eventString</span><span class="p">);</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_events</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_events</span><span class="p">.</span><span class="n">removeAt</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">          </span><span class="n">_lastEvent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eventString</span><span class="p">;</span>
+<span class="w">          </span><span class="n">_eventCount</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nl">onError:</span><span class="w"> </span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 7. Handle errors</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_lastEvent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Error: </span><span class="si">$</span><span class="n">error</span><span class="s1">&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nl">onDone:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 8. Handle stream completion</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_lastEvent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Stream ended&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;EventChannel&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">actions:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="c1">// 9. Clear events</span>
+<span class="w">          </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">clear</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_events</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">                </span><span class="n">_eventCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">              </span><span class="p">});</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// Event statistics</span>
+<span class="w">            </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">spaceAround</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                          </span><span class="s1">&#39;Total Events&#39;</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                          </span><span class="s1">&#39;</span><span class="si">$</span><span class="n">_eventCount</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                            </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">                            </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                          </span><span class="p">),</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                      </span><span class="p">],</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                    </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                          </span><span class="s1">&#39;Last Event&#39;</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                          </span><span class="n">_lastEvent</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">14</span><span class="p">),</span>
+<span class="w">                          </span><span class="nl">softWrap:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                      </span><span class="p">],</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">],</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="c1">// Event list</span>
+<span class="w">            </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">_events</span><span class="p">.</span><span class="n">isEmpty</span>
+<span class="w">                      </span><span class="o">?</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;No events received yet&#39;</span><span class="p">),</span>
+<span class="w">                        </span><span class="p">)</span>
+<span class="w">                      </span><span class="o">:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">itemCount:</span><span class="w"> </span><span class="n">_events</span><span class="p">.</span><span class="n">length</span><span class="p">,</span>
+<span class="w">                          </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="k">return</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">                              </span><span class="nl">leading:</span><span class="w"> </span><span class="n">CircleAvatar</span><span class="p">(</span>
+<span class="w">                                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">${</span><span class="n">_events</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">index</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                              </span><span class="p">),</span>
+<span class="w">                              </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                                </span><span class="n">_events</span><span class="p">[</span><span class="n">_events</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">index</span><span class="p">],</span>
+<span class="w">                                </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">12</span><span class="p">),</span>
+<span class="w">                              </span><span class="p">),</span>
+<span class="w">                              </span><span class="nl">dense:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                            </span><span class="p">);</span>
+<span class="w">                          </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- EventChannel for streaming events
+- receiveBroadcastStream() listens to events
+- StreamSubscription manages the stream
+- Events are processed in real-time</p>
+<hr />
+<h1 id="native-implementation-android">Native Implementation - Android</h1>
+<blockquote>
+<p><strong>Implementing</strong> EventChannel on Android.</p>
+</blockquote>
+<div class="language-kotlin highlight"><pre><span></span><code><span class="c1">// MainActivity.kt (Android)</span>
+
+<span class="k">package</span><span class="w"> </span><span class="nn">com.example.app</span>
+
+<span class="k">import</span><span class="w"> </span><span class="nn">android.os.Build</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">android.os.Handler</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">android.os.Looper</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">androidx.annotation.NonNull</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">io.flutter.embedding.android.FlutterActivity</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">io.flutter.embedding.engine.FlutterEngine</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">io.flutter.plugin.common.EventChannel</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">io.flutter.plugin.common.EventChannel.EventSink</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">io.flutter.plugin.common.EventChannel.StreamHandler</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">MainActivity</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">FlutterActivity</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Channel name must match Dart side</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">val</span><span class="w"> </span><span class="nv">CHANNEL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;com.example.app/events&quot;</span>
+
+<span class="w">    </span><span class="c1">// 2. Handler for sending events</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">var</span><span class="w"> </span><span class="nv">eventSink</span><span class="p">:</span><span class="w"> </span><span class="n">EventSink? </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">val</span><span class="w"> </span><span class="nv">handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Handler</span><span class="p">(</span><span class="n">Looper</span><span class="p">.</span><span class="na">getMainLooper</span><span class="p">())</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">var</span><span class="w"> </span><span class="nv">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+
+<span class="w">    </span><span class="kd">override</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">configureFlutterEngine</span><span class="p">(</span><span class="nd">@NonNull</span><span class="w"> </span><span class="n">flutterEngine</span><span class="p">:</span><span class="w"> </span><span class="n">FlutterEngine</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">super</span><span class="p">.</span><span class="na">configureFlutterEngine</span><span class="p">(</span><span class="n">flutterEngine</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c1">// 3. Create EventChannel</span>
+<span class="w">        </span><span class="n">EventChannel</span><span class="p">(</span><span class="n">flutterEngine</span><span class="p">.</span><span class="na">dartExecutor</span><span class="p">.</span><span class="na">binaryMessenger</span><span class="p">,</span><span class="w"> </span><span class="n">CHANNEL</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="na">setStreamHandler</span><span class="p">(</span>
+<span class="w">                </span><span class="k">object</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="nc">StreamHandler</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="c1">// 4. Called when listener is attached</span>
+<span class="w">                    </span><span class="kd">override</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">onListen</span><span class="p">(</span><span class="n">arguments</span><span class="p">:</span><span class="w"> </span><span class="kt">Any?</span><span class="p">,</span><span class="w"> </span><span class="n">events</span><span class="p">:</span><span class="w"> </span><span class="n">EventSink</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="n">eventSink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">events</span>
+<span class="w">                        </span><span class="c1">// Start sending events</span>
+<span class="w">                        </span><span class="n">startSendingEvents</span><span class="p">()</span>
+<span class="w">                    </span><span class="p">}</span>
+
+<span class="w">                    </span><span class="c1">// 5. Called when listener is detached</span>
+<span class="w">                    </span><span class="kd">override</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">onCancel</span><span class="p">(</span><span class="n">arguments</span><span class="p">:</span><span class="w"> </span><span class="kt">Any?</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="n">eventSink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">                        </span><span class="n">stopSendingEvents</span><span class="p">()</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 6. Send events to Flutter</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">startSendingEvents</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Send a stream of events</span>
+<span class="w">        </span><span class="n">handler</span><span class="p">.</span><span class="na">post</span><span class="p">(</span><span class="k">object</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="nc">Runnable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kd">override</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">eventSink</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">counter</span><span class="o">++</span>
+<span class="w">                    </span><span class="kd">val</span><span class="w"> </span><span class="nv">event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mapOf</span><span class="p">(</span>
+<span class="w">                        </span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">counter</span><span class="p">,</span>
+<span class="w">                        </span><span class="s">&quot;timestamp&quot;</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">currentTimeMillis</span><span class="p">(),</span>
+<span class="w">                        </span><span class="s">&quot;message&quot;</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="s">&quot;Event #</span><span class="si">$</span><span class="n">counter</span><span class="s">&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="s">&quot;data&quot;</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="s">&quot;Sample data </span><span class="si">$</span><span class="n">counter</span><span class="s">&quot;</span>
+<span class="w">                    </span><span class="p">)</span>
+<span class="w">                    </span><span class="c1">// Send event to Flutter</span>
+<span class="w">                    </span><span class="n">eventSink</span><span class="o">?.</span><span class="na">success</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<span class="w">                    </span><span class="c1">// Schedule next event</span>
+<span class="w">                    </span><span class="n">handler</span><span class="p">.</span><span class="na">postDelayed</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="m">2000</span><span class="p">)</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">})</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">stopSendingEvents</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">handler</span><span class="p">.</span><span class="na">removeCallbacksAndMessages</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- EventChannel streams events
+- StreamHandler manages listeners
+- onListen starts streaming
+- onCancel stops streaming
+- EventSink sends events to Flutter</p>
+<hr />
+<h1 id="native-implementation-ios">Native Implementation - iOS</h1>
+<blockquote>
+<p><strong>Implementing</strong> EventChannel on iOS.</p>
+</blockquote>
+<div class="language-swift highlight"><pre><span></span><code><span class="c1">// AppDelegate.swift (iOS)</span>
+
+<span class="kd">import</span><span class="w"> </span><span class="nc">UIKit</span>
+<span class="kd">import</span><span class="w"> </span><span class="nc">Flutter</span>
+
+<span class="kr">@UIApplicationMain</span>
+<span class="kr">@objc</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nc">AppDelegate</span><span class="p">:</span><span class="w"> </span><span class="n">FlutterAppDelegate</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Channel name must match Dart side</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nv">CHANNEL</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;com.example.app/events&quot;</span>
+
+<span class="w">    </span><span class="c1">// 2. Handler for sending events</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">var</span><span class="w"> </span><span class="nv">eventSink</span><span class="p">:</span><span class="w"> </span><span class="n">FlutterEventSink</span><span class="p">?</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">var</span><span class="w"> </span><span class="nv">timer</span><span class="p">:</span><span class="w"> </span><span class="n">Timer</span><span class="p">?</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">var</span><span class="w"> </span><span class="nv">counter</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">0</span>
+
+<span class="w">    </span><span class="kr">override</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">application</span><span class="p">(</span>
+<span class="w">        </span><span class="kc">_</span><span class="w"> </span><span class="n">application</span><span class="p">:</span><span class="w"> </span><span class="bp">UIApplication</span><span class="p">,</span>
+<span class="w">        </span><span class="n">didFinishLaunchingWithOptions</span><span class="w"> </span><span class="n">launchOptions</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="bp">UIApplication</span><span class="p">.</span><span class="n">LaunchOptionsKey</span><span class="p">:</span><span class="w"> </span><span class="nb">Any</span><span class="p">]?</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Bool</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 3. Get the root view controller</span>
+<span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="nv">controller</span><span class="p">:</span><span class="w"> </span><span class="n">FlutterViewController</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">window</span><span class="p">?.</span><span class="n">rootViewController</span><span class="w"> </span><span class="k">as</span><span class="p">!</span><span class="w"> </span><span class="n">FlutterViewController</span>
+
+<span class="w">        </span><span class="c1">// 4. Create EventChannel</span>
+<span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="nv">eventChannel</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">FlutterEventChannel</span><span class="p">(</span>
+<span class="w">            </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="n">CHANNEL</span><span class="p">,</span>
+<span class="w">            </span><span class="n">binaryMessenger</span><span class="p">:</span><span class="w"> </span><span class="n">controller</span><span class="p">.</span><span class="n">binaryMessenger</span>
+<span class="w">        </span><span class="p">)</span>
+
+<span class="w">        </span><span class="c1">// 5. Set stream handler</span>
+<span class="w">        </span><span class="n">eventChannel</span><span class="p">.</span><span class="n">setStreamHandler</span><span class="p">(</span><span class="kc">self</span><span class="p">)</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">super</span><span class="p">.</span><span class="n">application</span><span class="p">(</span><span class="n">application</span><span class="p">,</span><span class="w"> </span><span class="n">didFinishLaunchingWithOptions</span><span class="p">:</span><span class="w"> </span><span class="n">launchOptions</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 6. Implement StreamHandler</span>
+<span class="kd">extension</span><span class="w"> </span><span class="nc">AppDelegate</span><span class="p">:</span><span class="w"> </span><span class="n">FlutterStreamHandler</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 7. Called when listener is attached</span>
+<span class="w">    </span><span class="kd">func</span><span class="w"> </span><span class="nf">onListen</span><span class="p">(</span>
+<span class="w">        </span><span class="n">withArguments</span><span class="w"> </span><span class="n">arguments</span><span class="p">:</span><span class="w"> </span><span class="nb">Any</span><span class="p">?,</span>
+<span class="w">        </span><span class="n">eventSink</span><span class="w"> </span><span class="n">events</span><span class="p">:</span><span class="w"> </span><span class="p">@</span><span class="n">escaping</span><span class="w"> </span><span class="n">FlutterEventSink</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">FlutterError</span><span class="p">?</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kc">self</span><span class="p">.</span><span class="n">eventSink</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">events</span>
+<span class="w">        </span><span class="n">startSendingEvents</span><span class="p">()</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 8. Called when listener is detached</span>
+<span class="w">    </span><span class="kd">func</span><span class="w"> </span><span class="nf">onCancel</span><span class="p">(</span><span class="n">withArguments</span><span class="w"> </span><span class="n">arguments</span><span class="p">:</span><span class="w"> </span><span class="nb">Any</span><span class="p">?)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">FlutterError</span><span class="p">?</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">eventSink</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">        </span><span class="n">stopSendingEvents</span><span class="p">()</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 9. Send events to Flutter</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">startSendingEvents</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">timer</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Timer</span><span class="p">.</span><span class="n">scheduledTimer</span><span class="p">(</span><span class="n">withTimeInterval</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="n">repeats</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">_</span><span class="w"> </span><span class="k">in</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nv">sink</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">self</span><span class="p">.</span><span class="n">eventSink</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="kc">self</span><span class="p">.</span><span class="n">counter</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="nv">event</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="nb">String</span><span class="p">:</span><span class="w"> </span><span class="nb">Any</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="s">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">self</span><span class="p">.</span><span class="n">counter</span><span class="p">,</span>
+<span class="w">                    </span><span class="s">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="nb">Int</span><span class="p">(</span><span class="n">Date</span><span class="p">().</span><span class="n">timeIntervalSince1970</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="p">),</span>
+<span class="w">                    </span><span class="s">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Event #</span><span class="si">\(</span><span class="kc">self</span><span class="p">.</span><span class="n">counter</span><span class="si">)</span><span class="s">&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="s">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Sample data </span><span class="si">\(</span><span class="kc">self</span><span class="p">.</span><span class="n">counter</span><span class="si">)</span><span class="s">&quot;</span>
+<span class="w">                </span><span class="p">]</span>
+<span class="w">                </span><span class="n">sink</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">stopSendingEvents</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">timer</span><span class="p">?.</span><span class="n">invalidate</span><span class="p">()</span>
+<span class="w">        </span><span class="n">timer</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- EventChannel streams events
+- FlutterStreamHandler manages listeners
+- onListen starts streaming
+- onCancel stops streaming
+- FlutterEventSink sends events</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> with EventChannel.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Battery level listener</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BatteryListener</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventChannel</span><span class="w"> </span><span class="n">_channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EventChannel</span><span class="p">(</span><span class="s1">&#39;com.example.app/battery&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">batteryLevelStream</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">().</span><span class="n">map</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">int</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">chargingStream</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">(</span><span class="s1">&#39;charging&#39;</span><span class="p">).</span><span class="n">map</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">bool</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Location listener</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">LocationListener</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventChannel</span><span class="w"> </span><span class="n">_channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EventChannel</span><span class="p">(</span><span class="s1">&#39;com.example.app/location&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">locationStream</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">().</span><span class="n">map</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">dynamic</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;latitude&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;longitude&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;accuracy&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span>
+<span class="w">      </span><span class="p">};</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">locationEnabledStream</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">(</span><span class="s1">&#39;enabled&#39;</span><span class="p">).</span><span class="n">map</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">bool</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 3. Sensor data listener</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">SensorListener</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventChannel</span><span class="w"> </span><span class="n">_channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EventChannel</span><span class="p">(</span><span class="s1">&#39;com.example.app/sensors&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">accelerometerStream</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">(</span><span class="s1">&#39;accelerometer&#39;</span><span class="p">).</span><span class="n">map</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">dynamic</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;x&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;y&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;z&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span>
+<span class="w">      </span><span class="p">};</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">gyroscopeStream</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">(</span><span class="s1">&#39;gyroscope&#39;</span><span class="p">).</span><span class="n">map</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">dynamic</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;x&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;y&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;z&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span>
+<span class="w">      </span><span class="p">};</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">lightSensorStream</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">(</span><span class="s1">&#39;light&#39;</span><span class="p">).</span><span class="n">map</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">double</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Battery level monitoring
+- Location updates streaming
+- Sensor data processing
+- Type-safe stream transformations</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="cancel-subscriptions">Cancel Subscriptions</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Cancel subscription</span>
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_subscription</span><span class="o">?</span><span class="p">.</span><span class="n">cancel</span><span class="p">();</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Memory leak</span>
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="handle-errors">Handle Errors</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Error handling</span>
+<span class="n">_subscription</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">().</span><span class="n">listen</span><span class="p">(</span>
+<span class="w">  </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">handleEvent</span><span class="p">(</span><span class="n">event</span><span class="p">),</span>
+<span class="w">  </span><span class="nl">onError:</span><span class="w"> </span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">handleError</span><span class="p">(</span><span class="n">error</span><span class="p">),</span>
+<span class="p">);</span>
+</code></pre></div>
+<h2 id="use-transformations">Use Transformations</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Type-safe streams</span>
+<span class="n">Stream</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">intStream</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">().</span><span class="n">map</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-cancelling-subscription">Not Cancelling Subscription</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Memory leak</span>
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">  </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">().</span><span class="n">listen</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{});</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Proper disposal</span>
+<span class="n">StreamSubscription</span><span class="o">?</span><span class="w"> </span><span class="n">_subscription</span><span class="p">;</span>
+
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">  </span><span class="n">_subscription</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_channel</span><span class="p">.</span><span class="n">receiveBroadcastStream</span><span class="p">().</span><span class="n">listen</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{});</span>
+<span class="p">}</span>
+
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_subscription</span><span class="o">?</span><span class="p">.</span><span class="n">cancel</span><span class="p">();</span>
+<span class="w">  </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="not-handling-oncancel">Not Handling onCancel</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Native side</span>
+<span class="n">override</span><span class="w"> </span><span class="n">fun</span><span class="w"> </span><span class="n">onCancel</span><span class="p">(</span><span class="nl">arguments:</span><span class="w"> </span><span class="n">Any</span><span class="o">?</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Not stopping event source</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Proper cleanup</span>
+<span class="n">override</span><span class="w"> </span><span class="n">fun</span><span class="w"> </span><span class="n">onCancel</span><span class="p">(</span><span class="nl">arguments:</span><span class="w"> </span><span class="n">Any</span><span class="o">?</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">eventSink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">  </span><span class="n">stopSendingEvents</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>EventChannel enables streaming events from native code to Flutter. Use receiveBroadcastStream() to listen to events, handle errors and completion, and cancel subscriptions to prevent memory leaks. EventChannel is essential for real-time data streams.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="ffi.md">FFI</a></li>
+<li><a href="plugins.md">Plugins</a></li>
+<li><a href="platform-views.md">Platform Views</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>EventChannel streams continuous events</li>
+<li>receiveBroadcastStream() listens to events</li>
+<li>StreamSubscription manages the stream</li>
+<li>onListen starts streaming on native side</li>
+<li>onCancel stops streaming</li>
+<li>Events can be transformed in Dart</li>
+<li>Multiple streams can exist</li>
+<li>Memory leaks if not disposed</li>
+</ul>
 
 
 

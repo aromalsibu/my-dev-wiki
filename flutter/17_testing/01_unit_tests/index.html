@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#unit-tests" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -8953,6 +8958,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,1006 @@
 
 
 
-  <h1>Unit Tests</h1>
+<h1 id="unit-tests">Unit Tests</h1>
+<p>Understand how to write and run unit tests in Flutter to ensure your code works correctly.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Unit Tests are automated tests that verify the behavior of individual units of code, such as functions, methods, or classes. They are the foundation of testing in Flutter and help ensure that your business logic, data models, and utility functions work correctly. Unit tests are fast, isolated, and run without any UI or platform dependencies.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Unit Tests exist to:</p>
+<ul>
+<li>Verify individual code units work correctly</li>
+<li>Catch bugs early in development</li>
+<li>Prevent regressions when changing code</li>
+<li>Document expected behavior</li>
+<li>Improve code design and maintainability</li>
+<li>Enable refactoring with confidence</li>
+<li>Reduce debugging time</li>
+</ul>
+<hr />
+<h1 id="setting-up-unit-tests">Setting Up Unit Tests</h1>
+<blockquote>
+<p><strong>Configuring</strong> testing in your project.</p>
+</blockquote>
+<div class="language-yaml highlight"><pre><span></span><code><span class="c1"># 1. Add test dependencies in pubspec.yaml</span>
+<span class="nt">dev_dependencies</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">flutter_test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">sdk</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flutter</span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^1.24.0</span>
+<span class="w">  </span><span class="nt">mockito</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^5.4.0</span>
+</code></pre></div>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 2. Create test folder structure</span>
+<span class="c1">// lib/</span>
+<span class="c1">//   models/</span>
+<span class="c1">//     user.dart</span>
+<span class="c1">//   services/</span>
+<span class="c1">//     api_service.dart</span>
+<span class="c1">// test/</span>
+<span class="c1">//   models/</span>
+<span class="c1">//     user_test.dart</span>
+<span class="c1">//   services/</span>
+<span class="c1">//     api_service_test.dart</span>
 
+<span class="c1">/// 3. Example: User model</span>
+<span class="c1">/// lib/models/user.dart</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
 
+<span class="w">  </span><span class="n">User</span><span class="p">({</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">email</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">age</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// Factory constructor to create User from JSON</span>
+<span class="w">  </span><span class="kd">factory</span><span class="w"> </span><span class="n">User</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">json</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">id:</span><span class="w"> </span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">name:</span><span class="w"> </span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">email:</span><span class="w"> </span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">age:</span><span class="w"> </span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Convert User to JSON</span>
+<span class="w">  </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">toJson</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
+<span class="w">      </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">      </span><span class="s1">&#39;email&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
+<span class="w">      </span><span class="s1">&#39;age&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">age</span><span class="p">,</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Create a copy with updated fields</span>
+<span class="w">  </span><span class="n">User</span><span class="w"> </span><span class="n">copyWith</span><span class="p">({</span>
+<span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="o">?</span><span class="w"> </span><span class="n">age</span><span class="p">,</span>
+<span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">id:</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">name:</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">email:</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">email</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">age:</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">age</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Validation method</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">isValid</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">id</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<span class="w">        </span><span class="n">name</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<span class="w">        </span><span class="n">email</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<span class="w">        </span><span class="n">age</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">operator</span><span class="w"> </span><span class="o">==</span><span class="p">(</span><span class="kt">Object</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">identical</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">other</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">other</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<span class="w">        </span><span class="n">other</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<span class="w">        </span><span class="n">other</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<span class="w">        </span><span class="n">other</span><span class="p">.</span><span class="n">email</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<span class="w">        </span><span class="n">other</span><span class="p">.</span><span class="n">age</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">hashCode</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">id</span><span class="p">.</span><span class="n">hashCode</span><span class="w"> </span><span class="o">^</span>
+<span class="w">        </span><span class="n">name</span><span class="p">.</span><span class="n">hashCode</span><span class="w"> </span><span class="o">^</span>
+<span class="w">        </span><span class="n">email</span><span class="p">.</span><span class="n">hashCode</span><span class="w"> </span><span class="o">^</span>
+<span class="w">        </span><span class="n">age</span><span class="p">.</span><span class="n">hashCode</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- test package for unit tests
+- Organized test structure
+- Models to test
+- Testing utilities</p>
+<hr />
+<h1 id="writing-unit-tests">Writing Unit Tests</h1>
+<blockquote>
+<p><strong>Creating</strong> your first unit tests.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// test/models/user_test.dart</span>
+
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter_test/flutter_test.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/models/user.dart&#39;</span><span class="p">;</span>
+
+<span class="c1">/// 1. Basic test group</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Group tests by class or feature</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;User Model Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 2. Setup test data</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">testUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3. Test initialization</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should create a User instance correctly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="m">25</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 4. Test JSON serialization</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should convert from JSON correctly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;email&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;age&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">};</span>
+
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">json</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="m">25</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 5. Test JSON deserialization</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should convert to JSON correctly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">user</span><span class="p">.</span><span class="n">toJson</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">],</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">],</span><span class="w"> </span><span class="m">25</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 6. Test copyWith method</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should create a copy with updated fields&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">updatedUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">user</span><span class="p">.</span><span class="n">copyWith</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;Jane Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">26</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">updatedUser</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">updatedUser</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Jane Doe&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">updatedUser</span><span class="p">.</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">updatedUser</span><span class="p">.</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="m">26</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 7. Test validation</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should validate user correctly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">validUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">invalidUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;invalid-email&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="o">-</span><span class="m">5</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">validUser</span><span class="p">.</span><span class="n">isValid</span><span class="p">(),</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">invalidUser</span><span class="p">.</span><span class="n">isValid</span><span class="p">(),</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 8. Test equality</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should compare users correctly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;2&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;Jane Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;jane@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">30</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user1</span><span class="p">,</span><span class="w"> </span><span class="n">user2</span><span class="p">);</span><span class="w"> </span><span class="c1">// Equal</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user1</span><span class="p">,</span><span class="w"> </span><span class="n">isNot</span><span class="p">(</span><span class="n">user3</span><span class="p">));</span><span class="w"> </span><span class="c1">// Not equal</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 9. Test with setup and teardown</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;User Model with Setup&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Setup runs before each test</span>
+<span class="w">    </span><span class="n">setUp</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Setting up test&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// Teardown runs after each test</span>
+<span class="w">    </span><span class="n">tearDown</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Cleaning up after test&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should create user with default values&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Test implementation</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 10. Parameterized tests</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Parameterized Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Test multiple scenarios with different inputs</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should validate email correctly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">validEmails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;jane@test.co&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;user@domain.org&#39;</span><span class="p">];</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">invalidEmails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;john&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;john@&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;john@example&#39;</span><span class="p">];</span>
+
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">validEmails</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">expect</span><span class="p">(</span><span class="n">User</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;Test&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">email:</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">        </span><span class="p">).</span><span class="n">isValid</span><span class="p">(),</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">invalidEmails</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">expect</span><span class="p">(</span><span class="n">User</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;Test&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">email:</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">        </span><span class="p">).</span><span class="n">isValid</span><span class="p">(),</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- group organizes related tests
+- test defines individual tests
+- setUp runs before each test
+- tearDown runs after each test
+- expect asserts expected values</p>
+<hr />
+<h1 id="testing-services">Testing Services</h1>
+<blockquote>
+<p><strong>Testing</strong> services and business logic.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// lib/services/api_service.dart</span>
+
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;dart:convert&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:http/http.dart&#39;</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">http</span><span class="p">;</span>
+
+<span class="c1">/// API service for making network requests</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ApiService</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="n">Client</span><span class="w"> </span><span class="n">client</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">baseUrl</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ApiService</span><span class="p">({</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">client</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">baseUrl</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">/// Fetch user data from API</span>
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fetchUser</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span>
+<span class="w">        </span><span class="n">Uri</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">$</span><span class="n">baseUrl</span><span class="s1">/users/</span><span class="si">$</span><span class="n">id</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">statusCode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">200</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">json</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">body</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">User</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to fetch user: </span><span class="si">${</span><span class="n">response</span><span class="p">.</span><span class="n">statusCode</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Network error: </span><span class="si">$</span><span class="n">e</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Fetch multiple users</span>
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">fetchUsers</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span>
+<span class="w">        </span><span class="n">Uri</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">$</span><span class="n">baseUrl</span><span class="s1">/users&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">statusCode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">200</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">json</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">body</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="n">map</span><span class="p">((</span><span class="n">json</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">User</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">json</span><span class="p">)).</span><span class="n">toList</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to fetch users: </span><span class="si">${</span><span class="n">response</span><span class="p">.</span><span class="n">statusCode</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Network error: </span><span class="si">$</span><span class="n">e</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Create a new user</span>
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createUser</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="n">post</span><span class="p">(</span>
+<span class="w">        </span><span class="n">Uri</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">$</span><span class="n">baseUrl</span><span class="s1">/users&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">headers:</span><span class="w"> </span><span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+<span class="w">        </span><span class="nl">body:</span><span class="w"> </span><span class="n">json</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">toJson</span><span class="p">()),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">statusCode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">201</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">json</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">body</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">User</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to create user: </span><span class="si">${</span><span class="n">response</span><span class="p">.</span><span class="n">statusCode</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Network error: </span><span class="si">$</span><span class="n">e</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// test/services/api_service_test.dart</span>
+
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter_test/flutter_test.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:http/http.dart&#39;</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">http</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:mockito/mockito.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/models/user.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/services/api_service.dart&#39;</span><span class="p">;</span>
+
+<span class="c1">// 1. Create mock classes</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MockClient</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Mock</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="n">Client</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="c1">/// ApiService unit tests</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">ApiService</span><span class="w"> </span><span class="n">apiService</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">MockClient</span><span class="w"> </span><span class="n">mockClient</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Setup before each test</span>
+<span class="w">  </span><span class="n">setUp</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mockClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MockClient</span><span class="p">();</span>
+<span class="w">    </span><span class="n">apiService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ApiService</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">client:</span><span class="w"> </span><span class="n">mockClient</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">baseUrl:</span><span class="w"> </span><span class="s1">&#39;https://api.example.com&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 2. Test fetching a single user</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;fetchUser&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return User when response is successful&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">userId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">mockResponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;email&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;age&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">};</span>
+
+<span class="w">      </span><span class="c1">// Mock the HTTP client response</span>
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockClient</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="n">any</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">(</span>
+<span class="w">          </span><span class="n">json</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">mockResponse</span><span class="p">),</span>
+<span class="w">          </span><span class="m">200</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">});</span>
+
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">apiService</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="n">userId</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="m">25</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should throw exception when response status is not 200&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">userId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">;</span>
+
+<span class="w">      </span><span class="c1">// Mock error response</span>
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockClient</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="n">any</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">(</span>
+<span class="w">          </span><span class="s1">&#39;Not Found&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="m">404</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">});</span>
+
+<span class="w">      </span><span class="c1">// Act &amp; Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">apiService</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="n">userId</span><span class="p">),</span>
+<span class="w">        </span><span class="n">throwsA</span><span class="p">(</span><span class="n">isA</span><span class="o">&lt;</span><span class="n">Exception</span><span class="o">&gt;</span><span class="p">()),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should throw exception on network error&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">userId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">;</span>
+
+<span class="w">      </span><span class="c1">// Mock network error</span>
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockClient</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="n">any</span><span class="p">)).</span><span class="n">thenThrow</span><span class="p">(</span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Network error&#39;</span><span class="p">));</span>
+
+<span class="w">      </span><span class="c1">// Act &amp; Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">apiService</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="n">userId</span><span class="p">),</span>
+<span class="w">        </span><span class="n">throwsA</span><span class="p">(</span><span class="n">isA</span><span class="o">&lt;</span><span class="n">Exception</span><span class="o">&gt;</span><span class="p">()),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 3. Test fetching multiple users</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;fetchUsers&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return List&lt;User&gt; when response is successful&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">mockResponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="s1">&#39;email&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="s1">&#39;age&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;2&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Jane Doe&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="s1">&#39;email&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;jane@example.com&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="s1">&#39;age&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">30</span><span class="p">,</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">      </span><span class="p">];</span>
+
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockClient</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="n">any</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">(</span>
+<span class="w">          </span><span class="n">json</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">mockResponse</span><span class="p">),</span>
+<span class="w">          </span><span class="m">200</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">});</span>
+
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">apiService</span><span class="p">.</span><span class="n">fetchUsers</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">users</span><span class="p">.</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="m">0</span><span class="p">].</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="m">1</span><span class="p">].</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should throw exception on error response&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockClient</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="n">any</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">(</span>
+<span class="w">          </span><span class="s1">&#39;Error&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="m">500</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">});</span>
+
+<span class="w">      </span><span class="c1">// Act &amp; Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">apiService</span><span class="p">.</span><span class="n">fetchUsers</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">throwsA</span><span class="p">(</span><span class="n">isA</span><span class="o">&lt;</span><span class="n">Exception</span><span class="o">&gt;</span><span class="p">()),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 4. Test creating a user</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;createUser&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should create and return User when successful&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;Bob Smith&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;bob@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">35</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">mockResponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Bob Smith&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;email&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;bob@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;age&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">35</span><span class="p">,</span>
+<span class="w">      </span><span class="p">};</span>
+
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockClient</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">any</span><span class="p">,</span><span class="w"> </span><span class="nl">headers:</span><span class="w"> </span><span class="n">anyNamed</span><span class="p">(</span><span class="s1">&#39;headers&#39;</span><span class="p">),</span><span class="w"> </span><span class="nl">body:</span><span class="w"> </span><span class="n">anyNamed</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">)))</span>
+<span class="w">          </span><span class="p">.</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">(</span>
+<span class="w">          </span><span class="n">json</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">mockResponse</span><span class="p">),</span>
+<span class="w">          </span><span class="m">201</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">});</span>
+
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">createdUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">apiService</span><span class="p">.</span><span class="n">createUser</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">createdUser</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">createdUser</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Bob Smith&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">createdUser</span><span class="p">.</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;bob@example.com&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">createdUser</span><span class="p">.</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="m">35</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Mockito for mocking dependencies
+- Testing success and error cases
+- Network request mocking
+- Exception testing</p>
+<hr />
+<h1 id="testing-async-code">Testing Async Code</h1>
+<blockquote>
+<p><strong>Testing</strong> asynchronous operations.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// lib/services/auth_service.dart</span>
+
+<span class="c1">/// Authentication service</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AuthService</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">ApiService</span><span class="w"> </span><span class="n">apiService</span><span class="p">;</span>
+<span class="w">  </span><span class="n">User</span><span class="o">?</span><span class="w"> </span><span class="n">_currentUser</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">AuthService</span><span class="p">({</span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">apiService</span><span class="p">});</span>
+
+<span class="w">  </span><span class="n">User</span><span class="o">?</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">currentUser</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_currentUser</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">/// Login with email and password</span>
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">login</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Simulate authentication</span>
+<span class="w">      </span><span class="c1">// In a real app, this would call the API</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">.</span><span class="n">isEmpty</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">password</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="c1">// Fetch user from API</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">apiService</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Simulate password verification</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">password</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;password123&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_currentUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">user</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Login error: </span><span class="si">$</span><span class="n">e</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Logout user</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">logout</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_currentUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Check if user is authenticated</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isAuthenticated</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_currentUser</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// test/services/auth_service_test.dart</span>
+
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter_test/flutter_test.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:mockito/mockito.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/models/user.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/services/api_service.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/services/auth_service.dart&#39;</span><span class="p">;</span>
+
+<span class="c1">/// Async test example</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AuthService</span><span class="w"> </span><span class="n">authService</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">ApiService</span><span class="w"> </span><span class="n">mockApiService</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">setUp</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mockApiService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MockApiService</span><span class="p">();</span>
+<span class="w">    </span><span class="n">authService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AuthService</span><span class="p">(</span><span class="nl">apiService:</span><span class="w"> </span><span class="n">mockApiService</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 1. Test login with async</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return true with valid credentials&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Mock the API service to return a user</span>
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockApiService</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">user</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">authService</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;password123&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">authService</span><span class="p">.</span><span class="n">currentUser</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return false with invalid password&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockApiService</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">user</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">authService</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;wrongpassword&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">authService</span><span class="p">.</span><span class="n">currentUser</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return false with empty credentials&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">authService</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">authService</span><span class="p">.</span><span class="n">currentUser</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return false on API error&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockApiService</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)).</span><span class="n">thenThrow</span><span class="p">(</span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;API error&#39;</span><span class="p">));</span>
+
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">authService</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;password123&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">authService</span><span class="p">.</span><span class="n">currentUser</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 2. Test logout</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;logout&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should clear current user&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockApiService</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">user</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">authService</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;password123&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">authService</span><span class="p">.</span><span class="n">currentUser</span><span class="p">,</span><span class="w"> </span><span class="n">isNotNull</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="n">authService</span><span class="p">.</span><span class="n">logout</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">authService</span><span class="p">.</span><span class="n">currentUser</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 3. Test authentication status</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;isAuthenticated&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return true when user is logged in&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="n">when</span><span class="p">(</span><span class="n">mockApiService</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">user</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">authService</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;password123&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">authService</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return false when user is logged out&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">authService</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="c1">/// Mock ApiService for testing</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MockApiService</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Mock</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ApiService</span><span class="w"> </span><span class="p">{}</span>
+</code></pre></div>
+<p>What's happening here?
+- Testing async methods with Future
+- Mocking API calls
+- Testing authentication flows
+- State verification</p>
+<hr />
+<h1 id="test-coverage">Test Coverage</h1>
+<blockquote>
+<p><strong>Measuring</strong> test coverage.</p>
+</blockquote>
+<div class="language-bash highlight"><pre><span></span><code><span class="c1"># 1. Run tests with coverage</span>
+flutter<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--coverage
+
+<span class="c1"># 2. Generate coverage report</span>
+genhtml<span class="w"> </span>coverage/lcov.info<span class="w"> </span>-o<span class="w"> </span>coverage/html
+
+<span class="c1"># 3. Open coverage report</span>
+open<span class="w"> </span>coverage/html/index.html
+
+<span class="c1"># 4. Check coverage in terminal</span>
+flutter<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--coverage<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>lcov<span class="w"> </span>--summary<span class="w"> </span>coverage/lcov.info
+
+<span class="c1"># 5. View coverage in VS Code</span>
+<span class="c1"># Install Coverage Gutters extension</span>
+<span class="c1"># Click &quot;Coverage Gutters: Display Coverage&quot;</span>
+</code></pre></div>
+<p>What's happening here?
+- Coverage reports show untested code
+- Helps identify missing tests
+- Improves test completeness
+- Ensures code quality</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> in unit testing.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Testing with testWidgets (Widget tests)</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MyWidget</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">MyWidget</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">data</span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;My Widget&#39;</span><span class="p">)),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">          </span><span class="n">data</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;MyWidget displays data correctly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">testData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Hello, World!&#39;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Act</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">      </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">home:</span><span class="w"> </span><span class="n">MyWidget</span><span class="p">(</span><span class="nl">data:</span><span class="w"> </span><span class="n">testData</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Assert</span>
+<span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="n">testData</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Some other text&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Testing with golden files</span>
+<span class="c1">// test/widgets/my_widget_test.dart</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;MyWidget matches golden image&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">testData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Hello, World!&#39;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Act</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">      </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">home:</span><span class="w"> </span><span class="n">MyWidget</span><span class="p">(</span><span class="nl">data:</span><span class="w"> </span><span class="n">testData</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Assert</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">      </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">MyWidget</span><span class="p">),</span>
+<span class="w">      </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/my_widget.png&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="c1">/// 3. Testing with test groups</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;User Model Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setUp</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Setup before each test</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should create user&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Test creation</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should validate user&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Test validation</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;JSON Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should serialize to JSON&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Test JSON serialization</span>
+<span class="w">      </span><span class="p">});</span>
+
+<span class="w">      </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should deserialize from JSON&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Test JSON deserialization</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Widget tests with testWidgets
+- Golden file testing
+- Grouped test organization</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="test-one-thing-per-test">Test One Thing Per Test</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - One assertion per test</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return user when fetch succeeds&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Test one thing</span>
+<span class="p">});</span>
+
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;should throw error when fetch fails&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Test another thing</span>
+<span class="p">});</span>
+
+<span class="c1">// Bad - Multiple assertions in one test</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;should handle fetch&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Tests multiple things</span>
+<span class="p">});</span>
+</code></pre></div>
+<h2 id="use-meaningful-names">Use Meaningful Names</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Descriptive test names</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;should calculate total correctly when tax is applied&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">});</span>
+
+<span class="c1">// Bad - Vague test names</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;test1&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">});</span>
+</code></pre></div>
+<h2 id="keep-tests-independent">Keep Tests Independent</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Independent tests</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;test A&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Independent setup</span>
+<span class="p">});</span>
+
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;test B&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Independent setup</span>
+<span class="p">});</span>
+
+<span class="c1">// Bad - Tests depend on each other</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">sharedState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;test 1&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">sharedState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;test 2&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Depends on test 1</span>
+<span class="p">});</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-testing-edge-cases">Not Testing Edge Cases</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Only tests happy path</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return user&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Tests successful case only</span>
+<span class="p">});</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Tests all cases</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;should return user&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Happy path</span>
+<span class="p">});</span>
+
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;should throw error when not found&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Error case</span>
+<span class="p">});</span>
+
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;should handle empty input&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Edge case</span>
+<span class="p">});</span>
+</code></pre></div></p>
+<h2 id="not-using-mocks">Not Using Mocks</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Uses real API in tests</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;should fetch user&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Makes real network request</span>
+<span class="p">});</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Uses mock API in tests</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;should fetch user&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Uses mock API</span>
+<span class="p">});</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Unit Tests verify individual code units work correctly. Use test package for unit tests, Mockito for mocking dependencies, and testWidgets for widget tests. Write one assertion per test, test edge cases, and keep tests independent. Unit tests are essential for building reliable, maintainable Flutter applications.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="widget-tests.md">Widget Tests</a></li>
+<li><a href="integration-tests.md">Integration Tests</a></li>
+<li><a href="golden-tests.md">Golden Tests</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Unit tests run without UI</li>
+<li>Mockito creates test doubles</li>
+<li>testWidgets tests widgets</li>
+<li>Coverage reports show untested code</li>
+<li>Golden tests compare visual appearance</li>
+<li>Tests should be independent</li>
+<li>One assertion per test is best practice</li>
+<li>Tests improve code quality</li>
+</ul>
 
 
 

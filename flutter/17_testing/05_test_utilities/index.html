@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#test-utilities" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -9065,6 +9070,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,648 @@
 
 
 
-  <h1>Test Utilities</h1>
+<h1 id="test-utilities">Test Utilities</h1>
+<p>Understand how to use test utilities to write more efficient and maintainable tests in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Test Utilities are helper functions and classes that simplify writing tests by providing common functionality like creating test widgets, mocking data, and simulating user interactions. They reduce boilerplate code, make tests more readable, and improve test maintainability.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Test Utilities exist to:</p>
+<ul>
+<li>Reduce test boilerplate</li>
+<li>Make tests more readable</li>
+<li>Provide common test functionality</li>
+<li>Simplify test setup and teardown</li>
+<li>Support test data creation</li>
+<li>Enable test customization</li>
+<li>Improve test maintenance</li>
+</ul>
+<hr />
+<h1 id="basic-test-utilities">Basic Test Utilities</h1>
+<blockquote>
+<p><strong>Creating</strong> test utilities.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 1. test_utils/widget_test_utils.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter_test/flutter_test.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// 1. Test widget wrapper</span>
+<span class="c1">/// Wraps a widget with MaterialApp for testing</span>
+<span class="n">Widget</span><span class="w"> </span><span class="n">wrapWithMaterialApp</span><span class="p">(</span><span class="n">Widget</span><span class="w"> </span><span class="n">widget</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">ThemeData</span><span class="o">?</span><span class="w"> </span><span class="n">theme</span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">    </span><span class="nl">theme:</span><span class="w"> </span><span class="n">theme</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="n">ThemeData</span><span class="p">.</span><span class="n">light</span><span class="p">(),</span>
+<span class="w">    </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">widget</span><span class="p">,</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
 
+<span class="c1">/// 2. Test widget wrapper with custom theme</span>
+<span class="n">Widget</span><span class="w"> </span><span class="n">wrapWithTheme</span><span class="p">(</span><span class="n">Widget</span><span class="w"> </span><span class="n">widget</span><span class="p">,</span><span class="w"> </span><span class="n">ThemeData</span><span class="w"> </span><span class="n">theme</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">    </span><span class="nl">theme:</span><span class="w"> </span><span class="n">theme</span><span class="p">,</span>
+<span class="w">    </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">widget</span><span class="p">,</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">/// 3. Test widget wrapper with state management</span>
+<span class="n">Widget</span><span class="w"> </span><span class="n">wrapWithProvider</span><span class="p">(</span><span class="n">Widget</span><span class="w"> </span><span class="n">widget</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// In a real app, this would include your providers</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">    </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">widget</span><span class="p">,</span>
+<span class="w">    </span><span class="p">),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">/// 4. Common test data</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">TestData</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;email&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;age&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;email&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;age&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">25</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;2&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Jane Smith&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;email&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;jane@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;age&#39;</span><span class="o">:</span><span class="w"> </span><span class="m">30</span><span class="p">},</span>
+<span class="w">  </span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 5. Using test utilities</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter_test/flutter_test.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/test_utils/widget_test_utils.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/widgets/my_widget.dart&#39;</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;MyWidget Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should display user data&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Use utility to wrap widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="n">wrapWithMaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="n">MyWidget</span><span class="p">(</span><span class="nl">user:</span><span class="w"> </span><span class="n">TestData</span><span class="p">.</span><span class="n">user</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify content</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;John Doe&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;john@example.com&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Test utilities reduce boilerplate
+- Consistent test setup
+- Reusable test data
+- Cleaner test code</p>
+<hr />
+<h1 id="finder-utilities">Finder Utilities</h1>
+<blockquote>
+<p><strong>Custom finders</strong> for testing.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// test_utils/finder_utils.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter_test/flutter_test.dart&#39;</span><span class="p">;</span>
+
+<span class="c1">/// 1. Custom finder for widgets with specific text</span>
+<span class="n">Finder</span><span class="w"> </span><span class="n">findWidgetWithText</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">ancestor</span><span class="p">(</span>
+<span class="w">    </span><span class="nl">of:</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="n">text</span><span class="p">),</span>
+<span class="w">    </span><span class="nl">matching:</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">Widget</span><span class="p">),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Finder for widgets with specific key</span>
+<span class="n">Finder</span><span class="w"> </span><span class="n">findWidgetByKey</span><span class="p">(</span><span class="n">Key</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">/// 3. Finder for widgets with specific type</span>
+<span class="n">Finder</span><span class="w"> </span><span class="n">findWidgetByType</span><span class="p">(</span><span class="n">Type</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">type</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">/// 4. Finder for widgets with specific property</span>
+<span class="n">Finder</span><span class="w"> </span><span class="n">findWidgetWithProperty</span><span class="p">(</span><span class="kt">dynamic</span><span class="w"> </span><span class="n">property</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byWidgetPredicate</span><span class="p">(</span>
+<span class="w">    </span><span class="p">(</span><span class="n">widget</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">toString</span><span class="p">().</span><span class="n">contains</span><span class="p">(</span><span class="n">property</span><span class="p">.</span><span class="n">toString</span><span class="p">()),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">/// 5. Finder for widgets with specific padding</span>
+<span class="n">Finder</span><span class="w"> </span><span class="n">findWidgetWithPadding</span><span class="p">(</span><span class="n">EdgeInsets</span><span class="w"> </span><span class="n">padding</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byWidgetPredicate</span><span class="p">(</span>
+<span class="w">    </span><span class="p">(</span><span class="n">widget</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">widget</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">Padding</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">padding</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">padding</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">/// 6. Using custom finders</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Custom Finders Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should find widget with text&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Use custom finder</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">widget</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findWidgetWithText</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should find widget with padding&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Padded Text&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Use custom finder</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">widget</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findWidgetWithPadding</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">));</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Custom finders for specific widgets
+- Widget property matching
+- Ancestor finder for complex trees
+- Predicate-based finding</p>
+<hr />
+<h1 id="test-data-utilities">Test Data Utilities</h1>
+<blockquote>
+<p><strong>Creating</strong> test data.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// test_utils/data_utils.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/models/user.dart&#39;</span><span class="p">;</span>
+
+<span class="c1">/// 1. Test data factory</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">TestDataFactory</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">/// Create a test user</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">createUser</span><span class="p">({</span>
+<span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">25</span><span class="p">,</span>
+<span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">id:</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">name:</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">email:</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">age:</span><span class="w"> </span><span class="n">age</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Create a list of test users</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createUsers</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;User </span><span class="si">${</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;user</span><span class="si">${</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">@example.com&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">index</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Create a test todo</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Todo</span><span class="w"> </span><span class="n">createTodo</span><span class="p">({</span>
+<span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Test Todo&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">isCompleted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Todo</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">id:</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="n">title</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">isCompleted:</span><span class="w"> </span><span class="n">isCompleted</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Create a list of test todos</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Todo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createTodos</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">Todo</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="s1">&#39;Todo </span><span class="si">${</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">isCompleted:</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Test data with random values</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">RandomTestData</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Random</span><span class="w"> </span><span class="n">_random</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Random</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">randomString</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">chars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kt">String</span><span class="p">.</span><span class="n">fromCharCodes</span><span class="p">(</span>
+<span class="w">      </span><span class="n">Iterable</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span>
+<span class="w">        </span><span class="n">length</span><span class="p">,</span>
+<span class="w">        </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">chars</span><span class="p">.</span><span class="n">codeUnitAt</span><span class="p">(</span><span class="n">_random</span><span class="p">.</span><span class="n">nextInt</span><span class="p">(</span><span class="n">chars</span><span class="p">.</span><span class="n">length</span><span class="p">)),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">randomInt</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">max</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">min</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_random</span><span class="p">.</span><span class="n">nextInt</span><span class="p">(</span><span class="n">max</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">min</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">randomBool</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_random</span><span class="p">.</span><span class="n">nextBool</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">randomEmail</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">randomString</span><span class="p">(</span><span class="m">8</span><span class="p">)</span><span class="si">}</span><span class="s1">@</span><span class="si">${</span><span class="n">randomString</span><span class="p">(</span><span class="m">5</span><span class="p">)</span><span class="si">}</span><span class="s1">.com&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">randomUser</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">randomInt</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1000</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">name:</span><span class="w"> </span><span class="n">randomString</span><span class="p">(</span><span class="m">10</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">email:</span><span class="w"> </span><span class="n">randomEmail</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">age:</span><span class="w"> </span><span class="n">randomInt</span><span class="p">(</span><span class="m">18</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 3. Using test data utilities</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Test Data Utilities Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should create test user&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TestDataFactory</span><span class="p">.</span><span class="n">createUser</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="m">25</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should create multiple test users&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TestDataFactory</span><span class="p">.</span><span class="n">createUsers</span><span class="p">(</span><span class="m">3</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">users</span><span class="p">.</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="m">0</span><span class="p">].</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="m">1</span><span class="p">].</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="m">2</span><span class="p">].</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should create random test data&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RandomTestData</span><span class="p">.</span><span class="n">randomUser</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">email</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">),</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">age</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">18</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">user</span><span class="p">.</span><span class="n">age</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">80</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Test data factories
+- Consistent test data
+- Random data generation
+- Reusable test objects</p>
+<hr />
+<h1 id="mock-utilities">Mock Utilities</h1>
+<blockquote>
+<p><strong>Creating</strong> mock utilities.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// test_utils/mock_utils.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:mockito/mockito.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/services/api_service.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/services/auth_service.dart&#39;</span><span class="p">;</span>
+
+<span class="c1">/// 1. Mock service factory</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MockServiceFactory</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">/// Create a mock ApiService</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">ApiService</span><span class="w"> </span><span class="n">createMockApiService</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">mock</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MockApiService</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mock</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Create a mock AuthService</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">AuthService</span><span class="w"> </span><span class="n">createMockAuthService</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">mock</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MockAuthService</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mock</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Setup mock API responses</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setupMockApiResponses</span><span class="p">(</span><span class="n">MockApiService</span><span class="w"> </span><span class="n">mock</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Setup default responses</span>
+<span class="w">    </span><span class="n">when</span><span class="p">(</span><span class="n">mock</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="n">any</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">TestDataFactory</span><span class="p">.</span><span class="n">createUser</span><span class="p">();</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">when</span><span class="p">(</span><span class="n">mock</span><span class="p">.</span><span class="n">fetchUsers</span><span class="p">()).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">TestDataFactory</span><span class="p">.</span><span class="n">createUsers</span><span class="p">(</span><span class="m">5</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">when</span><span class="p">(</span><span class="n">mock</span><span class="p">.</span><span class="n">createUser</span><span class="p">(</span><span class="n">any</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">TestDataFactory</span><span class="p">.</span><span class="n">createUser</span><span class="p">(</span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Setup mock auth responses</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setupMockAuthResponses</span><span class="p">(</span><span class="n">MockAuthService</span><span class="w"> </span><span class="n">mock</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">when</span><span class="p">(</span><span class="n">mock</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="n">any</span><span class="p">,</span><span class="w"> </span><span class="n">any</span><span class="p">)).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">when</span><span class="p">(</span><span class="n">mock</span><span class="p">.</span><span class="n">logout</span><span class="p">()).</span><span class="n">thenAnswer</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Create mock with error responses</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setupMockErrorResponses</span><span class="p">(</span><span class="n">MockApiService</span><span class="w"> </span><span class="n">mock</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">when</span><span class="p">(</span><span class="n">mock</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="n">any</span><span class="p">)).</span><span class="n">thenThrow</span><span class="p">(</span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Network error&#39;</span><span class="p">));</span>
+<span class="w">    </span><span class="n">when</span><span class="p">(</span><span class="n">mock</span><span class="p">.</span><span class="n">fetchUsers</span><span class="p">()).</span><span class="n">thenThrow</span><span class="p">(</span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Network error&#39;</span><span class="p">));</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Mock classes</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MockApiService</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Mock</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ApiService</span><span class="w"> </span><span class="p">{}</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MockAuthService</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Mock</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">AuthService</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="c1">/// 3. Using mock utilities</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Mock Utilities Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">late</span><span class="w"> </span><span class="n">MockApiService</span><span class="w"> </span><span class="n">mockApi</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">late</span><span class="w"> </span><span class="n">AuthService</span><span class="w"> </span><span class="n">authService</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">setUp</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Setup mock</span>
+<span class="w">      </span><span class="n">mockApi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MockServiceFactory</span><span class="p">.</span><span class="n">createMockApiService</span><span class="p">();</span>
+<span class="w">      </span><span class="n">MockServiceFactory</span><span class="p">.</span><span class="n">setupMockApiResponses</span><span class="p">(</span><span class="n">mockApi</span><span class="p">);</span>
+<span class="w">      </span><span class="n">authService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AuthService</span><span class="p">(</span><span class="nl">apiService:</span><span class="w"> </span><span class="n">mockApi</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should use mock responses&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">mockApi</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should handle mock errors&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Setup error response</span>
+<span class="w">      </span><span class="n">MockServiceFactory</span><span class="p">.</span><span class="n">setupMockErrorResponses</span><span class="p">(</span><span class="n">mockApi</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act &amp; Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">mockApi</span><span class="p">.</span><span class="n">fetchUser</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="n">throwsA</span><span class="p">(</span><span class="n">isA</span><span class="o">&lt;</span><span class="n">Exception</span><span class="o">&gt;</span><span class="p">()),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Mock service factory
+- Default mock responses
+- Error mock setup
+- Reusable mock utilities</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> with test utilities.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Complete test utility package</span>
+<span class="c1">/// test_utils/test_utils.dart</span>
+<span class="k">library</span><span class="w"> </span><span class="n">test_utils</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="s1">&#39;finder_utils.dart&#39;</span><span class="p">;</span>
+<span class="k">export</span><span class="w"> </span><span class="s1">&#39;data_utils.dart&#39;</span><span class="p">;</span>
+<span class="k">export</span><span class="w"> </span><span class="s1">&#39;mock_utils.dart&#39;</span><span class="p">;</span>
+<span class="k">export</span><span class="w"> </span><span class="s1">&#39;widget_test_utils.dart&#39;</span><span class="p">;</span>
+
+<span class="c1">/// 2. Test configuration</span>
+<span class="c1">/// test/test_config.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter_test/flutter_test.dart&#39;</span><span class="p">;</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">TestConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">/// Configure test environment</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">configure</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Set test environment variables</span>
+<span class="w">    </span><span class="c1">// Configure test services</span>
+<span class="w">    </span><span class="c1">// Initialize test data</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Skip tests on specific platforms</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">skipOnPlatform</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">platform</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Implementation</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">/// Run tests in specific mode</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isDebugMode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 3. Using complete test utilities</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Configure tests</span>
+<span class="w">  </span><span class="n">TestConfig</span><span class="p">.</span><span class="n">configure</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Complete Test Utility Usage&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should test widget with utilities&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Use data utility</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TestDataFactory</span><span class="p">.</span><span class="n">createUser</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Arrange: Use widget utility</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="n">wrapWithMaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="n">MyWidget</span><span class="p">(</span><span class="nl">user:</span><span class="w"> </span><span class="n">user</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Use finder utility</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">nameWidget</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findWidgetWithText</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">emailWidget</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findWidgetWithText</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">email</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">nameWidget</span><span class="p">,</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">emailWidget</span><span class="p">,</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should test with mocks&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Setup mock</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">mockApi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MockServiceFactory</span><span class="p">.</span><span class="n">createMockApiService</span><span class="p">();</span>
+<span class="w">      </span><span class="n">MockServiceFactory</span><span class="p">.</span><span class="n">setupMockApiResponses</span><span class="p">(</span><span class="n">mockApi</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">authService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AuthService</span><span class="p">(</span><span class="nl">apiService:</span><span class="w"> </span><span class="n">mockApi</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Use mock</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">authService</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;test@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;password&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should test with random data&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Create random data</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">RandomTestData</span><span class="p">.</span><span class="n">randomUser</span><span class="p">());</span>
+
+<span class="w">      </span><span class="c1">// Act: Test with random data</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">users</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">          </span><span class="n">wrapWithMaterialApp</span><span class="p">(</span>
+<span class="w">            </span><span class="n">UserCard</span><span class="p">(</span><span class="nl">user:</span><span class="w"> </span><span class="n">user</span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">);</span>
+
+<span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">        </span><span class="c1">// Assert: Verify each user is displayed correctly</span>
+<span class="w">        </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">        </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">email</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Complete test utility package
+- Test configuration
+- Combined utility usage
+- Random data testing</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="create-reusable-utilities">Create Reusable Utilities</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Reusable utilities</span>
+<span class="n">Widget</span><span class="w"> </span><span class="n">wrapWithMaterialApp</span><span class="p">(</span><span class="n">Widget</span><span class="w"> </span><span class="n">widget</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="n">Finder</span><span class="w"> </span><span class="n">findWidgetWithText</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+
+<span class="c1">// Bad - Duplicated code</span>
+<span class="c1">// Repeated MaterialApp wrapper in every test</span>
+</code></pre></div>
+<h2 id="use-consistent-naming">Use Consistent Naming</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Consistent naming</span>
+<span class="n">wrapWithMaterialApp</span><span class="p">()</span>
+<span class="n">wrapWithTheme</span><span class="p">()</span>
+<span class="n">wrapWithProvider</span><span class="p">()</span>
+
+<span class="c1">// Bad - Inconsistent naming</span>
+<span class="n">wrapWidget</span><span class="p">()</span>
+<span class="n">wrapApp</span><span class="p">()</span>
+<span class="n">wrap</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="document-utilities">Document Utilities</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Documented utility</span>
+<span class="c1">/// Wraps a widget with MaterialApp for testing.</span>
+<span class="c1">/// </span>
+<span class="c1">/// Example:</span>
+<span class="c1">/// ```</span>
+<span class="c1">/// await tester.pumpWidget(</span>
+<span class="c1">///   wrapWithMaterialApp(MyWidget()),</span>
+<span class="c1">/// );</span>
+<span class="c1">/// ```</span>
+<span class="n">Widget</span><span class="w"> </span><span class="n">wrapWithMaterialApp</span><span class="p">(</span><span class="n">Widget</span><span class="w"> </span><span class="n">widget</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="overcomplicating-utilities">Overcomplicating Utilities</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Too complex</span>
+<span class="n">Widget</span><span class="w"> </span><span class="n">wrapWithEverything</span><span class="p">(</span><span class="n">Widget</span><span class="w"> </span><span class="n">widget</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Too many configurations</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Simple and focused</span>
+<span class="n">Widget</span><span class="w"> </span><span class="n">wrapWithMaterialApp</span><span class="p">(</span><span class="n">Widget</span><span class="w"> </span><span class="n">widget</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// One responsibility</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="not-reusing-utilities">Not Reusing Utilities</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Duplicated code</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;test 1&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">    </span><span class="n">MaterialApp</span><span class="p">(</span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span><span class="nl">body:</span><span class="w"> </span><span class="n">MyWidget</span><span class="p">())),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;test 2&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">    </span><span class="n">MaterialApp</span><span class="p">(</span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span><span class="nl">body:</span><span class="w"> </span><span class="n">MyWidget</span><span class="p">())),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Reusable utility</span>
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;test 1&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">    </span><span class="n">wrapWithMaterialApp</span><span class="p">(</span><span class="n">MyWidget</span><span class="p">()),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="n">test</span><span class="p">(</span><span class="s1">&#39;test 2&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">    </span><span class="n">wrapWithMaterialApp</span><span class="p">(</span><span class="n">MyWidget</span><span class="p">()),</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Test Utilities simplify testing by providing reusable functions, data, and mocks. Create utilities for widget wrapping, finders, test data, and mocks. Use consistent naming, document utilities, and avoid overcomplicating them. Good test utilities make tests more maintainable and efficient.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="performance-testing.md">Performance Testing</a></li>
+<li><a href="cicd-integration.md">CI/CD Integration</a></li>
+<li><a href="testing-best-practices.md">Testing Best Practices</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Test utilities reduce boilerplate</li>
+<li>Custom finders simplify widget location</li>
+<li>Test data factories create consistent data</li>
+<li>Mock utilities simplify service testing</li>
+<li>Reusable utilities improve test maintenance</li>
+<li>Consistent naming helps organization</li>
+<li>Documented utilities are easier to use</li>
+<li>Test utilities are essential for large projects</li>
+</ul>
 
 
 
