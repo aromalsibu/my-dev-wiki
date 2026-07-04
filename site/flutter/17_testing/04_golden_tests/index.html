@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#golden-tests" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -9037,6 +9042,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,671 @@
 
 
 
-  <h1>Golden Tests</h1>
+<h1 id="golden-tests">Golden Tests</h1>
+<p>Understand how to use golden tests to detect visual regressions in Flutter applications.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Golden Tests are a type of widget test that compare the visual appearance of a widget against a previously captured "golden" image. If the widget's appearance changes, the test fails, alerting you to visual regressions. Golden tests are essential for maintaining UI consistency across your application.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Golden Tests exist to:</p>
+<ul>
+<li>Detect visual regressions</li>
+<li>Ensure UI consistency</li>
+<li>Verify widget appearance</li>
+<li>Catch unintended UI changes</li>
+<li>Support design system compliance</li>
+<li>Test responsive layouts</li>
+<li>Validate styling and theming</li>
+</ul>
+<hr />
+<h1 id="setting-up-golden-tests">Setting Up Golden Tests</h1>
+<blockquote>
+<p><strong>Configuring</strong> golden tests in your project.</p>
+</blockquote>
+<div class="language-yaml highlight"><pre><span></span><code><span class="c1"># 1. Add dependencies in pubspec.yaml</span>
+<span class="nt">dev_dependencies</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">flutter_test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">sdk</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flutter</span>
+<span class="w">  </span><span class="nt">flutter_goldens</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">sdk</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flutter</span>
+</code></pre></div>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 2. Create golden test structure</span>
+<span class="c1">// test/</span>
+<span class="c1">//   golden/</span>
+<span class="c1">//     widgets/</span>
+<span class="c1">//       button_golden_test.dart</span>
+<span class="c1">//       card_golden_test.dart</span>
+<span class="c1">//     screens/</span>
+<span class="c1">//       login_screen_golden_test.dart</span>
+<span class="c1">//   goldens/</span>
+<span class="c1">//     widgets/</span>
+<span class="c1">//       button.png</span>
+<span class="c1">//       button_dark.png</span>
+<span class="c1">//     screens/</span>
+<span class="c1">//       login_screen.png</span>
 
+<span class="c1">/// 3. Basic golden test setup</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter_test/flutter_test.dart&#39;</span><span class="p">;</span>
 
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Enable golden tests</span>
+<span class="w">  </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;Golden test example&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange: Build the widget</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">MyButton</span><span class="p">(),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Act: Wait for rendering</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Assert: Compare with golden image</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">      </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">MyButton</span><span class="p">),</span>
+<span class="w">      </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/my_button.png&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- flutter_goldens for golden testing
+- matchesGoldenFile compares images
+- Golden images stored in goldens folder
+- Visual regression detection</p>
+<hr />
+<h1 id="basic-golden-tests">Basic Golden Tests</h1>
+<blockquote>
+<p><strong>Writing</strong> your first golden tests.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Widgets for golden testing</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CustomButton</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CustomButton</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">label</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">isPrimary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">label</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isPrimary</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">symmetric</span><span class="p">(</span><span class="nl">horizontal:</span><span class="w"> </span><span class="m">16</span><span class="p">,</span><span class="w"> </span><span class="nl">vertical:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">color:</span><span class="w"> </span><span class="n">isPrimary</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">        </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">boxShadow:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">BoxShadow</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span><span class="p">.</span><span class="n">withOpacity</span><span class="p">(</span><span class="m">0.1</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">blurRadius:</span><span class="w"> </span><span class="m">4</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">offset:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">        </span><span class="n">label</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">color:</span><span class="w"> </span><span class="n">isPrimary</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Golden tests</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Group golden tests</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Golden Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Test primary button</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match primary button golden&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Build the widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">CustomButton</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Primary Button&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">isPrimary:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Compare with golden</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">CustomButton</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/primary_button.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test secondary button</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match secondary button golden&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Build the widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">CustomButton</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Secondary Button&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">isPrimary:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Compare with golden</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">CustomButton</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/secondary_button.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 3. Test different sizes</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match different sizes&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Test small button</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">width:</span><span class="w"> </span><span class="m">80</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">CustomButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Small&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">isPrimary:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">CustomButton</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/small_button.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 4. Test with different themes</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match dark theme golden&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Build with dark theme</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">theme:</span><span class="w"> </span><span class="n">ThemeData</span><span class="p">.</span><span class="n">dark</span><span class="p">(),</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">CustomButton</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">label:</span><span class="w"> </span><span class="s1">&#39;Dark Button&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">isPrimary:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Compare with golden</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">CustomButton</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/dark_button.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- matchesGoldenFile compares images
+- Multiple button states tested
+- Different themes tested
+- Visual regression detection</p>
+<hr />
+<h1 id="golden-tests-with-different-states">Golden Tests with Different States</h1>
+<blockquote>
+<p><strong>Testing</strong> widget states.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Interactive widget for golden testing</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">InteractiveWidget</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">InteractiveWidget</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">InteractiveWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_InteractiveWidgetState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_InteractiveWidgetState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">InteractiveWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isActive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isHovered</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">GestureDetector</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_isActive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">_isActive</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">width:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">height:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">color:</span><span class="w"> </span><span class="n">_isActive</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">boxShadow:</span><span class="w"> </span><span class="n">_isHovered</span>
+<span class="w">              </span><span class="o">?</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="n">BoxShadow</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span><span class="p">.</span><span class="n">withOpacity</span><span class="p">(</span><span class="m">0.2</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">blurRadius:</span><span class="w"> </span><span class="m">8</span><span class="p">,</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">]</span>
+<span class="w">              </span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">            </span><span class="n">_isActive</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;Active&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Inactive&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Golden tests for different states</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Widget States Golden Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Test inactive state</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match inactive state&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Build the widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">InteractiveWidget</span><span class="p">(),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Compare with golden</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">InteractiveWidget</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/inactive_state.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test active state</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match active state&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Build the widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">InteractiveWidget</span><span class="p">(),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Tap to activate</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">InteractiveWidget</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Compare with golden</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">InteractiveWidget</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/active_state.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 3. Test hover state (desktop only)</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match hover state&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// This test is only relevant for desktop/web</span>
+<span class="w">      </span><span class="c1">// Skip on mobile platforms</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Platform</span><span class="p">.</span><span class="n">isAndroid</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">Platform</span><span class="p">.</span><span class="n">isIOS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="c1">// Arrange: Build the widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">InteractiveWidget</span><span class="p">(),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Simulate hover</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">widget</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">InteractiveWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Compare with golden</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">widget</span><span class="p">,</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/hover_state.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Testing different widget states
+- Interactive state changes
+- Hover state testing
+- Platform-specific tests</p>
+<hr />
+<h1 id="golden-tests-with-different-screen-sizes">Golden Tests with Different Screen Sizes</h1>
+<blockquote>
+<p><strong>Testing</strong> responsive widgets.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Responsive widget</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ResponsiveCard</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ResponsiveCard</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">screenWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MediaQuery</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">isDesktop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">screenWidth</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">800</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">isTablet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">screenWidth</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">600</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">screenWidth</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">800</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">crossAxisAlignment:</span><span class="w"> </span><span class="n">CrossAxisAlignment</span><span class="p">.</span><span class="n">start</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">              </span><span class="c1">// Header</span>
+<span class="w">              </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">width:</span><span class="w"> </span><span class="kt">double</span><span class="p">.</span><span class="n">infinity</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">height:</span><span class="w"> </span><span class="m">150</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">100</span><span class="p">],</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="nl">size:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                </span><span class="s1">&#39;Card Title&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                </span><span class="s1">&#39;Card description goes here. This is a sample description.&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">              </span><span class="c1">// Layout changes based on screen size</span>
+<span class="w">              </span><span class="n">isDesktop</span>
+<span class="w">                  </span><span class="o">?</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">spaceEvenly</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">children:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Desktop Layout&#39;</span><span class="p">),</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">                        </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;More space available&#39;</span><span class="p">),</span>
+<span class="w">                      </span><span class="p">],</span>
+<span class="w">                    </span><span class="p">)</span>
+<span class="w">                  </span><span class="o">:</span><span class="w"> </span><span class="n">isTablet</span>
+<span class="w">                      </span><span class="o">?</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">children:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                            </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Tablet Layout&#39;</span><span class="p">),</span>
+<span class="w">                            </span><span class="p">),</span>
+<span class="w">                            </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">arrow_forward</span><span class="p">),</span>
+<span class="w">                          </span><span class="p">],</span>
+<span class="w">                        </span><span class="p">)</span>
+<span class="w">                      </span><span class="o">:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                            </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Mobile Layout&#39;</span><span class="p">),</span>
+<span class="w">                            </span><span class="p">),</span>
+<span class="w">                            </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">arrow_forward</span><span class="p">),</span>
+<span class="w">                          </span><span class="p">],</span>
+<span class="w">                        </span><span class="p">),</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Golden tests for responsive widget</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Responsive Golden Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Test mobile size</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match mobile layout&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Set mobile screen size</span>
+<span class="w">      </span><span class="n">tester</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">physicalSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="m">400</span><span class="p">,</span><span class="w"> </span><span class="m">800</span><span class="p">);</span>
+<span class="w">      </span><span class="n">tester</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">devicePixelRatio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1.0</span><span class="p">;</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">ResponsiveCard</span><span class="p">(),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Compare with golden</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">ResponsiveCard</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/mobile_card.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test tablet size</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match tablet layout&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Set tablet screen size</span>
+<span class="w">      </span><span class="n">tester</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">physicalSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="m">700</span><span class="p">,</span><span class="w"> </span><span class="m">1000</span><span class="p">);</span>
+<span class="w">      </span><span class="n">tester</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">devicePixelRatio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1.0</span><span class="p">;</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">ResponsiveCard</span><span class="p">(),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Compare with golden</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">ResponsiveCard</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/tablet_card.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 3. Test desktop size</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match desktop layout&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Set desktop screen size</span>
+<span class="w">      </span><span class="n">tester</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">physicalSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="m">1200</span><span class="p">,</span><span class="w"> </span><span class="m">800</span><span class="p">);</span>
+<span class="w">      </span><span class="n">tester</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">devicePixelRatio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1.0</span><span class="p">;</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span><span class="n">ResponsiveCard</span><span class="p">(),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Compare with golden</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">ResponsiveCard</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/desktop_card.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Testing different screen sizes
+- Responsive layout validation
+- Mobile, tablet, desktop layouts
+- Device pixel ratio handling</p>
+<hr />
+<h1 id="updating-golden-images">Updating Golden Images</h1>
+<blockquote>
+<p><strong>Managing</strong> golden image updates.</p>
+</blockquote>
+<div class="language-bash highlight"><pre><span></span><code><span class="c1"># 1. Run golden tests</span>
+flutter<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--update-goldens
+
+<span class="c1"># 2. Update specific golden files</span>
+flutter<span class="w"> </span><span class="nb">test</span><span class="w"> </span>test/golden/<span class="w"> </span>--update-goldens
+
+<span class="c1"># 3. Update all golden files</span>
+flutter<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--update-goldens<span class="w"> </span>--no-test
+
+<span class="c1"># 4. Review golden changes</span>
+<span class="c1"># Golden files are stored in test/goldens/</span>
+<span class="c1"># Review changes before committing</span>
+
+<span class="c1"># 5. CI/CD integration</span>
+<span class="c1"># Run golden tests in CI</span>
+<span class="c1"># Fail if golden files don&#39;t match</span>
+</code></pre></div>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 3. Golden test with skip option</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Golden Tests with Options&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Test with skip</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match golden (skip if needed)&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Skip if golden file doesn&#39;t exist yet</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">hasGolden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;goldens/my_widget.png&#39;</span><span class="p">).</span><span class="n">exists</span><span class="p">();</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">hasGolden</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Create initial golden</span>
+<span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">_createGolden</span><span class="p">(</span><span class="n">tester</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="c1">// Run normal golden test</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyWidget</span><span class="p">());</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">MyWidget</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/my_widget.png&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test with custom threshold</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match golden with custom threshold&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyWidget</span><span class="p">());</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">expectLater</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">MyWidget</span><span class="p">),</span>
+<span class="w">        </span><span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/my_widget.png&#39;</span><span class="p">,</span><span class="w"> </span><span class="nl">threshold:</span><span class="w"> </span><span class="m">0.01</span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Updating golden images
+- Custom similarity threshold
+- CI/CD integration
+- Conditional golden testing</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="keep-golden-files-organized">Keep Golden Files Organized</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Organized golden files</span>
+<span class="n">goldens</span><span class="o">/</span>
+<span class="w">  </span><span class="n">widgets</span><span class="o">/</span>
+<span class="w">    </span><span class="n">button</span><span class="p">.</span><span class="n">png</span>
+<span class="w">    </span><span class="n">card</span><span class="p">.</span><span class="n">png</span>
+<span class="w">  </span><span class="n">screens</span><span class="o">/</span>
+<span class="w">    </span><span class="n">login</span><span class="p">.</span><span class="n">png</span>
+<span class="w">    </span><span class="n">home</span><span class="p">.</span><span class="n">png</span>
+<span class="w">  </span><span class="n">themes</span><span class="o">/</span>
+<span class="w">    </span><span class="n">light</span><span class="p">.</span><span class="n">png</span>
+<span class="w">    </span><span class="n">dark</span><span class="p">.</span><span class="n">png</span>
+</code></pre></div>
+<h2 id="use-consistent-naming">Use Consistent Naming</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Consistent naming</span>
+<span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/widgets/button_primary.png&#39;</span><span class="p">)</span>
+<span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/widgets/button_secondary.png&#39;</span><span class="p">)</span>
+
+<span class="c1">// Bad - Inconsistent naming</span>
+<span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/button1.png&#39;</span><span class="p">)</span>
+<span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/button2.png&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="test-different-states">Test Different States</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Test all states</span>
+<span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match enabled state&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">});</span>
+<span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match disabled state&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">});</span>
+<span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should match hovered state&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">});</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-updating-golden-files">Not Updating Golden Files</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Golden files not updated after UI changes</span>
+<span class="c1">// Tests will fail unnecessarily</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Update golden files after intentional UI changes</span>
+<span class="n">flutter</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="o">--</span><span class="n">update</span><span class="o">-</span><span class="n">goldens</span>
+</code></pre></div></p>
+<h2 id="platform-specific-differences">Platform-Specific Differences</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Golden files differ between platforms</span>
+<span class="c1">// Tests fail on different platforms</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Create platform-specific golden files</span>
+<span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/widgets/button_android.png&#39;</span><span class="p">)</span>
+<span class="n">matchesGoldenFile</span><span class="p">(</span><span class="s1">&#39;goldens/widgets/button_ios.png&#39;</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Golden Tests detect visual regressions by comparing widgets against golden images. Use matchesGoldenFile for comparison, organize golden files properly, and update them when UI changes intentionally. Golden tests are essential for maintaining UI consistency.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="test-utilities.md">Test Utilities</a></li>
+<li><a href="performance-testing.md">Performance Testing</a></li>
+<li><a href="cicd-integration.md">CI/CD Integration</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Golden tests detect visual regressions</li>
+<li>matchesGoldenFile compares images</li>
+<li>Golden files are stored in test/goldens/</li>
+<li>Update golden files with --update-goldens</li>
+<li>Platform-specific golden files may be needed</li>
+<li>Custom threshold controls sensitivity</li>
+<li>Golden tests are visual snapshots</li>
+<li>Golden tests are part of CI/CD</li>
+</ul>
 
 
 

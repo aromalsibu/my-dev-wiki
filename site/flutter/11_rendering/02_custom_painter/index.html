@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#custompainter" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -7559,6 +7564,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,954 @@
 
 
 
-  <h1>CustomPainter</h1>
+<h1 id="custompainter">CustomPainter</h1>
+<p>Understand how to create custom drawings and graphics using CustomPainter in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>CustomPainter is a class that allows you to create custom drawings and graphics on a Canvas. It provides a paint method where you can use the Canvas API to draw shapes, text, images, and complex graphics. CustomPainter is used with the CustomPaint widget to render custom visual elements.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>CustomPainter exists to:</p>
+<ul>
+<li>Create custom graphics and visualizations</li>
+<li>Draw custom shapes and paths</li>
+<li>Implement charts and graphs</li>
+<li>Create custom UI elements</li>
+<li>Build games and animations</li>
+<li>Design unique visual components</li>
+<li>Achieve pixel-perfect custom designs</li>
+</ul>
+<hr />
+<h1 id="basic-custompainter">Basic CustomPainter</h1>
+<blockquote>
+<p><strong>Creating a simple</strong> CustomPainter.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// Basic CustomPainter example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BasicCustomPainterExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">BasicCustomPainterExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;CustomPainter&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">CustomPaint</span><span class="p">(</span>
+<span class="w">          </span><span class="c1">// 1. Size of the painting area</span>
+<span class="w">          </span><span class="nl">size:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="m">300</span><span class="p">,</span><span class="w"> </span><span class="m">300</span><span class="p">),</span>
+<span class="w">          </span><span class="c1">// 2. The custom painter that does the drawing</span>
+<span class="w">          </span><span class="nl">painter:</span><span class="w"> </span><span class="n">BasicPainter</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 1. CustomPainter class</span>
+<span class="c1">/// This is where all the drawing logic goes</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BasicPainter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CustomPainter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 2. Paint objects for styling</span>
+<span class="w">    </span><span class="c1">// Paint controls color, style, stroke width, etc.</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">fillPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">strokePaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 3. Draw a rectangle</span>
+<span class="w">    </span><span class="c1">// Rect.fromLTWH: left, top, width, height</span>
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawRect</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">,</span><span class="w"> </span><span class="m">60</span><span class="p">),</span>
+<span class="w">      </span><span class="n">fillPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawRect</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">,</span><span class="w"> </span><span class="m">60</span><span class="p">),</span>
+<span class="w">      </span><span class="n">strokePaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4. Draw a circle</span>
+<span class="w">    </span><span class="c1">// Offset: x, y position</span>
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">160</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">),</span>
+<span class="w">      </span><span class="m">30</span><span class="p">,</span>
+<span class="w">      </span><span class="n">fillPaint</span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">160</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">),</span>
+<span class="w">      </span><span class="m">30</span><span class="p">,</span>
+<span class="w">      </span><span class="n">strokePaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 5. Draw a line</span>
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawLine</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">120</span><span class="p">),</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">120</span><span class="p">,</span><span class="w"> </span><span class="m">120</span><span class="p">),</span>
+<span class="w">      </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">        </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span>
+<span class="w">        </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 6. Draw an arc</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">arcPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">purple</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawArc</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="m">140</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">60</span><span class="p">,</span><span class="w"> </span><span class="m">60</span><span class="p">),</span>
+<span class="w">      </span><span class="m">0</span><span class="p">,</span>
+<span class="w">      </span><span class="m">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="p">,</span>
+<span class="w">      </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="n">arcPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 7. Draw text</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">textPainter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextPainter</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">text:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextSpan</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;Custom Painter&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">textDirection:</span><span class="w"> </span><span class="n">TextDirection</span><span class="p">.</span><span class="n">ltr</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">textPainter</span><span class="p">.</span><span class="n">layout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">textPainter</span><span class="p">.</span><span class="n">paint</span><span class="p">(</span>
+<span class="w">      </span><span class="n">canvas</span><span class="p">,</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">80</span><span class="p">,</span><span class="w"> </span><span class="m">200</span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 8. shouldRepaint controls when the painter redraws</span>
+<span class="w">  </span><span class="c1">// Return true to redraw, false to skip</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">shouldRepaint</span><span class="p">(</span><span class="n">BasicPainter</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// For static painting, return false</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- CustomPaint provides the canvas
+- CustomPainter defines what to draw
+- Paint objects control styling
+- Canvas methods draw shapes
+- shouldRepaint controls redraws</p>
+<hr />
+<h1 id="painting-with-paint-properties">Painting with Paint Properties</h1>
+<blockquote>
+<p><strong>Using different</strong> Paint properties.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Paint properties example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">PaintPropertiesExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PaintPropertiesExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Paint Properties&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">CustomPaint</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">size:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="m">400</span><span class="p">,</span><span class="w"> </span><span class="m">400</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">painter:</span><span class="w"> </span><span class="n">PaintPropertiesPainter</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">PaintPropertiesPainter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CustomPainter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Fill style</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">fillPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">60</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">),</span>
+<span class="w">      </span><span class="m">40</span><span class="p">,</span>
+<span class="w">      </span><span class="n">fillPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 2. Stroke style with width</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">strokePaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">160</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">),</span>
+<span class="w">      </span><span class="m">40</span><span class="p">,</span>
+<span class="w">      </span><span class="n">strokePaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3. Stroke cap: round</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">roundCapPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeCap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StrokeCap</span><span class="p">.</span><span class="n">round</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawLine</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">220</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">220</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">),</span>
+<span class="w">      </span><span class="n">roundCapPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4. Stroke join: round</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">roundJoinPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">orange</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeJoin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StrokeJoin</span><span class="p">.</span><span class="n">round</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">moveTo</span><span class="p">(</span><span class="m">260</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">lineTo</span><span class="p">(</span><span class="m">300</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">lineTo</span><span class="p">(</span><span class="m">260</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">roundJoinPaint</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 5. Gradient shader</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">gradientPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">shader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LinearGradient</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">colors:</span><span class="w"> </span><span class="p">[</span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">],</span>
+<span class="w">        </span><span class="nl">begin:</span><span class="w"> </span><span class="n">Alignment</span><span class="p">.</span><span class="n">topLeft</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">end:</span><span class="w"> </span><span class="n">Alignment</span><span class="p">.</span><span class="n">bottomRight</span><span class="p">,</span>
+<span class="w">      </span><span class="p">).</span><span class="n">createShader</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">110</span><span class="p">,</span><span class="w"> </span><span class="m">120</span><span class="p">,</span><span class="w"> </span><span class="m">60</span><span class="p">))</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawRect</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">110</span><span class="p">,</span><span class="w"> </span><span class="m">120</span><span class="p">,</span><span class="w"> </span><span class="m">60</span><span class="p">),</span>
+<span class="w">      </span><span class="n">gradientPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 6. Radial gradient</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">radialPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">shader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">RadialGradient</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">colors:</span><span class="w"> </span><span class="p">[</span><span class="n">Colors</span><span class="p">.</span><span class="n">yellow</span><span class="p">,</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">orange</span><span class="p">],</span>
+<span class="w">        </span><span class="nl">center:</span><span class="w"> </span><span class="n">Alignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">radius:</span><span class="w"> </span><span class="m">0.5</span><span class="p">,</span>
+<span class="w">      </span><span class="p">).</span><span class="n">createShader</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="m">160</span><span class="p">,</span><span class="w"> </span><span class="m">110</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">))</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="m">150</span><span class="p">),</span>
+<span class="w">      </span><span class="m">40</span><span class="p">,</span>
+<span class="w">      </span><span class="n">radialPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 7. Sweep gradient</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">sweepPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">shader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SweepGradient</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">colors:</span><span class="w"> </span><span class="p">[</span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">,</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">,</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">],</span>
+<span class="w">        </span><span class="nl">startAngle:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">endAngle:</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="p">,</span>
+<span class="w">      </span><span class="p">).</span><span class="n">createShader</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="m">280</span><span class="p">,</span><span class="w"> </span><span class="m">110</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">))</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">320</span><span class="p">,</span><span class="w"> </span><span class="m">150</span><span class="p">),</span>
+<span class="w">      </span><span class="m">40</span><span class="p">,</span>
+<span class="w">      </span><span class="n">sweepPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 8. Shadow</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">shadowPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">purple</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span>
+<span class="w">      </span><span class="p">..</span><span class="n">maskFilter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">MaskFilter</span><span class="p">.</span><span class="n">blur</span><span class="p">(</span><span class="n">BlurStyle</span><span class="p">.</span><span class="n">normal</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">80</span><span class="p">,</span><span class="w"> </span><span class="m">260</span><span class="p">),</span>
+<span class="w">      </span><span class="m">40</span><span class="p">,</span>
+<span class="w">      </span><span class="n">shadowPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 9. Blend mode</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">blendPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">.</span><span class="n">withOpacity</span><span class="p">(</span><span class="m">0.5</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span>
+<span class="w">      </span><span class="p">..</span><span class="n">blendMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BlendMode</span><span class="p">.</span><span class="n">multiply</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">180</span><span class="p">,</span><span class="w"> </span><span class="m">260</span><span class="p">),</span>
+<span class="w">      </span><span class="m">40</span><span class="p">,</span>
+<span class="w">      </span><span class="n">blendPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">220</span><span class="p">,</span><span class="w"> </span><span class="m">260</span><span class="p">),</span>
+<span class="w">      </span><span class="m">40</span><span class="p">,</span>
+<span class="w">      </span><span class="n">blendPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">shouldRepaint</span><span class="p">(</span><span class="n">PaintPropertiesPainter</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Fill and stroke styles
+- StrokeCap: round, square, butt
+- StrokeJoin: round, bevel, miter
+- Linear, radial, and sweep gradients
+- Shadows with MaskFilter
+- Blend modes for compositing</p>
+<hr />
+<h1 id="path-drawing">Path Drawing</h1>
+<blockquote>
+<p><strong>Creating complex</strong> paths with CustomPainter.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Path drawing example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">PathDrawingExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PathDrawingExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Path Drawing&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">CustomPaint</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">size:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="m">400</span><span class="p">,</span><span class="w"> </span><span class="m">400</span><span class="p">),</span>
+<span class="w">          </span><span class="nl">painter:</span><span class="w"> </span><span class="n">PathPainter</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">PathPainter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CustomPainter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">paint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">strokePaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 1. Basic path (triangle)</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">path1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">moveTo</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">30</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">lineTo</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">lineTo</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">close</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path1</span><span class="p">,</span><span class="w"> </span><span class="n">paint</span><span class="p">);</span>
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path1</span><span class="p">,</span><span class="w"> </span><span class="n">strokePaint</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 2. Quad bezier curve</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">path2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">moveTo</span><span class="p">(</span><span class="m">120</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">quadraticBezierTo</span><span class="p">(</span><span class="m">150</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">180</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span>
+<span class="w">      </span><span class="n">path2</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">        </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span>
+<span class="w">        </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">        </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3. Cubic bezier curve</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">path3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">moveTo</span><span class="p">(</span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">cubicBezierTo</span><span class="p">(</span><span class="m">220</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">270</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">290</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span>
+<span class="w">      </span><span class="n">path3</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">        </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span>
+<span class="w">        </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">        </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4. Star shape</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">starPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">();</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">points</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">outerRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">40</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">innerRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">16</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">centerX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">70</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">centerY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">180</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">points</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">2</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="n">isEven</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">outerRadius</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">innerRadius</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">points</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">centerX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">centerY</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">);</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">starPath</span><span class="p">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">starPath</span><span class="p">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">starPath</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span>
+<span class="w">      </span><span class="n">starPath</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">        </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">orange</span>
+<span class="w">        </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span>
+<span class="w">      </span><span class="n">starPath</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">        </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span>
+<span class="w">        </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">        </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 5. Heart shape</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">heartPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">moveTo</span><span class="p">(</span><span class="m">160</span><span class="p">,</span><span class="w"> </span><span class="m">220</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">cubicTo</span><span class="p">(</span><span class="m">130</span><span class="p">,</span><span class="w"> </span><span class="m">180</span><span class="p">,</span><span class="w"> </span><span class="m">80</span><span class="p">,</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="m">160</span><span class="p">,</span><span class="w"> </span><span class="m">250</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">cubicTo</span><span class="p">(</span><span class="m">240</span><span class="p">,</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="m">190</span><span class="p">,</span><span class="w"> </span><span class="m">180</span><span class="p">,</span><span class="w"> </span><span class="m">160</span><span class="p">,</span><span class="w"> </span><span class="m">220</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span>
+<span class="w">      </span><span class="n">heartPath</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">        </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span>
+<span class="w">        </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span>
+<span class="w">      </span><span class="n">heartPath</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">        </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span>
+<span class="w">        </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">        </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 6. Combined path (pacman)</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">pacmanPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">moveTo</span><span class="p">(</span><span class="m">260</span><span class="p">,</span><span class="w"> </span><span class="m">200</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">arcTo</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="m">230</span><span class="p">,</span><span class="w"> </span><span class="m">170</span><span class="p">,</span><span class="w"> </span><span class="m">60</span><span class="p">,</span><span class="w"> </span><span class="m">60</span><span class="p">),</span>
+<span class="w">        </span><span class="m">0.2</span><span class="p">,</span>
+<span class="w">        </span><span class="m">1.2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="p">,</span>
+<span class="w">        </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">lineTo</span><span class="p">(</span><span class="m">260</span><span class="p">,</span><span class="w"> </span><span class="m">200</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span>
+<span class="w">      </span><span class="n">pacmanPath</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">        </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">yellow</span>
+<span class="w">        </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">shouldRepaint</span><span class="p">(</span><span class="n">PathPainter</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Basic path with moveTo, lineTo, close
+- Quadratic bezier curve
+- Cubic bezier curve
+- Star with trigonometric calculations
+- Heart with cubic curves
+- Arc with arcTo</p>
+<hr />
+<h1 id="animated-custompainter">Animated CustomPainter</h1>
+<blockquote>
+<p><strong>Animating</strong> custom paintings.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Animated CustomPainter example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AnimatedCustomPainterExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">AnimatedCustomPainterExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">AnimatedCustomPainterExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_AnimatedCustomPainterExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_AnimatedCustomPainterExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">AnimatedCustomPainterExample</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Animation controller</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_animation</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">3</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">    </span><span class="p">)..</span><span class="n">repeat</span><span class="p">(</span><span class="nl">reverse:</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">_animation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">1.0</span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Animated CustomPainter&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">AnimatedBuilder</span><span class="p">(</span>
+<span class="w">          </span><span class="c1">// 2. Rebuild when animation changes</span>
+<span class="w">          </span><span class="nl">animation:</span><span class="w"> </span><span class="n">_animation</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">CustomPaint</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">size:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="m">400</span><span class="p">,</span><span class="w"> </span><span class="m">400</span><span class="p">),</span>
+<span class="w">              </span><span class="c1">// 3. Pass animation value to painter</span>
+<span class="w">              </span><span class="nl">painter:</span><span class="w"> </span><span class="n">AnimatedPainter</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">progress:</span><span class="w"> </span><span class="n">_animation</span><span class="p">.</span><span class="n">value</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Animated painter</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AnimatedPainter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CustomPainter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">AnimatedPainter</span><span class="p">({</span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">progress</span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">progress</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">center</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">20</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 1. Background</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">bgPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">]</span><span class="o">!</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span><span class="n">center</span><span class="p">,</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span><span class="w"> </span><span class="n">bgPaint</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 2. Animated arc</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">arcPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">shader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SweepGradient</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">colors:</span><span class="w"> </span><span class="p">[</span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">purple</span><span class="p">],</span>
+<span class="w">        </span><span class="nl">startAngle:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">endAngle:</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="p">,</span>
+<span class="w">      </span><span class="p">).</span><span class="n">createShader</span><span class="p">(</span>
+<span class="w">        </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromCircle</span><span class="p">(</span><span class="nl">center:</span><span class="w"> </span><span class="n">center</span><span class="p">,</span><span class="w"> </span><span class="nl">radius:</span><span class="w"> </span><span class="n">radius</span><span class="p">),</span>
+<span class="w">      </span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeCap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StrokeCap</span><span class="p">.</span><span class="n">round</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawArc</span><span class="p">(</span>
+<span class="w">      </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromCircle</span><span class="p">(</span><span class="nl">center:</span><span class="w"> </span><span class="n">center</span><span class="p">,</span><span class="w"> </span><span class="nl">radius:</span><span class="w"> </span><span class="n">radius</span><span class="p">),</span>
+<span class="w">      </span><span class="o">-</span><span class="m">3.14159</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">      </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">progress</span><span class="p">,</span>
+<span class="w">      </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="n">arcPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3. Animated circle</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">circlePaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">progress</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">circleX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">center</span><span class="p">.</span><span class="n">dx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">circleY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">center</span><span class="p">.</span><span class="n">dy</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">      </span><span class="n">Offset</span><span class="p">(</span><span class="n">circleX</span><span class="p">,</span><span class="w"> </span><span class="n">circleY</span><span class="p">),</span>
+<span class="w">      </span><span class="m">15</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">progress</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">10</span><span class="p">,</span>
+<span class="w">      </span><span class="n">circlePaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4. Animated text</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">textPainter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextPainter</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">text:</span><span class="w"> </span><span class="n">TextSpan</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="p">(</span><span class="n">progress</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">24</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">progress</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">16</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">textDirection:</span><span class="w"> </span><span class="n">TextDirection</span><span class="p">.</span><span class="n">ltr</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">textPainter</span><span class="p">.</span><span class="n">layout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">textPainter</span><span class="p">.</span><span class="n">paint</span><span class="p">(</span>
+<span class="w">      </span><span class="n">canvas</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Offset</span><span class="p">(</span>
+<span class="w">        </span><span class="n">center</span><span class="p">.</span><span class="n">dx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">textPainter</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">        </span><span class="n">center</span><span class="p">.</span><span class="n">dy</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">textPainter</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 5. Animated dots around the circle</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">dotPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">orange</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">12</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">dotAngle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">progress</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">dotRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sin</span><span class="p">(</span><span class="n">progress</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">dotX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">center</span><span class="p">.</span><span class="n">dx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dotRadius</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">cos</span><span class="p">(</span><span class="n">dotAngle</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">dotY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">center</span><span class="p">.</span><span class="n">dy</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dotRadius</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sin</span><span class="p">(</span><span class="n">dotAngle</span><span class="p">);</span>
+
+<span class="w">      </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span>
+<span class="w">        </span><span class="n">Offset</span><span class="p">(</span><span class="n">dotX</span><span class="p">,</span><span class="w"> </span><span class="n">dotY</span><span class="p">),</span>
+<span class="w">        </span><span class="m">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sin</span><span class="p">(</span><span class="n">progress</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">),</span>
+<span class="w">        </span><span class="n">dotPaint</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">shouldRepaint</span><span class="p">(</span><span class="n">AnimatedPainter</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Redraw when progress changes</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">progress</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">progress</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Animation drives progress
+- Animated arc with gradient
+- Moving circle on the arc
+- Dynamic text size
+- Rotating dots with varying sizes</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> with CustomPainter.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Custom progress indicator</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CustomProgressIndicator</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CustomProgressIndicator</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">progress</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">progress</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">CustomPaint</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">size:</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">painter:</span><span class="w"> </span><span class="n">ProgressIndicatorPainter</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">progress:</span><span class="w"> </span><span class="n">progress</span><span class="p">.</span><span class="n">clamp</span><span class="p">(</span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="m">1.0</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">color:</span><span class="w"> </span><span class="n">color</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">ProgressIndicatorPainter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CustomPainter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">ProgressIndicatorPainter</span><span class="p">({</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">progress</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">color</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">progress</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">center</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">8</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Background</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">bgPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">]</span><span class="o">!</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span><span class="n">center</span><span class="p">,</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span><span class="w"> </span><span class="n">bgPaint</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Progress arc</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">progressPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color</span>
+<span class="w">      </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">stroke</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span>
+<span class="w">      </span><span class="p">..</span><span class="n">strokeCap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StrokeCap</span><span class="p">.</span><span class="n">round</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawArc</span><span class="p">(</span>
+<span class="w">      </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromCircle</span><span class="p">(</span><span class="nl">center:</span><span class="w"> </span><span class="n">center</span><span class="p">,</span><span class="w"> </span><span class="nl">radius:</span><span class="w"> </span><span class="n">radius</span><span class="p">),</span>
+<span class="w">      </span><span class="o">-</span><span class="m">3.14159</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">      </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">progress</span><span class="p">,</span>
+<span class="w">      </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="n">progressPaint</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Percentage text</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">textPainter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextPainter</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">text:</span><span class="w"> </span><span class="n">TextSpan</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">text:</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="p">(</span><span class="n">progress</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">color:</span><span class="w"> </span><span class="n">color</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">textDirection:</span><span class="w"> </span><span class="n">TextDirection</span><span class="p">.</span><span class="n">ltr</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">textPainter</span><span class="p">.</span><span class="n">layout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">textPainter</span><span class="p">.</span><span class="n">paint</span><span class="p">(</span>
+<span class="w">      </span><span class="n">canvas</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Offset</span><span class="p">(</span>
+<span class="w">        </span><span class="n">center</span><span class="p">.</span><span class="n">dx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">textPainter</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">        </span><span class="n">center</span><span class="p">.</span><span class="n">dy</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">textPainter</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">shouldRepaint</span><span class="p">(</span><span class="n">ProgressIndicatorPainter</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">progress</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">progress</span><span class="w"> </span><span class="o">||</span>
+<span class="w">           </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">color</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Custom rating stars</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CustomRatingStars</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CustomRatingStars</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">rating</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">30</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">maxStars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">yellow</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">backgroundColor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rating</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxStars</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="n">backgroundColor</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">CustomPaint</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">size:</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">maxStars</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">painter:</span><span class="w"> </span><span class="n">StarsPainter</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">rating:</span><span class="w"> </span><span class="n">rating</span><span class="p">.</span><span class="n">clamp</span><span class="p">(</span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">maxStars</span><span class="p">.</span><span class="n">toDouble</span><span class="p">()),</span>
+<span class="w">        </span><span class="nl">size:</span><span class="w"> </span><span class="n">size</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">maxStars:</span><span class="w"> </span><span class="n">maxStars</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">color:</span><span class="w"> </span><span class="n">color</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">backgroundColor</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">StarsPainter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CustomPainter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">StarsPainter</span><span class="p">({</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">rating</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">size</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">maxStars</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">color</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">backgroundColor</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rating</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxStars</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="n">backgroundColor</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">starPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_createStarPath</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">maxStars</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">fillAmount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">rating</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">i</span><span class="p">).</span><span class="n">clamp</span><span class="p">(</span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="m">1.0</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Background</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">bgPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">        </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">backgroundColor</span>
+<span class="w">        </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">;</span>
+
+<span class="w">      </span><span class="n">canvas</span><span class="p">.</span><span class="n">save</span><span class="p">();</span>
+<span class="w">      </span><span class="n">canvas</span><span class="p">.</span><span class="n">translate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">);</span>
+<span class="w">      </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">starPath</span><span class="p">,</span><span class="w"> </span><span class="n">bgPaint</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Filled portion</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fillAmount</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">fillPaint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Paint</span><span class="p">()</span>
+<span class="w">          </span><span class="p">..</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color</span>
+<span class="w">          </span><span class="p">..</span><span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingStyle</span><span class="p">.</span><span class="n">fill</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">canvas</span><span class="p">.</span><span class="n">save</span><span class="p">();</span>
+<span class="w">        </span><span class="n">canvas</span><span class="p">.</span><span class="n">clipRect</span><span class="p">(</span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="o">-</span><span class="n">size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">fillAmount</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">));</span>
+<span class="w">        </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">starPath</span><span class="p">,</span><span class="w"> </span><span class="n">fillPaint</span><span class="p">);</span>
+<span class="w">        </span><span class="n">canvas</span><span class="p">.</span><span class="n">restore</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="n">canvas</span><span class="p">.</span><span class="n">restore</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Path</span><span class="w"> </span><span class="n">_createStarPath</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">points</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">points</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">2</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="n">isEven</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.4</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">points</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">3.14159</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">);</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">path</span><span class="p">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">path</span><span class="p">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">path</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">path</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">shouldRepaint</span><span class="p">(</span><span class="n">StarsPainter</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">rating</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">rating</span><span class="w"> </span><span class="o">||</span>
+<span class="w">           </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">||</span>
+<span class="w">           </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">maxStars</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">maxStars</span><span class="w"> </span><span class="o">||</span>
+<span class="w">           </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">color</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">||</span>
+<span class="w">           </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">backgroundColor</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">backgroundColor</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Custom progress indicator with percentage
+- Custom rating stars with partial fills
+- Reusable custom components
+- Professional custom designs</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="use-shouldrepaint-correctly">Use shouldRepaint Correctly</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Only repaint when needed</span>
+<span class="nd">@override</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">shouldRepaint</span><span class="p">(</span><span class="n">MyPainter</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">progress</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">progress</span><span class="w"> </span><span class="o">||</span>
+<span class="w">         </span><span class="n">oldDelegate</span><span class="p">.</span><span class="n">color</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Always repaint</span>
+<span class="nd">@override</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">shouldRepaint</span><span class="p">(</span><span class="n">MyPainter</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="optimize-paint-methods">Optimize Paint Methods</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Pre-calculate values</span>
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">center</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">);</span>
+<span class="w">  </span><span class="c1">// Use center multiple times</span>
+<span class="p">}</span>
+
+<span class="c1">// Bad - Recalculate values</span>
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawCircle</span><span class="p">(</span><span class="n">Offset</span><span class="p">(</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="p">...);</span>
+<span class="w">  </span><span class="n">canvas</span><span class="p">.</span><span class="n">drawArc</span><span class="p">(</span><span class="n">Rect</span><span class="p">.</span><span class="n">fromCircle</span><span class="p">(</span><span class="nl">center:</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="p">...));</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="use-const-where-possible">Use const Where Possible</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Const values</span>
+<span class="k">const</span><span class="w"> </span><span class="n">Rect</span><span class="w"> </span><span class="n">rect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">);</span>
+
+<span class="c1">// Bad - Non-const</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">Rect</span><span class="w"> </span><span class="n">rect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Rect</span><span class="p">.</span><span class="n">fromLTWH</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">);</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="forgetting-shouldrepaint">Forgetting shouldRepaint</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Missing shouldRepaint</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MyPainter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CustomPainter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="c1">// Missing shouldRepaint</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Proper shouldRepaint</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">MyPainter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CustomPainter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">shouldRepaint</span><span class="p">(</span><span class="n">MyPainter</span><span class="w"> </span><span class="n">oldDelegate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">oldDelegate</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="heavy-computations-in-paint">Heavy Computations in paint</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Heavy computation every frame</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calculateComplexData</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Pre-calculate data</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calculateComplexData</span><span class="p">();</span>
+
+<span class="nd">@override</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="n">Canvas</span><span class="w"> </span><span class="n">canvas</span><span class="p">,</span><span class="w"> </span><span class="n">Size</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Use pre-calculated data</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>CustomPainter enables custom graphics and drawings with complete control. Use Paint for styling, Canvas for drawing, and Path for complex shapes. Animation with CustomPainter creates dynamic visual effects. CustomPainter is essential for unique custom designs.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="canvas.md">Canvas</a></li>
+<li><a href="renderobject.md">RenderObject</a></li>
+<li><a href="renderbox.md">RenderBox</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>CustomPainter provides full drawing control</li>
+<li>shouldRepaint controls redraw frequency</li>
+<li>Path creates complex shapes</li>
+<li>Paint controls style and color</li>
+<li>Shader creates gradients</li>
+<li>Canvas provides drawing methods</li>
+<li>CustomPainter is highly performant</li>
+<li>CustomPainter enables unique designs</li>
+</ul>
 
 
 

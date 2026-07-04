@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#widget-tests" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -8981,6 +8986,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,811 @@
 
 
 
-  <h1>Widget Tests</h1>
+<h1 id="widget-tests">Widget Tests</h1>
+<p>Understand how to test Flutter widgets to ensure they render and behave correctly.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Widget Tests (also called Component Tests) are tests that verify the behavior and appearance of individual widgets. They test widgets in isolation, simulating user interactions and verifying that the widget renders correctly and responds to user input as expected. Widget tests are faster than integration tests but more comprehensive than unit tests.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Widget Tests exist to:</p>
+<ul>
+<li>Verify widget rendering</li>
+<li>Test user interactions</li>
+<li>Validate widget behavior</li>
+<li>Ensure UI consistency</li>
+<li>Catch visual regressions</li>
+<li>Test state changes</li>
+<li>Verify widget responsiveness</li>
+</ul>
+<hr />
+<h1 id="basic-widget-tests">Basic Widget Tests</h1>
+<blockquote>
+<p><strong>Writing</strong> your first widget tests.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter_test/flutter_test.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// 1. Simple counter widget to test</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CounterWidget</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CounterWidget</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CounterWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_CounterWidgetState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_CounterWidgetState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CounterWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_increment</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_counter</span><span class="o">++</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_decrement</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_counter</span><span class="o">--</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. Display counter value</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;</span><span class="si">$</span><span class="n">_counter</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;counter_value&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">            </span><span class="c1">// 2. Increment button</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;increment_button&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_increment</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Increment&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="c1">// 3. Decrement button</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;decrement_button&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_decrement</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Decrement&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="c1">// 4. Reset button</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;reset_button&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="n">_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">                </span><span class="p">});</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Reset&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Widget tests</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Group tests for the CounterWidget</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;CounterWidget Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 3. Test widget initialization</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should display initial counter value of 0&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Build the widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">CounterWidget</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify counter displays 0</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 4. Test increment button</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should increment counter when increment button is pressed&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Build the widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">CounterWidget</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Find and tap the increment button</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">incrementButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;increment_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">incrementButton</span><span class="p">,</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">incrementButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span><span class="w"> </span><span class="c1">// Rebuild the widget</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify counter increased to 1</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 5. Test decrement button</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should decrement counter when decrement button is pressed&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Build the widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">CounterWidget</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Tap decrement button</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">decrementButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;decrement_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">decrementButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify counter decreased to -1</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;-1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 6. Test reset button</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should reset counter to 0 when reset button is pressed&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Build the widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">CounterWidget</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: First increment to change the value</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">incrementButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;increment_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">incrementButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify counter is now 1</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Tap reset button</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">resetButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;reset_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">resetButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify counter reset to 0</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 7. Test multiple interactions</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should handle multiple interactions correctly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Arrange: Build the widget</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">CounterWidget</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Increment twice</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">incrementButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;increment_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">incrementButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">incrementButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Counter should be 2</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Decrement once</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">decrementButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;decrement_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">decrementButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Counter should be 1</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- testWidgets for widget testing
+- pump() rebuilds the widget
+- find finds widgets in the tree
+- tap simulates user taps
+- Keys identify widgets for testing</p>
+<hr />
+<h1 id="testing-forms">Testing Forms</h1>
+<blockquote>
+<p><strong>Testing</strong> form widgets and validation.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Login form widget</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">LoginForm</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LoginForm</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">LoginForm</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_LoginFormState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_LoginFormState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">LoginForm</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">_formKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GlobalKey</span><span class="o">&lt;</span><span class="n">FormState</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">_emailController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">_passwordController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_emailController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_passwordController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_submitForm</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_formKey</span><span class="p">.</span><span class="n">currentState</span><span class="o">!</span><span class="p">.</span><span class="n">validate</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Login successful!&#39;</span><span class="p">;</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Please fix errors&#39;</span><span class="p">;</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Form</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">key:</span><span class="w"> </span><span class="n">_formKey</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">              </span><span class="c1">// Email field</span>
+<span class="w">              </span><span class="n">TextFormField</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;email_field&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_emailController</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Email&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">validator:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Email is required&#39;</span><span class="p">;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">                  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">value</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Invalid email&#39;</span><span class="p">;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">                  </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="c1">// Password field</span>
+<span class="w">              </span><span class="n">TextFormField</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;password_field&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_passwordController</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">obscureText:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Password&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">validator:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Password is required&#39;</span><span class="p">;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">                  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">6</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Password must be at least 6 characters&#39;</span><span class="p">;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">                  </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="c1">// Submit button</span>
+<span class="w">              </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;submit_button&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_submitForm</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Login&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="c1">// Message display</span>
+<span class="w">              </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_message</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">)</span>
+<span class="w">                </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">only</span><span class="p">(</span><span class="nl">top:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="n">_message</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;message_text&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">_message</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Form widget tests</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;LoginForm Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Test initial state</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should display form fields&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">LoginForm</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Verify form fields are present</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;email_field&#39;</span><span class="p">)),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;password_field&#39;</span><span class="p">)),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;submit_button&#39;</span><span class="p">)),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test validation - empty fields</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should show validation errors when fields are empty&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">LoginForm</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Tap submit without entering any data</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">submitButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;submit_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">submitButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify validation messages</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Email is required&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Password is required&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 3. Test validation - invalid email</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should show invalid email error&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">LoginForm</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Enter invalid email</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">emailField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;email_field&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">emailField</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;invalid-email&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Tap submit</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">submitButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;submit_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">submitButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify invalid email error</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Invalid email&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 4. Test validation - short password</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should show password length error&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">LoginForm</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Enter valid email and short password</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">emailField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;email_field&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">emailField</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;test@example.com&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">passwordField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;password_field&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">passwordField</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;123&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Tap submit</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">submitButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;submit_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">submitButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify password error</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Password must be at least 6 characters&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 5. Test successful login</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should show success message when form is valid&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">LoginForm</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Enter valid credentials</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">emailField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;email_field&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">emailField</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;test@example.com&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">passwordField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;password_field&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">passwordField</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;password123&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Tap submit</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">submitButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;submit_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">submitButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify success message</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Login successful!&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;message_text&#39;</span><span class="p">)),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Testing form fields
+- enterText simulates typing
+- Validation error checking
+- Success message verification</p>
+<hr />
+<h1 id="testing-lists">Testing Lists</h1>
+<blockquote>
+<p><strong>Testing</strong> list and scrolling widgets.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. List widget</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">UserList</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">UserList</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">users</span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">users</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;User List&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;user_list&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">itemCount:</span><span class="w"> </span><span class="n">users</span><span class="p">.</span><span class="n">length</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">key:</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;user_item_</span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span>
+<span class="w">            </span><span class="nl">leading:</span><span class="w"> </span><span class="n">CircleAvatar</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">${</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="nl">trailing:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">arrow_forward</span><span class="p">),</span>
+<span class="w">          </span><span class="p">);</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. List widget tests</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;UserList Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">testUsers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;Alice&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Bob&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Charlie&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Diana&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Eve&#39;</span><span class="p">];</span>
+
+<span class="w">    </span><span class="c1">// 1. Test list rendering</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should display all users in the list&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">UserList</span><span class="p">(</span><span class="nl">users:</span><span class="w"> </span><span class="n">testUsers</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Verify all users are displayed</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">testUsers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="n">user</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test list item count</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should display correct number of items&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">UserList</span><span class="p">(</span><span class="nl">users:</span><span class="w"> </span><span class="n">testUsers</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Find all list items</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">items</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">ListTile</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">items</span><span class="p">,</span><span class="w"> </span><span class="n">findsNWidgets</span><span class="p">(</span><span class="n">testUsers</span><span class="p">.</span><span class="n">length</span><span class="p">));</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 3. Test list with keys</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should have keys for each item&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">UserList</span><span class="p">(</span><span class="nl">users:</span><span class="w"> </span><span class="n">testUsers</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Verify each item has a key</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">testUsers</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;user_item_</span><span class="si">$</span><span class="n">i</span><span class="s1">&#39;</span><span class="p">)),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 4. Test empty list</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should handle empty list gracefully&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">UserList</span><span class="p">(</span><span class="nl">users:</span><span class="w"> </span><span class="p">[]),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Verify no items are displayed</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">items</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">ListTile</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">items</span><span class="p">,</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Testing list rendering
+- Item count verification
+- Keyed item testing
+- Empty list handling</p>
+<hr />
+<h1 id="testing-interactions">Testing Interactions</h1>
+<blockquote>
+<p><strong>Testing</strong> user interactions.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Interactive widget</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">TodoWidget</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TodoWidget</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">TodoWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_TodoWidgetState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_TodoWidgetState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">TodoWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_todos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextEditingController</span><span class="w"> </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_addTodo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">text</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_todos</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">_controller</span><span class="p">.</span><span class="n">text</span><span class="p">);</span>
+<span class="w">        </span><span class="n">_controller</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_removeTodo</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_todos</span><span class="p">.</span><span class="n">removeAt</span><span class="p">(</span><span class="n">index</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Todo List&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="c1">// Input row</span>
+<span class="w">          </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">TextField</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;todo_input&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">hintText:</span><span class="w"> </span><span class="s1">&#39;Enter todo&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;add_button&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_addTodo</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Add&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="c1">// Todo list</span>
+<span class="w">          </span><span class="n">Expanded</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;todo_list&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">itemCount:</span><span class="w"> </span><span class="n">_todos</span><span class="p">.</span><span class="n">length</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">key:</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;todo_item_</span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="n">_todos</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span>
+<span class="w">                  </span><span class="nl">trailing:</span><span class="w"> </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">key:</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;delete_button_</span><span class="si">$</span><span class="n">index</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">delete</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_removeTodo</span><span class="p">(</span><span class="n">index</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Interaction tests</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;TodoWidget Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Test adding a todo</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should add a todo when add button is pressed&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">TodoWidget</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Enter text in input field</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">inputField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;todo_input&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">inputField</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Buy groceries&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Tap add button</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">addButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;add_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">addButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify todo was added</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Buy groceries&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test adding multiple todos</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should add multiple todos&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">TodoWidget</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Add first todo</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;todo_input&#39;</span><span class="p">)),</span><span class="w"> </span><span class="s1">&#39;Todo 1&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;add_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Add second todo</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;todo_input&#39;</span><span class="p">)),</span><span class="w"> </span><span class="s1">&#39;Todo 2&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;add_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify both todos are present</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Todo 1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Todo 2&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 3. Test deleting a todo</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should delete a todo when delete button is pressed&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">TodoWidget</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Add a todo first</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;todo_input&#39;</span><span class="p">)),</span><span class="w"> </span><span class="s1">&#39;Todo to delete&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;add_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify todo exists</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Todo to delete&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Delete the todo</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">deleteButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;delete_button_0&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">deleteButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify todo is gone</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Todo to delete&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 4. Test empty input</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should not add empty todo&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">home:</span><span class="w"> </span><span class="n">TodoWidget</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Tap add without entering text</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">addButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;add_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">addButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify no todos added</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">todoList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">ListTile</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">todoList</span><span class="p">,</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Testing input fields
+- Adding and removing items
+- Interaction testing
+- Edge case handling</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="use-keys-for-testing">Use Keys for Testing</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Use keys for test identification</span>
+<span class="n">Widget</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">key:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;my_widget&#39;</span><span class="p">),</span>
+<span class="w">  </span><span class="c1">// ...</span>
+<span class="p">)</span>
+
+<span class="c1">// Bad - Relying on text only</span>
+<span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Some text&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="test-user-interactions">Test User Interactions</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Test interactions</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">button</span><span class="p">);</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+<span class="n">expect</span><span class="p">(...);</span>
+
+<span class="c1">// Bad - Only testing initial state</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="use-appropriate-finders">Use Appropriate Finders</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Specific finders</span>
+<span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">MyWidget</span><span class="p">)</span>
+<span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">))</span>
+<span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+
+<span class="c1">// Bad - Generic finders</span>
+<span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">Widget</span><span class="p">)</span><span class="w"> </span><span class="c1">// Too broad</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-using-pump">Not Using pump</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Missing pump - state not updated</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">button</span><span class="p">);</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// With pump - state updated</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">button</span><span class="p">);</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+</code></pre></div></p>
+<h2 id="not-using-materialapp">Not Using MaterialApp</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Missing MaterialApp - material widgets may not work</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span><span class="n">MyWidget</span><span class="p">());</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// With MaterialApp - material widgets work</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpWidget</span><span class="p">(</span>
+<span class="w">  </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">    </span><span class="nl">home:</span><span class="w"> </span><span class="n">MyWidget</span><span class="p">(),</span>
+<span class="w">  </span><span class="p">),</span>
+<span class="p">);</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Widget Tests verify widget rendering and behavior. Use testWidgets for widget testing, pump to rebuild widgets, find to locate widgets, and tap to simulate interactions. Test user interactions, form validation, and list rendering. Widget tests are essential for UI reliability.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="integration-tests.md">Integration Tests</a></li>
+<li><a href="golden-tests.md">Golden Tests</a></li>
+<li><a href="test-utilities.md">Test Utilities</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Widget tests run in a test environment</li>
+<li>pump rebuilds widgets</li>
+<li>find locates widgets in the tree</li>
+<li>tap simulates user taps</li>
+<li>enterText simulates typing</li>
+<li>Keys help identify widgets</li>
+<li>Widget tests are fast</li>
+<li>Widget tests catch UI bugs early</li>
+</ul>
 
 
 

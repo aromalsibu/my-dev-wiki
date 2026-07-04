@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#folder-organization" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -9344,6 +9349,8 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,591 @@
 
 
 
-  <h1>Folder Organization</h1>
+<h1 id="folder-organization">Folder Organization</h1>
+<p>Understand how to organize folders and files in Flutter applications for better maintainability and scalability.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Folder Organization refers to the logical grouping of files and directories in your Flutter project. It's the practical implementation of your chosen project structure, determining where different types of files (widgets, models, services, etc.) should be placed. Good folder organization makes your codebase easier to navigate, understand, and maintain.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Folder Organization exists to:</p>
+<ul>
+<li>Make code easier to find and navigate</li>
+<li>Group related files together</li>
+<li>Separate different concerns</li>
+<li>Support team collaboration</li>
+<li>Enable scalable development</li>
+<li>Improve code maintainability</li>
+<li>Follow industry best practices</li>
+</ul>
+<hr />
+<h1 id="type-based-organization">Type-Based Organization</h1>
+<blockquote>
+<p><strong>Organizing</strong> by file type.</p>
+</blockquote>
+<div class="language-text highlight"><pre><span></span><code>lib/
+├── main.dart
+├── models/                     # Data models
+│   ├── user.dart
+│   ├── product.dart
+│   └── order.dart
+├── views/                      # UI screens
+│   ├── home_screen.dart
+│   ├── profile_screen.dart
+│   └── settings_screen.dart
+├── widgets/                    # Reusable widgets
+│   ├── buttons.dart
+│   ├── cards.dart
+│   └── inputs.dart
+├── services/                   # Business logic
+│   ├── api_service.dart
+│   ├── auth_service.dart
+│   └── storage_service.dart
+├── providers/                  # State management
+│   ├── auth_provider.dart
+│   └── theme_provider.dart
+├── utils/                      # Utility functions
+│   ├── validators.dart
+│   ├── formatters.dart
+│   └── helpers.dart
+├── constants/                  # Constants
+│   ├── app_constants.dart
+│   └── theme_constants.dart
+└── extensions/                 # Dart extensions
+    ├── context_extensions.dart
+    └── string_extensions.dart
+</code></pre></div>
+<p>What's happening here?
+- Files grouped by type
+- Clear separation of concerns
+- Easy to find related files
+- Simple and straightforward</p>
+<hr />
+<h1 id="feature-based-organization">Feature-Based Organization</h1>
+<blockquote>
+<p><strong>Organizing</strong> by features.</p>
+</blockquote>
+<div class="language-text highlight"><pre><span></span><code>lib/
+├── main.dart
+├── core/                       # Core functionality
+│   ├── constants/
+│   ├── utils/
+│   ├── services/
+│   └── widgets/
+├── features/                   # Feature modules
+│   ├── auth/                   # Authentication feature
+│   │   ├── models/
+│   │   │   ├── user.dart
+│   │   │   └── auth_state.dart
+│   │   ├── screens/
+│   │   │   ├── login_screen.dart
+│   │   │   └── register_screen.dart
+│   │   ├── widgets/
+│   │   │   ├── login_form.dart
+│   │   │   └── register_form.dart
+│   │   ├── services/
+│   │   │   └── auth_service.dart
+│   │   └── providers/
+│   │       └── auth_provider.dart
+│   ├── home/                   # Home feature
+│   │   ├── models/
+│   │   ├── screens/
+│   │   ├── widgets/
+│   │   └── services/
+│   └── profile/                # Profile feature
+│       ├── models/
+│       ├── screens/
+│       ├── widgets/
+│       └── services/
+└── shared/                     # Shared across features
+    ├── widgets/
+    │   ├── buttons.dart
+    │   └── cards.dart
+    ├── extensions/
+    │   └── context_extensions.dart
+    └── constants/
+        └── app_constants.dart
+</code></pre></div>
+<p>What's happening here?
+- Features are self-contained
+- Easy to add/remove features
+- Clear feature boundaries
+- Scalable for large projects</p>
+<hr />
+<h1 id="clean-architecture-organization">Clean Architecture Organization</h1>
+<blockquote>
+<p><strong>Organizing</strong> by layers.</p>
+</blockquote>
+<div class="language-text highlight"><pre><span></span><code>lib/
+├── main.dart
+├── data/                       # Data layer
+│   ├── datasources/            # Data sources
+│   │   ├── local/
+│   │   │   └── local_datasource.dart
+│   │   └── remote/
+│   │       └── remote_datasource.dart
+│   ├── models/                 # Data models
+│   │   ├── user_model.dart
+│   │   └── todo_model.dart
+│   └── repositories/           # Repository implementations
+│       ├── auth_repository_impl.dart
+│       └── todo_repository_impl.dart
+├── domain/                     # Domain layer
+│   ├── entities/               # Business entities
+│   │   ├── user.dart
+│   │   └── todo.dart
+│   ├── repositories/           # Repository interfaces
+│   │   ├── auth_repository.dart
+│   │   └── todo_repository.dart
+│   └── usecases/               # Use cases
+│       ├── auth/
+│       │   ├── login_usecase.dart
+│       │   └── register_usecase.dart
+│       └── todo/
+│           ├── get_todos_usecase.dart
+│           └── add_todo_usecase.dart
+└── presentation/               # Presentation layer
+    ├── blocs/                  # State management
+    │   ├── auth/
+    │   │   ├── auth_bloc.dart
+    │   │   └── auth_event.dart
+    │   └── todo/
+    │       ├── todo_bloc.dart
+    │       └── todo_event.dart
+    ├── pages/                  # Screens
+    │   ├── auth/
+    │   │   ├── login_page.dart
+    │   │   └── register_page.dart
+    │   └── home/
+    │       └── home_page.dart
+    └── widgets/                # UI widgets
+        ├── common/
+        └── auth/
+</code></pre></div>
+<p>What's happening here?
+- Layers are clearly separated
+- Dependency direction is clear
+- Business logic is isolated
+- High testability</p>
+<hr />
+<h1 id="example-implementation">Example Implementation</h1>
+<blockquote>
+<p><strong>Implementing</strong> folder organization.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 1. lib/main.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:provider/provider.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;features/auth/providers/auth_provider.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;features/auth/screens/login_screen.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;features/home/screens/home_screen.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;core/services/storage_service.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;core/constants/app_constants.dart&#39;</span><span class="p">;</span>
 
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">runApp</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyApp</span><span class="p">());</span>
+<span class="p">}</span>
 
+<span class="kd">class</span><span class="w"> </span><span class="nc">MyApp</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">MyApp</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MultiProvider</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">providers:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="n">ChangeNotifierProvider</span><span class="p">(</span><span class="nl">create:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AuthProvider</span><span class="p">()),</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">MaterialApp</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="n">AppConstants</span><span class="p">.</span><span class="n">appName</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">theme:</span><span class="w"> </span><span class="n">ThemeData</span><span class="p">(</span><span class="nl">primarySwatch:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">home:</span><span class="w"> </span><span class="n">Consumer</span><span class="o">&lt;</span><span class="n">AuthProvider</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">auth</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">auth</span><span class="p">.</span><span class="n">isAuthenticated</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HomeScreen</span><span class="p">();</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LoginScreen</span><span class="p">();</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 2. lib/core/constants/app_constants.dart</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AppConstants</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">appName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;My App&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">apiBaseUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;https://api.example.com&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">tokenKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;auth_token&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 3. lib/core/services/storage_service.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:shared_preferences/shared_preferences.dart&#39;</span><span class="p">;</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">StorageService</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">SharedPreferences</span><span class="w"> </span><span class="n">_prefs</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">StorageService</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">_prefs</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">saveString</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">_prefs</span><span class="p">.</span><span class="n">setString</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">getString</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_prefs</span><span class="p">.</span><span class="n">getString</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">remove</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">_prefs</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clear</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">_prefs</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 4. lib/features/auth/models/user.dart</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">User</span><span class="p">({</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">email</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">factory</span><span class="w"> </span><span class="n">User</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">json</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">id:</span><span class="w"> </span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+<span class="w">      </span><span class="nl">name:</span><span class="w"> </span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+<span class="w">      </span><span class="nl">email:</span><span class="w"> </span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">],</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">toJson</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="s1">&#39;id&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
+<span class="w">      </span><span class="s1">&#39;name&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">      </span><span class="s1">&#39;email&#39;</span><span class="o">:</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 5. lib/features/auth/providers/auth_provider.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;../models/user.dart&#39;</span><span class="p">;</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">AuthProvider</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ChangeNotifier</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">User</span><span class="o">?</span><span class="w"> </span><span class="n">_user</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">User</span><span class="o">?</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_user</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isAuthenticated</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isAuthenticated</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">login</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Simulate login</span>
+<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">1</span><span class="p">));</span>
+<span class="w">    </span><span class="n">_user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">email:</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">logout</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="n">_isAuthenticated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">notifyListeners</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 6. lib/features/auth/widgets/login_form.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">LoginForm</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LoginForm</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">onLogin</span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="n">onLogin</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">LoginForm</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_LoginFormState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_LoginFormState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">LoginForm</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">_formKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GlobalKey</span><span class="o">&lt;</span><span class="n">FormState</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">_emailController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">_passwordController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEditingController</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_emailController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_passwordController</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_submit</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_formKey</span><span class="p">.</span><span class="n">currentState</span><span class="o">!</span><span class="p">.</span><span class="n">validate</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">      </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">onLogin</span><span class="p">(</span>
+<span class="w">          </span><span class="n">_emailController</span><span class="p">.</span><span class="n">text</span><span class="p">,</span>
+<span class="w">          </span><span class="n">_passwordController</span><span class="p">.</span><span class="n">text</span><span class="p">,</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Form</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">key:</span><span class="w"> </span><span class="n">_formKey</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">TextFormField</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_emailController</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Email&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="nl">keyboardType:</span><span class="w"> </span><span class="n">TextInputType</span><span class="p">.</span><span class="n">emailAddress</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">validator:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Email is required&#39;</span><span class="p">;</span>
+<span class="w">              </span><span class="p">}</span>
+<span class="w">              </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">value</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Invalid email&#39;</span><span class="p">;</span>
+<span class="w">              </span><span class="p">}</span>
+<span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+<span class="w">          </span><span class="n">TextFormField</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">controller:</span><span class="w"> </span><span class="n">_passwordController</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">decoration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputDecoration</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">labelText:</span><span class="w"> </span><span class="s1">&#39;Password&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">border:</span><span class="w"> </span><span class="n">OutlineInputBorder</span><span class="p">(),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="nl">obscureText:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">validator:</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;Password is required&#39;</span><span class="p">;</span>
+<span class="w">              </span><span class="p">}</span>
+<span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+<span class="w">          </span><span class="n">SizedBox</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">width:</span><span class="w"> </span><span class="kt">double</span><span class="p">.</span><span class="n">infinity</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">_isLoading</span>
+<span class="w">                </span><span class="o">?</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span><span class="nl">child:</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">())</span>
+<span class="w">                </span><span class="o">:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_submit</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Login&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 7. lib/features/auth/screens/login_screen.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:provider/provider.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;../providers/auth_provider.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;../widgets/login_form.dart&#39;</span><span class="p">;</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">LoginScreen</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LoginScreen</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Login&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Consumer</span><span class="o">&lt;</span><span class="n">AuthProvider</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">auth</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">LoginForm</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onLogin:</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="kd">await</span><span class="w"> </span><span class="n">auth</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="n">ScaffoldMessenger</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">showSnackBar</span><span class="p">(</span>
+<span class="w">                    </span><span class="n">SnackBar</span><span class="p">(</span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Error: </span><span class="si">$</span><span class="n">e</span><span class="s1">&#39;</span><span class="p">)),</span>
+<span class="w">                  </span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">            </span><span class="p">);</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 8. lib/shared/widgets/custom_button.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">CustomButton</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CustomButton</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">label</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">onPressed</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">isPrimary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">label</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">VoidCallback</span><span class="w"> </span><span class="n">onPressed</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isPrimary</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">width:</span><span class="w"> </span><span class="kt">double</span><span class="p">.</span><span class="n">infinity</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">height:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">onPressed</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">style:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">.</span><span class="n">styleFrom</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">isPrimary</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">300</span><span class="p">],</span>
+<span class="w">          </span><span class="nl">foregroundColor:</span><span class="w"> </span><span class="n">isPrimary</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black</span><span class="p">,</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="n">label</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- core/ for app-wide functionality
+- features/ for feature modules
+- shared/ for shared widgets
+- Clear import paths
+- Organized by responsibility</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="be-consistent">Be Consistent</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Consistent naming</span>
+<span class="n">features</span><span class="o">/</span>
+<span class="w">  </span><span class="n">auth</span><span class="o">/</span>
+<span class="w">    </span><span class="n">auth_screen</span><span class="p">.</span><span class="n">dart</span>
+<span class="w">    </span><span class="n">auth_provider</span><span class="p">.</span><span class="n">dart</span>
+<span class="w">    </span><span class="n">auth_service</span><span class="p">.</span><span class="n">dart</span>
+
+<span class="c1">// Bad - Inconsistent naming</span>
+<span class="n">features</span><span class="o">/</span>
+<span class="w">  </span><span class="n">auth</span><span class="o">/</span>
+<span class="w">    </span><span class="n">auth_screen</span><span class="p">.</span><span class="n">dart</span>
+<span class="w">    </span><span class="n">authProvider</span><span class="p">.</span><span class="n">dart</span>
+<span class="w">    </span><span class="n">AuthService</span><span class="p">.</span><span class="n">dart</span>
+</code></pre></div>
+<h2 id="use-index-files">Use Index Files</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Index file for exports</span>
+<span class="c1">// lib/features/auth/index.dart</span>
+<span class="k">export</span><span class="w"> </span><span class="s1">&#39;models/user.dart&#39;</span><span class="p">;</span>
+<span class="k">export</span><span class="w"> </span><span class="s1">&#39;providers/auth_provider.dart&#39;</span><span class="p">;</span>
+<span class="k">export</span><span class="w"> </span><span class="s1">&#39;screens/login_screen.dart&#39;</span><span class="p">;</span>
+<span class="k">export</span><span class="w"> </span><span class="s1">&#39;widgets/login_form.dart&#39;</span><span class="p">;</span>
+
+<span class="c1">// Usage</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/features/auth/index.dart&#39;</span><span class="p">;</span>
+</code></pre></div>
+<h2 id="keep-folders-shallow">Keep Folders Shallow</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Shallow nesting</span>
+<span class="n">features</span><span class="o">/</span>
+<span class="w">  </span><span class="n">auth</span><span class="o">/</span>
+<span class="w">    </span><span class="n">models</span><span class="o">/</span>
+<span class="w">    </span><span class="n">screens</span><span class="o">/</span>
+<span class="w">    </span><span class="n">widgets</span><span class="o">/</span>
+
+<span class="c1">// Bad - Deep nesting</span>
+<span class="n">features</span><span class="o">/</span>
+<span class="w">  </span><span class="n">auth</span><span class="o">/</span>
+<span class="w">    </span><span class="n">ui</span><span class="o">/</span>
+<span class="w">      </span><span class="n">screens</span><span class="o">/</span>
+<span class="w">        </span><span class="n">auth</span><span class="o">/</span>
+<span class="w">          </span><span class="n">login</span><span class="o">/</span>
+<span class="w">            </span><span class="n">login_screen</span><span class="p">.</span><span class="n">dart</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="too-many-levels">Too Many Levels</h2>
+<p>Wrong:
+<div class="language-text highlight"><pre><span></span><code>lib/
+├── features/
+│   └── auth/
+│       └── presentation/
+│           └── screens/
+│               └── auth_screen/
+│                   └── widgets/
+│                       └── login/
+│                           └── login_button.dart
+</code></pre></div></p>
+<p>Correct:
+<div class="language-text highlight"><pre><span></span><code>lib/
+├── features/
+│   └── auth/
+│       ├── screens/
+│       │   └── auth_screen.dart
+│       └── widgets/
+│           └── login_button.dart
+</code></pre></div></p>
+<h2 id="mixed-concerns">Mixed Concerns</h2>
+<p>Wrong:
+<div class="language-text highlight"><pre><span></span><code>lib/
+├── models/
+│   ├── auth/
+│   └── home/
+├── screens/
+│   ├── auth/
+│   └── home/
+└── services/
+    ├── auth/
+    └── home/
+</code></pre></div></p>
+<p>Correct:
+<div class="language-text highlight"><pre><span></span><code>lib/
+└── features/
+    ├── auth/
+    │   ├── models/
+    │   ├── screens/
+    │   └── services/
+    └── home/
+        ├── models/
+        ├── screens/
+        └── services/
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Folder Organization is the practical implementation of your project structure. Choose an organization strategy (type-based, feature-based, or layer-based) that fits your project. Be consistent, use clear naming, and keep folders organized. Good folder organization makes your codebase easier to navigate and maintain.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="separation-of-concerns.md">Separation of Concerns</a></li>
+<li><a href="architecture-patterns.md">Architecture Patterns</a></li>
+<li><a href="project-structure.md">Project Structure</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Feature-based organization scales well</li>
+<li>Type-based organization is simpler</li>
+<li>Clean architecture separates layers</li>
+<li>Index files simplify imports</li>
+<li>Consistent naming improves navigation</li>
+<li>Folder organization affects productivity</li>
+<li>Structure can evolve with the project</li>
+<li>Team consensus is important</li>
+</ul>
 
 
 

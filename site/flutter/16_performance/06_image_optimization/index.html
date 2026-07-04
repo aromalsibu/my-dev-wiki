@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#image-optimization" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -8814,6 +8819,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,722 @@
 
 
 
-  <h1>Image Optimization</h1>
+<h1 id="image-optimization">Image Optimization</h1>
+<p>Understand how to optimize images for better performance in Flutter applications.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Image Optimization is the practice of reducing image file sizes, loading times, and memory usage while maintaining acceptable visual quality. In Flutter, image optimization involves using appropriate image formats, compression, caching strategies, and loading techniques to improve app performance and user experience.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Image Optimization exists to:</p>
+<ul>
+<li>Reduce app size and download time</li>
+<li>Improve loading performance</li>
+<li>Reduce memory usage</li>
+<li>Prevent out-of-memory errors</li>
+<li>Optimize network usage</li>
+<li>Improve user experience</li>
+<li>Support slow network conditions</li>
+</ul>
+<hr />
+<h1 id="image-formats">Image Formats</h1>
+<blockquote>
+<p><strong>Choosing the right</strong> image format.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// Image formats comparison</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ImageFormatsExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ImageFormatsExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Image Formats&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. PNG - Lossless, good for icons, transparent backgrounds</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;PNG - Lossless (Icons, Transparent)&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">Image</span><span class="p">.</span><span class="n">asset</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;assets/images/logo.png&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. JPEG - Lossy, good for photographs</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;JPEG - Lossy (Photographs)&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;https://picsum.photos/200/200?random=1&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">fit:</span><span class="w"> </span><span class="n">BoxFit</span><span class="p">.</span><span class="n">cover</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. WebP - Modern format, better compression</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;WebP - Modern (Better Compression)&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;https://www.gstatic.com/webp/gallery/1.webp&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">fit:</span><span class="w"> </span><span class="n">BoxFit</span><span class="p">.</span><span class="n">cover</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 4. SVG - Vector, scalable</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;SVG - Vector (Scalable)&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="c1">// SVG needs flutter_svg package</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;SVG support</span><span class="se">\n</span><span class="s1">needs flutter_svg&#39;</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- PNG: Lossless, transparent, icons
+- JPEG: Lossy, photos, smaller size
+- WebP: Modern, better compression
+- SVG: Vector, scalable</p>
+<hr />
+<h1 id="image-compression">Image Compression</h1>
+<blockquote>
+<p><strong>Compressing images</strong> for better performance.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Image compression example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ImageCompressionExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ImageCompressionExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">ImageCompressionExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_ImageCompressionExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_ImageCompressionExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">ImageCompressionExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Track compression info</span>
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_compressionInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Original size: Unknown&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_checkImageSize</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 2. Check image size</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_checkImageSize</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// In a real app, you&#39;d check the actual file size</span>
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_compressionInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Original: 2.5 MB</span><span class="se">\n</span><span class="s1">&#39;</span>
+<span class="w">                          </span><span class="s1">&#39;Compressed: 0.3 MB</span><span class="se">\n</span><span class="s1">&#39;</span>
+<span class="w">                          </span><span class="s1">&#39;Reduction: 88%&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Image Compression&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. Original image</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Original Image (2.5 MB)&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;https://picsum.photos/400/300?random=1&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">150</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">fit:</span><span class="w"> </span><span class="n">BoxFit</span><span class="p">.</span><span class="n">cover</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. Compressed image</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Compressed Image (0.3 MB)&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;https://picsum.photos/200/150?random=1&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">150</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">fit:</span><span class="w"> </span><span class="n">BoxFit</span><span class="p">.</span><span class="n">cover</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Compression info</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">[</span><span class="m">50</span><span class="p">],</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">border:</span><span class="w"> </span><span class="n">Border</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">[</span><span class="m">200</span><span class="p">]</span><span class="o">!</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;Compression Results&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">16</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="n">_compressionInfo</span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 4. Tips</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">50</span><span class="p">],</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">crossAxisAlignment:</span><span class="w"> </span><span class="n">CrossAxisAlignment</span><span class="p">.</span><span class="n">start</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;Compression Tips:&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">16</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;• Use JPEG for photographs&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;• Use PNG for icons with transparency&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;• Use WebP for modern browsers&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;• Compress before adding to assets&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;• Use appropriate resolution for screen&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Original vs compressed images
+- Significant size reduction
+- Quality vs size trade-off
+- Compression tips</p>
+<hr />
+<h1 id="responsive-images">Responsive Images</h1>
+<blockquote>
+<p><strong>Loading appropriate</strong> image sizes.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Responsive images example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ResponsiveImagesExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ResponsiveImagesExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Responsive Images&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. Using MediaQuery for responsive sizing</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Responsive Image Sizing&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="n">_buildResponsiveImage</span><span class="p">(),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. Different sizes for different devices</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Device-Aware Image Loading&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="n">_buildDeviceAwareImage</span><span class="p">(),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Aspect ratio maintained</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Maintaining Aspect Ratio&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">            </span><span class="n">_buildAspectRatioImage</span><span class="p">(),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildResponsiveImage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Get screen width for responsive sizing</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">screenWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MediaQuery</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">imageWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">screenWidth</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.8</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">imageHeight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imageWidth</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.75</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">width:</span><span class="w"> </span><span class="n">imageWidth</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">height:</span><span class="w"> </span><span class="n">imageHeight</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">        </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">        </span><span class="s1">&#39;https://picsum.photos/</span><span class="si">${</span><span class="n">imageWidth</span><span class="p">.</span><span class="n">toInt</span><span class="p">()</span><span class="si">}</span><span class="s1">/</span><span class="si">${</span><span class="n">imageHeight</span><span class="p">.</span><span class="n">toInt</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">fit:</span><span class="w"> </span><span class="n">BoxFit</span><span class="p">.</span><span class="n">cover</span><span class="p">,</span>
+<span class="w">        </span><span class="c1">// Cache optimized version</span>
+<span class="w">        </span><span class="nl">cacheWidth:</span><span class="w"> </span><span class="n">imageWidth</span><span class="p">.</span><span class="n">toInt</span><span class="p">(),</span>
+<span class="w">        </span><span class="nl">cacheHeight:</span><span class="w"> </span><span class="n">imageHeight</span><span class="p">.</span><span class="n">toInt</span><span class="p">(),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildDeviceAwareImage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Different sizes based on device pixel ratio</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">pixelRatio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MediaQuery</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">devicePixelRatio</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">baseWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">200</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">imageWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">baseWidth</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pixelRatio</span><span class="p">).</span><span class="n">toInt</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">width:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">height:</span><span class="w"> </span><span class="m">150</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">        </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">        </span><span class="s1">&#39;https://picsum.photos/</span><span class="si">$</span><span class="n">imageWidth</span><span class="s1">/</span><span class="si">${</span><span class="p">(</span><span class="n">imageWidth</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.75</span><span class="p">).</span><span class="n">toInt</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">fit:</span><span class="w"> </span><span class="n">BoxFit</span><span class="p">.</span><span class="n">cover</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">cacheWidth:</span><span class="w"> </span><span class="n">imageWidth</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">cacheHeight:</span><span class="w"> </span><span class="p">(</span><span class="n">imageWidth</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">0.75</span><span class="p">).</span><span class="n">toInt</span><span class="p">(),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildAspectRatioImage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">AspectRatio</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">aspectRatio:</span><span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">9</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">        </span><span class="s1">&#39;https://picsum.photos/400/225&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">fit:</span><span class="w"> </span><span class="n">BoxFit</span><span class="p">.</span><span class="n">cover</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">cacheWidth:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">cacheHeight:</span><span class="w"> </span><span class="m">225</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Images adapt to screen size
+- Device pixel ratio aware
+- Aspect ratio maintained
+- Cache optimization</p>
+<hr />
+<h1 id="memory-optimization">Memory Optimization</h1>
+<blockquote>
+<p><strong>Reducing image</strong> memory usage.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Memory optimization example</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">MemoryOptimizationExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">MemoryOptimizationExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MemoryOptimizationExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">      </span><span class="n">_MemoryOptimizationExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_MemoryOptimizationExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">MemoryOptimizationExample</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_memoryUsage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;0.0 MB&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">_imageCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Schedule a check right after the first frame renders</span>
+<span class="w">    </span><span class="n">WidgetsBinding</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">addPostFrameCallback</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_checkMemoryUsage</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_checkMemoryUsage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaintingBinding</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">imageCache</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">cacheSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cache</span><span class="p">.</span><span class="n">currentSize</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">cacheSizeBytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cache</span><span class="p">.</span><span class="n">currentSizeBytes</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_imageCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cacheSize</span><span class="p">;</span>
+<span class="w">      </span><span class="n">_memoryUsage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="p">(</span><span class="n">cacheSizeBytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">1024</span><span class="p">).</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="si">}</span><span class="s1"> MB&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Memory Optimization&#39;</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">actions:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="n">IconButton</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">icon:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">refresh</span><span class="p">),</span>
+<span class="w">            </span><span class="nl">onPressed:</span><span class="w"> </span><span class="n">_checkMemoryUsage</span><span class="p">,</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. Memory display card</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">[</span><span class="m">50</span><span class="p">],</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">spaceAround</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                      </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                        </span><span class="s1">&#39;Cache Size&#39;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                      </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                        </span><span class="s1">&#39;</span><span class="si">$</span><span class="n">_imageCount</span><span class="s1"> images&#39;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">20</span><span class="p">),</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                      </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                        </span><span class="s1">&#39;Memory Used&#39;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                      </span><span class="p">),</span>
+<span class="w">                      </span><span class="n">Text</span><span class="p">(</span><span class="n">_memoryUsage</span><span class="p">,</span><span class="w"> </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">20</span><span class="p">)),</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;Optimized Image Loading&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. The optimized image frame</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">150</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">                </span><span class="c1">// Added a timestamp to break the browser/CDN cache so it downloads fresh</span>
+<span class="w">                </span><span class="s1">&#39;https://picsum.photos/1200/800?cb=</span><span class="si">${</span><span class="n">DateTime</span><span class="p">.</span><span class="n">now</span><span class="p">().</span><span class="n">millisecondsSinceEpoch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">width:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">height:</span><span class="w"> </span><span class="m">150</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">fit:</span><span class="w"> </span><span class="n">BoxFit</span><span class="p">.</span><span class="n">cover</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">cacheWidth:</span>
+<span class="w">                    </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="c1">// Truncates image matrix calculation down to layout dimensions</span>
+<span class="w">                </span><span class="nl">cacheHeight:</span><span class="w"> </span><span class="m">150</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">frameBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">,</span><span class="w"> </span><span class="n">frame</span><span class="p">,</span><span class="w"> </span><span class="n">wasSynchronouslyLoaded</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">frame</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="c1">// CRITICAL: Trigger layout state recalculation when the image actually finishes rendering</span>
+<span class="w">                    </span><span class="n">WidgetsBinding</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">addPostFrameCallback</span><span class="p">(</span>
+<span class="w">                      </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_checkMemoryUsage</span><span class="p">(),</span>
+<span class="w">                    </span><span class="p">);</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">                  </span><span class="k">return</span><span class="w"> </span><span class="n">child</span><span class="p">;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Destructive state modification action</span>
+<span class="w">            </span><span class="n">ElevatedButton</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">PaintingBinding</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">imageCache</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">                </span><span class="n">PaintingBinding</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">imageCache</span>
+<span class="w">                    </span><span class="p">.</span><span class="n">clearLiveImages</span><span class="p">();</span><span class="w"> </span><span class="c1">// Clears running engine references</span>
+<span class="w">                </span><span class="n">_checkMemoryUsage</span><span class="p">();</span>
+<span class="w">                </span><span class="n">ScaffoldMessenger</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">showSnackBar</span><span class="p">(</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SnackBar</span><span class="p">(</span>
+<span class="w">                    </span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Image cache cleared completely&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">              </span><span class="p">},</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="n">ElevatedButton</span><span class="p">.</span><span class="n">styleFrom</span><span class="p">(</span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                </span><span class="s1">&#39;Clear Image Cache&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Monitor cache size
+- Optimize cache usage
+- Clear cache when needed
+- Memory-efficient loading</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> with image optimization.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Progressive image loading</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ProgressiveImageLoader</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatelessWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ProgressiveImageLoader</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">imageUrl</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">width</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">height</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">fit</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">imageUrl</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="o">?</span><span class="w"> </span><span class="n">width</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="o">?</span><span class="w"> </span><span class="n">height</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">BoxFit</span><span class="o">?</span><span class="w"> </span><span class="n">fit</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">      </span><span class="n">imageUrl</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">width:</span><span class="w"> </span><span class="n">width</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">height:</span><span class="w"> </span><span class="n">height</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">fit:</span><span class="w"> </span><span class="n">fit</span><span class="p">,</span>
+<span class="w">      </span><span class="c1">// 1. Load optimized version</span>
+<span class="w">      </span><span class="nl">cacheWidth:</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">width</span><span class="o">!</span><span class="p">.</span><span class="n">toInt</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">cacheHeight:</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">height</span><span class="o">!</span><span class="p">.</span><span class="n">toInt</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="c1">// 2. Show loading indicator</span>
+<span class="w">      </span><span class="nl">loadingBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">,</span><span class="w"> </span><span class="n">loadingProgress</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">loadingProgress</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">child</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">width:</span><span class="w"> </span><span class="n">width</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">height:</span><span class="w"> </span><span class="n">height</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">(),</span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">loadingProgress</span><span class="p">.</span><span class="n">expectedTotalBytes</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;</span><span class="si">${</span><span class="p">(</span><span class="n">loadingProgress</span><span class="p">.</span><span class="n">cumulativeBytesLoaded</span><span class="w"> </span><span class="o">/</span>
+<span class="w">                        </span><span class="n">loadingProgress</span><span class="p">.</span><span class="n">expectedTotalBytes</span><span class="o">!</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">              </span><span class="p">],</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="c1">// 3. Error handling</span>
+<span class="w">      </span><span class="nl">errorBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">,</span><span class="w"> </span><span class="n">stackTrace</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">width:</span><span class="w"> </span><span class="n">width</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">height:</span><span class="w"> </span><span class="n">height</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">broken_image</span><span class="p">),</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Lazy image loading</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">LazyImageLoader</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LazyImageLoader</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">imageUrl</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">placeholder</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">width</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">height</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">fit</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">imageUrl</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Widget</span><span class="w"> </span><span class="n">placeholder</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="o">?</span><span class="w"> </span><span class="n">width</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="o">?</span><span class="w"> </span><span class="n">height</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">BoxFit</span><span class="o">?</span><span class="w"> </span><span class="n">fit</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">LazyImageLoader</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_LazyImageLoaderState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_LazyImageLoaderState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">LazyImageLoader</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_loadImage</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_loadImage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Preload image</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">provider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NetworkImage</span><span class="p">(</span><span class="n">widget</span><span class="p">.</span><span class="n">imageUrl</span><span class="p">);</span>
+<span class="w">    </span><span class="n">provider</span><span class="p">.</span><span class="n">obtainKey</span><span class="p">(</span><span class="n">ImageConfiguration</span><span class="p">.</span><span class="n">empty</span><span class="p">).</span><span class="n">then</span><span class="p">((</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">_isLoading</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_isLoading</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">placeholder</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">      </span><span class="n">widget</span><span class="p">.</span><span class="n">imageUrl</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">width:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">width</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">height:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">height</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">fit:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">fit</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">cacheWidth:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">width</span><span class="o">!</span><span class="p">.</span><span class="n">toInt</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">cacheHeight:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">height</span><span class="o">!</span><span class="p">.</span><span class="n">toInt</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Progressive loading with indicator
+- Lazy loading with placeholder
+- Cache optimization
+- Error handling</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="use-appropriate-formats">Use Appropriate Formats</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Use JPEG for photos</span>
+<span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span><span class="s1">&#39;photo.jpg&#39;</span><span class="p">)</span>
+
+<span class="c1">// Good - Use PNG for icons</span>
+<span class="n">Image</span><span class="p">.</span><span class="n">asset</span><span class="p">(</span><span class="s1">&#39;icon.png&#39;</span><span class="p">)</span>
+
+<span class="c1">// Good - Use WebP for modern apps</span>
+<span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span><span class="s1">&#39;image.webp&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="optimize-image-size">Optimize Image Size</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Load appropriate size</span>
+<span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">  </span><span class="n">url</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">cacheWidth:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">cacheHeight:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1">// Bad - Loading full size</span>
+<span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="use-caching">Use Caching</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Cache optimized images</span>
+<span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">  </span><span class="n">url</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">cacheWidth:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">cacheHeight:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="loading-full-size-images">Loading Full-Size Images</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Loads full size image</span>
+<span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span><span class="s1">&#39;https://example.com/huge-image.jpg&#39;</span><span class="p">)</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Loads optimized size</span>
+<span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">  </span><span class="s1">&#39;https://example.com/huge-image.jpg&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">cacheWidth:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">cacheHeight:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<h2 id="no-error-handling">No Error Handling</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// No error handling</span>
+<span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span><span class="s1">&#39;https://example.com/image.jpg&#39;</span><span class="p">)</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// With error handling</span>
+<span class="n">Image</span><span class="p">.</span><span class="n">network</span><span class="p">(</span>
+<span class="w">  </span><span class="s1">&#39;https://example.com/image.jpg&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">errorBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">,</span><span class="w"> </span><span class="n">stackTrace</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">error</span><span class="p">);</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Image Optimization improves app performance by reducing file sizes, memory usage, and loading times. Use appropriate formats, compress images, load responsive sizes, and implement caching. Optimized images result in faster loading and better user experience.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="devtools.md">DevTools</a></li>
+<li><a href="profiling.md">Profiling</a></li>
+<li><a href="performance-best-practices.md">Performance Best Practices</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>JPEG is best for photographs</li>
+<li>PNG is best for icons with transparency</li>
+<li>WebP offers better compression</li>
+<li>cacheWidth/cacheHeight optimize memory</li>
+<li>Image cache reduces network usage</li>
+<li>Progressive loading improves UX</li>
+<li>Lazy loading saves bandwidth</li>
+<li>Proper optimization reduces app size</li>
+</ul>
 
 
 

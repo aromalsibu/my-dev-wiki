@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#ffi-foreign-function-interface" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -8340,6 +8345,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,427 @@
 
 
 
-  <h1>FFI</h1>
+<h1 id="ffi-foreign-function-interface">FFI (Foreign Function Interface)</h1>
+<p>Understand how to call native C/C++ code directly from Dart using FFI.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>FFI (Foreign Function Interface) is a mechanism in Dart that allows you to call native C/C++ code directly from Dart without going through platform channels. This provides higher performance and lower latency compared to MethodChannel, making it ideal for computationally intensive tasks, game engines, and performance-critical operations.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>FFI exists to:</p>
+<ul>
+<li>Call native C/C++ code directly</li>
+<li>Achieve higher performance</li>
+<li>Reduce latency</li>
+<li>Access existing C libraries</li>
+<li>Implement performance-critical operations</li>
+<li>Integrate with game engines</li>
+<li>Use native data processing</li>
+</ul>
+<hr />
+<h1 id="ffi-setup">FFI Setup</h1>
+<blockquote>
+<p><strong>Setting up</strong> FFI in your Flutter project.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;dart:ffi&#39;</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">ffi</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;dart:typed_data&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:ffi/ffi.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// 1. Basic FFI setup</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">FFISetup</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 1. Load the native library</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">DynamicLibrary</span><span class="w"> </span><span class="n">nativeLibrary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_loadLibrary</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">DynamicLibrary</span><span class="w"> </span><span class="n">_loadLibrary</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Platform-specific library loading</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Platform</span><span class="p">.</span><span class="n">isAndroid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">DynamicLibrary</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;libnative_lib.so&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Platform</span><span class="p">.</span><span class="n">isIOS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">DynamicLibrary</span><span class="p">.</span><span class="n">process</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Platform</span><span class="p">.</span><span class="n">isWindows</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">DynamicLibrary</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;native_lib.dll&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Platform</span><span class="p">.</span><span class="n">isMacOS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">DynamicLibrary</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;libnative_lib.dylib&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Platform</span><span class="p">.</span><span class="n">isLinux</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">DynamicLibrary</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;libnative_lib.so&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">Exception</span><span class="p">(</span><span class="s1">&#39;Unsupported platform&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Define native function signatures</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">NativeFunctions</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 2.1 Function that returns an int</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">add</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Look up the native function and call it</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">addFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="p">,</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="kt">int</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 2.2 Function that returns a double</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">multiply</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">multiplyFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="p">,</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;multiply&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">multiply</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">multiplyFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="kt">double</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 2.3 Function that modifies a string</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">reverseString</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Convert Dart string to C string</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">cString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="n">toNativeUtf8</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">reverseFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Char</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Char</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;reverseString&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">reverse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reverseFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Char</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Char</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reverse</span><span class="p">(</span><span class="n">cString</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">resultString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">cast</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Uint8</span><span class="o">&gt;</span><span class="p">().</span><span class="n">toDartString</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Free memory</span>
+<span class="w">    </span><span class="n">calloc</span><span class="p">.</span><span class="n">free</span><span class="p">(</span><span class="n">cString</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">resultString</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 2.4 Function that processes an array</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">sumArray</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">numbers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Create a C array</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">cArray</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">numbers</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">numbers</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">cArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numbers</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">sumFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;sumArray&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sumFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="kt">int</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">cArray</span><span class="p">,</span><span class="w"> </span><span class="n">numbers</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Free memory</span>
+<span class="w">    </span><span class="n">calloc</span><span class="p">.</span><span class="n">free</span><span class="p">(</span><span class="n">cArray</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- DynamicLibrary loads native code
+- lookup finds native functions
+- asFunction converts to Dart function
+- Pointers manage memory
+- Native strings require conversion</p>
+<hr />
+<h1 id="native-cc-implementation">Native C/C++ Implementation</h1>
+<blockquote>
+<p><strong>Implementing</strong> native functions.</p>
+</blockquote>
+<div class="language-c highlight"><pre><span></span><code><span class="c1">// native_lib.c</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>
+
+<span class="c1">// 1. Simple addition</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 2. Multiplication</span>
+<span class="kt">double</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 3. String reversal</span>
+<span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="nf">reverseString</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">((</span><span class="n">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">[</span><span class="n">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">result</span><span class="p">[</span><span class="n">length</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 4. Array sum</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">sumArray</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">arr</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">sum</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 5. Image processing (blur effect)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">applyBlur</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">imageData</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Simple box blur algorithm</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="n">width</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">height</span><span class="p">;</span><span class="w"> </span><span class="n">y</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">width</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">dy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="n">dy</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">dy</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="n">dx</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">dx</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="kt">int</span><span class="w"> </span><span class="n">px</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dx</span><span class="p">;</span>
+<span class="w">                    </span><span class="kt">int</span><span class="w"> </span><span class="n">py</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dy</span><span class="p">;</span>
+
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">px</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">px</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">py</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">py</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">height</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">imageData</span><span class="p">[</span><span class="n">py</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">px</span><span class="p">];</span>
+<span class="w">                        </span><span class="n">count</span><span class="o">++</span><span class="p">;</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+
+<span class="w">            </span><span class="n">temp</span><span class="p">[</span><span class="n">y</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">count</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Copy back</span>
+<span class="w">    </span><span class="n">memcpy</span><span class="p">(</span><span class="n">imageData</span><span class="p">,</span><span class="w"> </span><span class="n">temp</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="p">));</span>
+<span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">temp</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- C functions implement logic
+- Memory management with malloc/free
+- Pointers for arrays and strings
+- Data processing in C</p>
+<hr />
+<h1 id="ffi-with-structs">FFI with Structs</h1>
+<blockquote>
+<p><strong>Using structs</strong> with FFI.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Define C struct in Dart</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">Point</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">Struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nd">@ffi</span><span class="p">.</span><span class="n">Double</span><span class="p">()</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@ffi</span><span class="p">.</span><span class="n">Double</span><span class="p">()</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Native functions with structs</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">NativeStructFunctions</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span><span class="n">Point</span><span class="w"> </span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="n">p2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">distanceFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;distance&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">distance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">distanceFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="kt">double</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Create Point objects in native memory</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">p1Ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">p2Ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">p1Ptr</span><span class="p">.</span><span class="n">ref</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="n">p1Ptr</span><span class="p">.</span><span class="n">ref</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="w">    </span><span class="n">p2Ptr</span><span class="p">.</span><span class="n">ref</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p2</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="n">p2Ptr</span><span class="p">.</span><span class="n">ref</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p2</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span><span class="n">p1Ptr</span><span class="p">,</span><span class="w"> </span><span class="n">p2Ptr</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Free memory</span>
+<span class="w">    </span><span class="n">calloc</span><span class="p">.</span><span class="n">free</span><span class="p">(</span><span class="n">p1Ptr</span><span class="p">);</span>
+<span class="w">    </span><span class="n">calloc</span><span class="p">.</span><span class="n">free</span><span class="p">(</span><span class="n">p2Ptr</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="n">midpoint</span><span class="p">(</span><span class="n">Point</span><span class="w"> </span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="n">p2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">midpointFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;midpoint&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">midpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">midpointFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">p1Ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">p2Ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">p1Ptr</span><span class="p">.</span><span class="n">ref</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="n">p1Ptr</span><span class="p">.</span><span class="n">ref</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="w">    </span><span class="n">p2Ptr</span><span class="p">.</span><span class="n">ref</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p2</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="n">p2Ptr</span><span class="p">.</span><span class="n">ref</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p2</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">resultPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">midpoint</span><span class="p">(</span><span class="n">p1Ptr</span><span class="p">,</span><span class="w"> </span><span class="n">p2Ptr</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Point</span><span class="p">()</span>
+<span class="w">      </span><span class="p">..</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resultPtr</span><span class="p">.</span><span class="n">ref</span><span class="p">.</span><span class="n">x</span>
+<span class="w">      </span><span class="p">..</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resultPtr</span><span class="p">.</span><span class="n">ref</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">calloc</span><span class="p">.</span><span class="n">free</span><span class="p">(</span><span class="n">p1Ptr</span><span class="p">);</span>
+<span class="w">    </span><span class="n">calloc</span><span class="p">.</span><span class="n">free</span><span class="p">(</span><span class="n">p2Ptr</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 3. Native struct definitions (C)</span>
+<span class="c1">// typedef struct {</span>
+<span class="c1">//   double x;</span>
+<span class="c1">//   double y;</span>
+<span class="c1">// } Point;</span>
+<span class="c1">//</span>
+<span class="c1">// double distance(Point* p1, Point* p2) {</span>
+<span class="c1">//   double dx = p1-&gt;x - p2-&gt;x;</span>
+<span class="c1">//   double dy = p1-&gt;y - p2-&gt;y;</span>
+<span class="c1">//   return sqrt(dx * dx + dy * dy);</span>
+<span class="c1">// }</span>
+<span class="c1">//</span>
+<span class="c1">// Point* midpoint(Point* p1, Point* p2) {</span>
+<span class="c1">//   Point* result = (Point*)malloc(sizeof(Point));</span>
+<span class="c1">//   result-&gt;x = (p1-&gt;x + p2-&gt;x) / 2;</span>
+<span class="c1">//   result-&gt;y = (p1-&gt;y + p2-&gt;y) / 2;</span>
+<span class="c1">//   return result;</span>
+<span class="c1">// }</span>
+</code></pre></div>
+<p>What's happening here?
+- Structs map C structures to Dart
+- Pointers manage native memory
+- calloc allocates memory
+- ref accesses struct fields</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> with FFI.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Image processing with FFI</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">ImageProcessor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Uint8List</span><span class="w"> </span><span class="n">applyBlur</span><span class="p">(</span><span class="n">Uint8List</span><span class="w"> </span><span class="n">imageData</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Create native buffer</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Uint8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">imageData</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 2. Copy data to native buffer</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">nativeArray</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">asTypedList</span><span class="p">(</span><span class="n">imageData</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+<span class="w">    </span><span class="n">nativeArray</span><span class="p">.</span><span class="n">setAll</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">imageData</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3. Call native function</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">blurFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Void</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Uint8</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="p">,</span><span class="w"> </span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;applyBlur&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">blur</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blurFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Pointer</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Uint8</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">blur</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4. Copy result back</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Uint8List</span><span class="p">.</span><span class="n">fromList</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">asTypedList</span><span class="p">(</span><span class="n">imageData</span><span class="p">.</span><span class="n">length</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// 5. Free memory</span>
+<span class="w">    </span><span class="n">calloc</span><span class="p">.</span><span class="n">free</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Native math operations</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">NativeMath</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">factorial</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">factorialFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int64</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;factorial&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">factorial</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factorialFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="kt">int</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">sin</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">sinFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;sin&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">sin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sinFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="kt">double</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">cos</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">cosFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;cos&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">cos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cosFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="kt">double</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">sqrtFunc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FFISetup</span><span class="p">.</span><span class="n">nativeLibrary</span>
+<span class="w">        </span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;sqrt&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">sqrt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sqrtFunc</span><span class="p">.</span><span class="n">asFunction</span><span class="o">&lt;</span><span class="kt">double</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Image processing with FFI
+- Native math operations
+- Memory management
+- Performance optimization</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="manage-memory-properly">Manage Memory Properly</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Free allocated memory</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Uint8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Use buffer</span>
+<span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">calloc</span><span class="p">.</span><span class="n">free</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="use-typeddata-for-performance">Use TypedData for Performance</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Use TypedData for arrays</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">length</span><span class="p">);</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">asTypedList</span><span class="p">(</span><span class="n">length</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="handle-errors">Handle Errors</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Error handling</span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NativeFunctions</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Native error: </span><span class="si">$</span><span class="n">e</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="memory-leaks">Memory Leaks</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Memory leak</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Uint8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+<span class="c1">// Use buffer</span>
+<span class="c1">// Not freeing memory</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Free memory</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calloc</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Uint8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Use buffer</span>
+<span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">calloc</span><span class="p">.</span><span class="n">free</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="incorrect-type-mapping">Incorrect Type Mapping</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Wrong type mapping</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">func</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">library</span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Float</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;function&#39;</span><span class="p">);</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Correct type mapping</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">func</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">library</span><span class="p">.</span><span class="n">lookup</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">NativeFunction</span><span class="o">&lt;</span><span class="n">ffi</span><span class="p">.</span><span class="n">Int32</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">ffi</span><span class="p">.</span><span class="n">Double</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s1">&#39;function&#39;</span><span class="p">);</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>FFI enables direct calling of native C/C++ code from Dart. Use DynamicLibrary to load native libraries, lookup to find functions, and asFunction to convert to Dart functions. Manage memory properly and handle errors gracefully for reliable FFI integration.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="plugins.md">Plugins</a></li>
+<li><a href="platform-views.md">Platform Views</a></li>
+<li><a href="methodchannel.md">MethodChannel</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>FFI calls native code directly</li>
+<li>DynamicLibrary loads native libraries</li>
+<li>Structs map C structures</li>
+<li>Pointers manage memory</li>
+<li>calloc allocates memory</li>
+<li>asFunction converts functions</li>
+<li>FFI is faster than MethodChannel</li>
+<li>FFI supports C, C++, and Objective-C</li>
+</ul>
 
 
 

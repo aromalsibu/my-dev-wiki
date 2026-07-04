@@ -1,651 +1,270 @@
-## Primary Keys
+# Primary Keys
 
-**Understanding and implementing primary keys in Drift**
+A primary key uniquely identifies each row in a table.
 
 ---
 
 # What is it?
 
-**Primary Keys** are unique identifiers for each row in a database table. They ensure that every record can be uniquely identified and retrieved. Drift provides flexible ways to define primary keys, from simple auto-incrementing integers to complex composite keys.
+A primary key is a column, or a combination of columns, whose value uniquely identifies every row in a table.
 
-> **Think of Primary Keys like "social security numbers"** – each person has a unique one that identifies them and only them, and you can always find someone using their SSN.
+Every table should have a primary key so that each record can be uniquely identified.
 
-```dart
-class Users extends Table {
-  // The most common primary key: auto-incrementing integer
-  IntColumn get id => integer().autoIncrement()();
-  
-  // The rest of the columns...
-  TextColumn get name => text()();
-  TextColumn get email => text()();
-}
-```
+For example, in a `Users` table:
 
-> **What's happening here?**
-> - **Auto-increment** – Automatically generates sequential IDs
-> - **Primary Key** – `autoIncrement()` implies PRIMARY KEY
-> - **Unique** – Each ID is unique across the table
-> - **Indexed** – Primary keys are automatically indexed for fast lookups
+| id | name    |
+| -- | ------- |
+| 1  | Alice   |
+| 2  | Bob     |
+| 3  | Charlie |
+
+The `id` column is the primary key because each value is unique and identifies exactly one user.
+
+In Drift, the most common way to define a primary key is by using `autoIncrement()`.
 
 ---
 
 # Why does it exist?
 
-- **Unique Identification** – Every row has a unique identifier
-- **Fast Lookups** – Primary keys are automatically indexed
-- **Relationships** – Foreign keys reference primary keys
-- **Data Integrity** – Prevents duplicate rows
-- **Performance** – Primary key lookups are O(log n) or better
-- **Ordering** – Sequential primary keys maintain insertion order
+Without a primary key, it becomes difficult to uniquely identify a row.
+
+For example, if two users have the same name:
+
+| id | name |
+| -- | ---- |
+| 1  | John |
+| 2  | John |
+
+Updating or deleting a specific user based only on their name would be unreliable.
+
+A primary key ensures every row has a unique identity, making queries, updates, relationships, and indexing more efficient.
 
 ---
 
-# Single Column Primary Keys
+# Syntax
 
-> **The most common type of primary key**
-
-## Auto-incrementing Integer (Recommended)
+## Auto-Incrementing Primary Key
 
 ```dart
 class Users extends Table {
-  // 👇 Most common primary key approach
   IntColumn get id => integer().autoIncrement()();
-  
-  TextColumn get name => text()();
-  TextColumn get email => text()();
-}
 
-// Generated SQL:
-// CREATE TABLE users (
-//   id INTEGER PRIMARY KEY AUTOINCREMENT,
-//   name TEXT NOT NULL,
-//   email TEXT NOT NULL
-// )
+  TextColumn get name => text()();
+}
 ```
 
-## Custom Integer Primary Key
+Explanation:
+
+* `autoIncrement()` creates an integer primary key.
+* SQLite automatically assigns a unique value for each new row.
+* The `id` column becomes the table's primary key.
+
+---
+
+## Custom Primary Key
+
+If you don't use `autoIncrement()`, you can define the primary key manually.
+
+```dart
+class Users extends Table {
+  TextColumn get email => text()();
+
+  TextColumn get name => text()();
+
+  @override
+  Set<Column> get primaryKey => {email};
+}
+```
+
+Explanation:
+
+* `primaryKey` specifies which column uniquely identifies each row.
+* Here, `email` acts as the primary key instead of an auto-generated ID.
+
+---
+
+# Mental Model
+
+Think of a primary key as a unique ID card.
+
+```text
+Users
+
+ID   Name
+------------
+1    Alice
+2    Bob
+3    Charlie
+```
+
+Even if two people have the same name, their ID numbers are different.
+
+The database uses the primary key to distinguish one row from another.
+
+---
+
+# Examples
+
+## Simple Example
+
+A products table.
 
 ```dart
 class Products extends Table {
-  // 👇 Custom primary key (not auto-incrementing)
-  @override
-  ColumnKey get primaryKey => const ColumnKey('product_id');
-  
-  IntColumn get productId => integer().named('product_id')();
-  TextColumn get name => text()();
-  RealColumn get price => real()();
-}
+  IntColumn get id => integer().autoIncrement()();
 
-// Generated SQL:
-// CREATE TABLE products (
-//   product_id INTEGER PRIMARY KEY,
-//   name TEXT NOT NULL,
-//   price REAL NOT NULL
-// )
+  TextColumn get name => text()();
+}
 ```
 
-## Text Primary Key
+Explanation:
+
+* Every product receives a unique ID automatically.
+* The ID can be used to retrieve, update, or delete a specific product.
+
+---
+
+## Real-World Example
+
+A country table using ISO country codes.
 
 ```dart
 class Countries extends Table {
-  // 👇 Text primary key (ISO country codes)
-  @override
-  ColumnKey get primaryKey => const ColumnKey('code');
-  
-  TextColumn get code => text().named('code')();
-  TextColumn get name => text()();
-  TextColumn get currency => text()();
-}
+  TextColumn get code => text()();
 
-// Generated SQL:
-// CREATE TABLE countries (
-//   code TEXT PRIMARY KEY,
-//   name TEXT NOT NULL,
-//   currency TEXT NOT NULL
-// )
+  TextColumn get name => text()();
+
+  @override
+  Set<Column> get primaryKey => {code};
+}
 ```
+
+Explanation:
+
+* Country codes such as `US`, `IN`, and `JP` are already unique.
+* There's no need for an additional auto-incrementing ID.
 
 ---
 
-# Composite Primary Keys
+# When to Use
 
-> **Primary keys that use multiple columns**
+Use a primary key for:
 
-## Simple Composite Key
-
-```dart
-class OrderItems extends Table {
-  // 👇 Composite primary key (orderId + productId)
-  @override
-  Set<Column> get primaryKey => {orderId, productId};
-  
-  IntColumn get orderId => integer()();
-  IntColumn get productId => integer()();
-  IntColumn get quantity => integer()();
-  RealColumn get unitPrice => real()();
-}
-
-// Generated SQL:
-// CREATE TABLE order_items (
-//   order_id INTEGER NOT NULL,
-//   product_id INTEGER NOT NULL,
-//   quantity INTEGER NOT NULL,
-//   unit_price REAL NOT NULL,
-//   PRIMARY KEY (order_id, product_id)
-// )
-```
-
-## Composite Key with Custom Names
-
-```dart
-class StudentCourses extends Table {
-  // 👇 Composite key with named columns
-  @override
-  Set<Column> get primaryKey => {studentId, courseId, semester};
-  
-  IntColumn get studentId => integer().named('student_id')();
-  IntColumn get courseId => integer().named('course_id')();
-  TextColumn get semester => text().named('semester')();
-  TextColumn get grade => text().nullable()();
-}
-
-// Generated SQL:
-// CREATE TABLE student_courses (
-//   student_id INTEGER NOT NULL,
-//   course_id INTEGER NOT NULL,
-//   semester TEXT NOT NULL,
-//   grade TEXT,
-//   PRIMARY KEY (student_id, course_id, semester)
-// )
-```
+* Every database table.
+* Identifying individual records.
+* Creating relationships between tables.
+* Updating or deleting specific rows.
+* Ensuring every record has a unique identity.
 
 ---
 
-# Primary Key Options
+# When NOT to Use
 
-> **Advanced primary key configurations**
+Avoid using a column as a primary key if:
 
-## WITH AUTOINCREMENT
+* Its value may change over time.
+* Duplicate values are possible.
+* It doesn't uniquely identify a row.
 
-```dart
-class AutoIncrementExample extends Table {
-  // 👇 AUTOINCREMENT ensures IDs are never reused
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
-}
-
-// Generated SQL:
-// CREATE TABLE auto_increment_example (
-//   id INTEGER PRIMARY KEY AUTOINCREMENT,
-//   name TEXT NOT NULL
-// )
-```
-
-**When to use AUTOINCREMENT:**
-- When you need IDs to be strictly increasing
-- When you never want IDs to be reused
-- For audit logs where sequence matters
-- **Note:** AUTOINCREMENT adds overhead
-
-## WITHOUT AUTOINCREMENT (Default)
-
-```dart
-class DefaultPrimaryKey extends Table {
-  // 👇 ROWID acts as primary key (faster, more efficient)
-  IntColumn get id => integer()(); // Not autoIncrement()
-  TextColumn get name => text()();
-}
-
-// Generated SQL:
-// CREATE TABLE default_primary_key (
-//   id INTEGER PRIMARY KEY,  -- ROWID alias
-//   name TEXT NOT NULL
-// )
-```
-
-**When to skip AUTOINCREMENT:**
-- For better performance
-- When you don't need strict increasing order
-- When you don't care about reused IDs
-- For most tables (default is fine)
-
-## Using ROWID Directly
-
-```dart
-class RowIdExample extends Table {
-  // 👇 Use SQLite's internal ROWID as primary key
-  // No need to define a primary key column
-  TextColumn get name => text()();
-  TextColumn get email => text()();
-  
-  // Access ROWID via custom query
-  Future<int> getRowId(QueryExecutor executor, String name) async {
-    final result = await executor.customSelect(
-      'SELECT ROWID FROM row_id_example WHERE name = ?',
-      variables: [Variable.withString(name)],
-    ).get();
-    return result.first.data['ROWID'] as int;
-  }
-}
-
-// Generated SQL:
-// CREATE TABLE row_id_example (
-//   name TEXT NOT NULL,
-//   email TEXT NOT NULL
-// )
-// Note: No explicit primary key, ROWID is used
-```
-
----
-
-# Primary Key Relationships
-
-> **Using primary keys in relationships**
-
-## One-to-One Relationship
-
-```dart
-class Users extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
-  TextColumn get email => text()();
-}
-
-class Profiles extends Table {
-  // 👇 Foreign key references Users primary key
-  IntColumn get userId => integer()
-    .references(Users, #id)
-    .unique() // One-to-one: each user has one profile
-    .named('user_id')();
-  
-  TextColumn get bio => text().nullable()();
-  TextColumn get avatar => text().nullable()();
-}
-
-// Generated SQL:
-// CREATE TABLE profiles (
-//   user_id INTEGER NOT NULL UNIQUE REFERENCES users(id),
-//   bio TEXT,
-//   avatar TEXT
-// )
-```
-
-## One-to-Many Relationship
-
-```dart
-class Users extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
-}
-
-class Posts extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get title => text()();
-  TextColumn get content => text()();
-  
-  // 👇 Foreign key references Users primary key
-  IntColumn get userId => integer()
-    .references(Users, #id)
-    .named('user_id')();
-}
-
-// Generated SQL:
-// CREATE TABLE posts (
-//   id INTEGER PRIMARY KEY AUTOINCREMENT,
-//   title TEXT NOT NULL,
-//   content TEXT NOT NULL,
-//   user_id INTEGER NOT NULL REFERENCES users(id)
-// )
-```
-
-## Many-to-Many Relationship
-
-```dart
-class Users extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
-}
-
-class Roles extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
-}
-
-class UserRoles extends Table {
-  // 👇 Composite primary key using both foreign keys
-  @override
-  Set<Column> get primaryKey => {userId, roleId};
-  
-  IntColumn get userId => integer()
-    .references(Users, #id)
-    .named('user_id')();
-  
-  IntColumn get roleId => integer()
-    .references(Roles, #id)
-    .named('role_id')();
-  
-  DateTimeColumn get assignedAt => dateTime()
-    .withDefault(currentDateAndTime)
-    .named('assigned_at')();
-}
-
-// Generated SQL:
-// CREATE TABLE user_roles (
-//   user_id INTEGER NOT NULL REFERENCES users(id),
-//   role_id INTEGER NOT NULL REFERENCES roles(id),
-//   assigned_at INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
-//   PRIMARY KEY (user_id, role_id)
-// )
-```
-
----
-
-# Real-World Example
-
-> **Complete primary key implementation**
-
-```dart
-// lib/database/tables/base_table.dart
-import 'package:drift/drift.dart';
-
-// 👇 Base table with common primary key pattern
-abstract class BaseTable extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-  DateTimeColumn get updatedAt => dateTime().nullable()();
-  BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
-}
-
-// lib/database/tables/users.dart
-import 'package:drift/drift.dart';
-import 'base_table.dart';
-
-class Users extends BaseTable {
-  TextColumn get username => text().unique()();
-  TextColumn get email => text().unique()();
-  TextColumn get fullName => text().nullable()();
-  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
-  DateTimeColumn get lastLogin => dateTime().nullable()();
-}
-
-// lib/database/tables/products.dart
-import 'package:drift/drift.dart';
-import 'base_table.dart';
-
-class Products extends BaseTable {
-  // 👇 Custom primary key (SKU)
-  @override
-  ColumnKey get primaryKey => const ColumnKey('sku');
-  
-  TextColumn get sku => text()
-    .unique()
-    .named('sku')
-    .customConstraint('CHECK (LENGTH(sku) >= 6)')();
-  
-  TextColumn get name => text()();
-  TextColumn get description => text().nullable()();
-  RealColumn get price => real().customConstraint('CHECK (price >= 0)')();
-  IntColumn get stock => integer().withDefault(const Constant(0))();
-  TextColumn get category => text()();
-}
-
-// lib/database/tables/orders.dart
-import 'package:drift/drift.dart';
-import 'users.dart';
-import 'base_table.dart';
-
-class Orders extends BaseTable {
-  // 👇 Use standard auto-increment
-  IntColumn get id => integer().autoIncrement()();
-  
-  // 👇 Foreign key
-  IntColumn get userId => integer()
-    .references(Users, #id)
-    .named('user_id')();
-  
-  // 👇 Unique order number (business key)
-  TextColumn get orderNumber => text()
-    .unique()
-    .named('order_number')
-    .customConstraint('CHECK (LENGTH(order_number) >= 8)')();
-  
-  TextColumn get status => text()
-    .withDefault(const Constant('pending'))
-    .customConstraint("CHECK (status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled'))")();
-  
-  RealColumn get totalAmount => real()
-    .customConstraint('CHECK (total_amount >= 0)')
-    .named('total_amount')();
-  
-  DateTimeColumn get orderDate => dateTime()
-    .withDefault(currentDateAndTime)
-    .named('order_date')();
-}
-
-// lib/database/tables/order_items.dart
-import 'package:drift/drift.dart';
-import 'orders.dart';
-import 'products.dart';
-
-class OrderItems extends Table {
-  // 👇 Composite primary key
-  @override
-  Set<Column> get primaryKey => {orderId, productId};
-  
-  // 👇 Foreign keys
-  IntColumn get orderId => integer()
-    .references(Orders, #id, onDelete: KeyAction.cascade)
-    .named('order_id')();
-  
-  IntColumn get productId => integer()
-    .references(Products, #id)
-    .named('product_id')();
-  
-  IntColumn get quantity => integer()
-    .customConstraint('CHECK (quantity > 0)')();
-  
-  RealColumn get unitPrice => real()
-    .customConstraint('CHECK (unit_price >= 0)')
-    .named('unit_price')();
-  
-  RealColumn get totalPrice => real()
-    .customConstraint('CHECK (total_price >= 0)')
-    .named('total_price')();
-  
-  // 👇 Additional index for performance
-  @override
-  List<Index> get indexes => [
-    Index('idx_order_items_order', 'order_id'),
-    Index('idx_order_items_product', 'product_id'),
-  ];
-}
-
-// lib/database/database.dart - Usage
-import 'package:drift/drift.dart';
-import 'tables/users.dart';
-import 'tables/products.dart';
-import 'tables/orders.dart';
-import 'tables/order_items.dart';
-
-@DriftDatabase(tables: [
-  Users,
-  Products,
-  Orders,
-  OrderItems,
-])
-class AppDatabase extends _$AppDatabase {
-  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
-
-  @override
-  int get schemaVersion => 1;
-
-  // 👇 Query by primary key
-  Future<User?> getUserById(int id) async {
-    return await (select(users)..where((u) => u.id.equals(id)))
-        .getSingleOrNull();
-  }
-
-  // 👇 Query by custom primary key (SKU)
-  Future<Product?> getProductBySku(String sku) async {
-    return await (select(products)..where((p) => p.sku.equals(sku)))
-        .getSingleOrNull();
-  }
-
-  // 👇 Query by business key
-  Future<Order?> getOrderByNumber(String orderNumber) async {
-    return await (select(orders)..where((o) => o.orderNumber.equals(orderNumber)))
-        .getSingleOrNull();
-  }
-
-  // 👇 Insert with composite primary key
-  Future<void> addOrderItem(
-    int orderId,
-    int productId,
-    int quantity,
-    double unitPrice,
-  ) async {
-    await into(orderItems).insert(
-      OrderItemsCompanion.insert(
-        orderId: orderId,
-        productId: productId,
-        quantity: quantity,
-        unitPrice: unitPrice,
-        totalPrice: quantity * unitPrice,
-      ),
-    );
-  }
-
-  // 👇 Get order with items using primary keys
-  Future<Map<String, dynamic>> getOrderWithItems(int orderId) async {
-    final order = await getOrderById(orderId);
-    if (order == null) throw Exception('Order not found');
-    
-    final items = await (select(orderItems)
-      ..where((i) => i.orderId.equals(orderId)))
-      .get();
-    
-    return {
-      'order': order,
-      'items': items,
-      'total': items.fold<double>(
-        0, 
-        (sum, item) => sum + item.totalPrice,
-      ),
-    };
-  }
-
-  Future<Order?> getOrderById(int id) async {
-    return await (select(orders)..where((o) => o.id.equals(id)))
-        .getSingleOrNull();
-  }
-}
-```
+For example, names, phone numbers, and addresses are often poor primary keys because they can change or may not be unique.
 
 ---
 
 # Best Practices
 
-- **Use auto-incrementing integers** – For most tables
-- **Use business keys** – For natural identifiers (SKU, order numbers)
-- **Use composite keys** – For junction tables
-- **Add indexes** – On foreign key columns
-- **Consider performance** – AUTOINCREMENT adds overhead
-- **Use meaningful names** – For primary key columns
-- **Document custom keys** – Explain why they're used
-- **Plan relationships** – Consider how tables relate
-- **Test performance** – Ensure primary keys are efficient
+* Give every table a primary key.
+* Prefer `autoIncrement()` for most tables.
+* Use natural keys only when they're guaranteed to be unique and stable.
+* Keep primary keys simple whenever possible.
+* Avoid changing primary key values after records are created.
 
 ---
 
 # Common Mistakes
 
-## Mistake 1: Using TEXT primary keys on large tables
+## Forgetting a primary key
 
-Wrong:
+**Wrong**
+
 ```dart
-// 🚫 Slow for large tables
+class Users extends Table {
+  TextColumn get name => text()();
+}
+```
+
+Explanation:
+
+* The table has no unique way to identify its rows.
+
+**Correct**
+
+```dart
+class Users extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get name => text()();
+}
+```
+
+Explanation:
+
+* Every row now has a unique identifier.
+
+---
+
+## Using non-unique values
+
+**Wrong**
+
+```dart
 @override
-ColumnKey get primaryKey => const ColumnKey('email');
-TextColumn get email => text()();
+Set<Column> get primaryKey => {name};
 ```
 
-Correct:
+Explanation:
+
+* Multiple users can have the same name.
+
+**Correct**
+
 ```dart
-// ✅ Use integer primary key
-IntColumn get id => integer().autoIncrement()();
-TextColumn get email => text().unique()();
-```
-
-## Mistake 2: Not using auto-increment when needed
-
-Wrong:
-```dart
-// 🚫 IDs might be reused
-IntColumn get id => integer()();
-```
-
-Correct:
-```dart
-// ✅ IDs are always unique and increasing
-IntColumn get id => integer().autoIncrement()();
-```
-
-## Mistake 3: Making foreign keys primary keys by default
-
-Wrong:
-```dart
-// 🚫 One-to-one relationship forced
 @override
-Set<Column> get primaryKey => {userId};
-IntColumn get userId => integer().references(Users, #id)();
+Set<Column> get primaryKey => {email};
 ```
 
-Correct:
-```dart
-// ✅ Let users have their own primary key
-IntColumn get id => integer().autoIncrement()();
-IntColumn get userId => integer().references(Users, #id).unique()();
-```
+Explanation:
+
+* Use a column that is guaranteed to be unique.
+
+---
+
+## Using mutable data as a primary key
+
+**Wrong**
+
+Using a username as the primary key.
+
+Explanation:
+
+* Usernames may change over time, affecting relationships and references.
+
+**Correct**
+
+Use an immutable ID or another stable unique value.
+
+---
+
+# Related APIs
+
+* Composite Keys
+* Foreign Keys
+* Constraints
+* Columns
+* Generated Data Classes
+* Insert
 
 ---
 
 # Summary
 
-| Type | Example | Use Case |
-|------|---------|----------|
-| **Auto-increment** | `integer().autoIncrement()` | Most tables |
-| **Custom Integer** | `ColumnKey('product_id')` | Business keys |
-| **Text Key** | `TextColumn get code` | Natural identifiers |
-| **Composite** | `primaryKey: {col1, col2}` | Junction tables |
-| **ROWID** | No primary key column | Performance |
-
----
-
-# Next Steps
-
-Now you understand primary keys, let's dive deeper:
-
-- [Composite Keys](link) – Advanced composite key patterns
-- [Foreign Keys](link) – Advanced foreign key relationships
-- [Default Values](link) – Setting default values
-
----
-
-# Did You Know?
-
-- **SQLite PRIMARY KEY is just a UNIQUE NOT NULL constraint** – With an implicit index
-
-- **ROWID is always available** – Even without a primary key
-
-- **AUTOINCREMENT guarantees increasing IDs** – But adds overhead
-
-- **Text primary keys are slower** – For lookups than integers
-
-- **Composite primary keys create multi-column indexes** – For fast lookups
-
-- **Primary keys can be used in sorting** – They preserve insertion order
-
-- **Drift auto-generates primary key getters** – For your convenience
-
-- **Foreign keys must reference a PRIMARY KEY or UNIQUE** – Constraint
-
+A primary key uniquely identifies every row in a table. In Drift, this is commonly achieved with `autoIncrement()`, though any unique and stable column can be used as a custom primary key. Choosing an appropriate primary key is essential for maintaining data integrity and building relationships between tables.

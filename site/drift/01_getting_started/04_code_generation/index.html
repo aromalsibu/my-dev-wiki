@@ -18094,722 +18094,217 @@
 
 
 <h1 id="code-generation">Code Generation</h1>
-<p><strong>Understanding Drift's automatic code generation system</strong></p>
+<p>Generate type-safe Dart code from your Drift database definitions.</p>
 <hr />
 <h1 id="what-is-it">What is it?</h1>
-<p><strong>Code Generation</strong> in Drift is the process where the <code>drift_dev</code> package analyzes your table definitions and database classes, then automatically generates all the boilerplate code needed for type-safe database operations.</p>
-<blockquote>
-<p><strong>Think of code generation as your "personal coding assistant"</strong> – you write the high-level definitions, and Drift generates the hundreds of lines of boring, repetitive code you'd otherwise have to write yourself.</p>
-</blockquote>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 👇 You write THIS (100 lines)</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">Users</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Table</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">IntColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">integer</span><span class="p">().</span><span class="n">autoIncrement</span><span class="p">()();</span>
-<span class="w">  </span><span class="n">TextColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">text</span><span class="p">()();</span>
-<span class="w">  </span><span class="n">IntColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">integer</span><span class="p">()();</span>
-<span class="p">}</span>
-
-<span class="nd">@DriftDatabase</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">AppDatabase</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">_$AppDatabase</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">AppDatabase</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">super</span><span class="p">(</span><span class="n">_openConnection</span><span class="p">());</span>
-<span class="w">  </span><span class="nd">@override</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">schemaVersion</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="c1">// 👇 Drift generates THIS (1000+ lines!)</span>
-<span class="c1">// database.g.dart</span>
-<span class="c1">// - Data classes (User)</span>
-<span class="c1">// - Companion classes (UsersCompanion)</span>
-<span class="c1">// - Table manager (users)</span>
-<span class="c1">// - Query methods</span>
-<span class="c1">// - Stream methods</span>
-<span class="c1">// - Insert/Update/Delete helpers</span>
-<span class="c1">// - And much more!</span>
-</code></pre></div>
-<blockquote>
-<p><strong>What's happening here?</strong>
-- <strong>Input</strong> – Your table definitions with <code>@DriftDatabase</code> annotation
-- <strong>Processing</strong> – <code>build_runner</code> runs <code>drift_dev</code> generator
-- <strong>Output</strong> – <code>*.g.dart</code> files with all database code
-- <strong>Result</strong> – Type-safe, efficient, boilerplate-free development</p>
-</blockquote>
+<p>Code generation is the process where Drift analyzes your annotated database classes, tables, DAOs, and SQL files, then generates Dart code that you use in your application.</p>
+<p>Instead of writing repetitive boilerplate code yourself, Drift creates it automatically.</p>
+<p>The generated code includes:</p>
+<ul>
+<li>Database implementations</li>
+<li>Data classes</li>
+<li>Companion classes</li>
+<li>Query APIs</li>
+<li>Table metadata</li>
+<li>DAO implementations</li>
+</ul>
+<p>You should never edit this generated code manually.</p>
 <hr />
 <h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Without code generation, you would have to manually write code for:</p>
 <ul>
-<li><strong>Boilerplate Elimination</strong> – Automatically generates data classes, companions, and table managers</li>
-<li><strong>Type Safety</strong> – Generated code is fully typed, catching errors at compile-time</li>
-<li><strong>Performance</strong> – Generated code is optimized and doesn't use reflection</li>
-<li><strong>Maintainability</strong> – Change your schema in one place, everything regenerates</li>
-<li><strong>Developer Experience</strong> – Autocomplete, refactoring, and navigation work perfectly</li>
-<li><strong>Compile-Time Validation</strong> – SQL errors are caught before runtime</li>
+<li>Mapping database rows to Dart objects.</li>
+<li>Creating insert and update objects.</li>
+<li>Building query helpers.</li>
+<li>Validating table definitions.</li>
+<li>Connecting tables to the database.</li>
+</ul>
+<p>This is repetitive, error-prone, and difficult to maintain.</p>
+<p>Drift generates this code for you, allowing you to focus on defining your database instead of implementing its plumbing.</p>
+<hr />
+<h1 id="syntax">Syntax</h1>
+<h2 id="mark-classes-for-generation">Mark Classes for Generation</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="nd">@DriftDatabase</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AppDatabase</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">_$AppDatabase</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">AppDatabase</span><span class="p">(</span><span class="k">super</span><span class="p">.</span><span class="n">executor</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">schemaVersion</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Explanation:</p>
+<ul>
+<li><code>@DriftDatabase</code> tells Drift to generate database code.</li>
+<li><code>_$AppDatabase</code> is created during code generation.</li>
 </ul>
 <hr />
-<h1 id="how-it-works">How It Works</h1>
-<blockquote>
-<p><strong>The code generation pipeline</strong></p>
-</blockquote>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 1. Your source code</span>
-<span class="c1">// lib/database/tables/users.dart</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">Users</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Table</span><span class="w"> </span><span class="p">{</span>
+<h2 id="include-the-generated-file">Include the Generated File</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="k">part</span><span class="w"> </span><span class="s1">&#39;app_database.g.dart&#39;</span><span class="p">;</span>
+</code></pre></div>
+<p>Explanation:</p>
+<ul>
+<li>Connects your source file with the generated implementation.</li>
+</ul>
+<hr />
+<h2 id="generate-the-code">Generate the Code</h2>
+<div class="language-bash highlight"><pre><span></span><code>dart<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build
+</code></pre></div>
+<p>Explanation:</p>
+<ul>
+<li>Generates all missing or updated Drift files once.</li>
+</ul>
+<hr />
+<h2 id="automatically-regenerate-code">Automatically Regenerate Code</h2>
+<div class="language-bash highlight"><pre><span></span><code>dart<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>watch
+</code></pre></div>
+<p>Explanation:</p>
+<ul>
+<li>Watches your project for changes and regenerates code automatically.</li>
+</ul>
+<hr />
+<h1 id="mental-model">Mental Model</h1>
+<p>Think of code generation as a compiler for your database definitions.</p>
+<div class="language-text highlight"><pre><span></span><code>Your Dart Code
+    │
+    ▼
+Annotations
+    │
+    ▼
+Drift Generator
+    │
+    ▼
+Generated .g.dart Files
+    │
+    ▼
+Your Application
+</code></pre></div>
+<p>You write the database schema.</p>
+<p>Drift writes the implementation.</p>
+<hr />
+<h1 id="examples">Examples</h1>
+<h2 id="simple-example">Simple Example</h2>
+<p>Suppose you define a table.</p>
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">Users</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Table</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">IntColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">integer</span><span class="p">().</span><span class="n">autoIncrement</span><span class="p">()();</span>
+
 <span class="w">  </span><span class="n">TextColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">text</span><span class="p">()();</span>
-<span class="w">  </span><span class="n">TextColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">text</span><span class="p">().</span><span class="n">unique</span><span class="p">()();</span>
-<span class="w">  </span><span class="n">DateTimeColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">createdAt</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dateTime</span><span class="p">()();</span>
 <span class="p">}</span>
-
-<span class="c1">// 2. Your database class</span>
-<span class="c1">// lib/database/database.dart</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;tables/users.dart&#39;</span><span class="p">;</span>
-<span class="k">part</span><span class="w"> </span><span class="s1">&#39;database.g.dart&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">// 👈 Important!</span>
-
-<span class="nd">@DriftDatabase</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">AppDatabase</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">_$AppDatabase</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">AppDatabase</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">super</span><span class="p">(</span><span class="n">_openConnection</span><span class="p">());</span>
-
-<span class="w">  </span><span class="nd">@override</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">schemaVersion</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="c1">// 3. Run build_runner</span>
-<span class="c1">// flutter pub run build_runner build</span>
-
-<span class="c1">// 4. Generated code is created</span>
-<span class="c1">// lib/database/database.g.dart</span>
-
-<span class="c1">// 5. Your code now has access to:</span>
-<span class="c1">// - User class (data class)</span>
-<span class="c1">// - UsersCompanion (for inserts/updates)</span>
-<span class="c1">// - users getter (table reference)</span>
-<span class="c1">// - select(users) for queries</span>
-<span class="c1">// - into(users) for inserts</span>
-<span class="c1">// - update(users) for updates</span>
-<span class="c1">// - delete(users) for deletions</span>
 </code></pre></div>
-<blockquote>
-<p><strong>Key insights:</strong>
-- <strong><code>part 'database.g.dart'</code></strong> – Must be included to use generated code
-- <strong><code>@DriftDatabase</code></strong> – Tells Drift which tables to generate
-- <strong><code>_$AppDatabase</code></strong> – The generated class your database extends
-- <strong>One file per database</strong> – All tables in one database share one generated file</p>
-</blockquote>
+<p>Explanation:</p>
+<ul>
+<li>This is all you write manually.</li>
+</ul>
+<p>After running the generator, Drift creates:</p>
+<ul>
+<li>A data class (<code>User</code>)</li>
+<li>A companion (<code>UsersCompanion</code>)</li>
+<li>Table information</li>
+<li>Query helpers</li>
+</ul>
+<p>All of this is generated automatically.</p>
 <hr />
-<h1 id="what-gets-generated">What Gets Generated?</h1>
-<blockquote>
-<p><strong>Everything Drift creates for you</strong></p>
-</blockquote>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// lib/database/database.g.dart (simplified view)</span>
-
-<span class="c1">// 1. ✅ Data Classes</span>
-<span class="nd">@UseRowClass</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">User</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">DateTime</span><span class="w"> </span><span class="n">createdAt</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">User</span><span class="p">({</span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">createdAt</span><span class="p">});</span>
-
-<span class="w">  </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">Object</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">toJson</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{...};</span>
-<span class="p">}</span>
-
-<span class="c1">// 2. ✅ Companion Classes (for inserts/updates)</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">UsersCompanion</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">UpdateCompanion</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Value</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Value</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Value</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Value</span><span class="o">&lt;</span><span class="n">DateTime</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createdAt</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">UsersCompanion</span><span class="p">({</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">createdAt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">  </span><span class="p">});</span>
-
-<span class="w">  </span><span class="n">UsersCompanion</span><span class="p">.</span><span class="n">insert</span><span class="p">({</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
-<span class="w">    </span><span class="n">DateTime</span><span class="o">?</span><span class="w"> </span><span class="n">createdAt</span><span class="p">,</span>
-<span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">...</span>
-<span class="p">}</span>
-
-<span class="c1">// 3. ✅ Table Manager</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">$UsersTable</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TableManager</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">AppDatabase</span><span class="w"> </span><span class="n">_db</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">$UsersTable</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">_db</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="kd">get</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">...;</span>
-<span class="w">  </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">watch</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">...;</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSingle</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">...;</span>
-<span class="w">  </span><span class="c1">// ... many more methods</span>
-<span class="p">}</span>
-
-<span class="c1">// 4. ✅ Database extension</span>
-<span class="kd">extension</span><span class="w"> </span><span class="nc">DatabaseExtensions</span><span class="w"> </span><span class="kd">on</span><span class="w"> </span><span class="n">AppDatabase</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">$UsersTable</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">$UsersTable</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="c1">// 5. ✅ Query building helpers</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">UserQuery</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Query</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="c1">// Where clauses, order by, limits, etc.</span>
-<span class="p">}</span>
+<h2 id="real-world-example">Real-World Example</h2>
+<p>Imagine adding a new column.</p>
+<div class="language-dart highlight"><pre><span></span><code><span class="n">TextColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">text</span><span class="p">()();</span>
 </code></pre></div>
-<blockquote>
-<p><strong>What's happening here?</strong>
-- <strong>Data classes</strong> – Typed objects representing your table rows
-- <strong>Companion classes</strong> – For inserts/updates with <code>Value&lt;T&gt;</code> for optional fields
-- <strong>Table managers</strong> – CRUD operations for each table
-- <strong>Extensions</strong> – Adds <code>users</code> getter to your database
-- <strong>Query builders</strong> – Fluent API for building type-safe queries</p>
-</blockquote>
+<p>After running code generation:</p>
+<ul>
+<li>The generated data class now includes <code>email</code>.</li>
+<li>Companion classes are updated.</li>
+<li>Query APIs understand the new column.</li>
+<li>Type safety is preserved automatically.</li>
+</ul>
+<p>No manual updates are required.</p>
 <hr />
-<h1 id="running-code-generation">Running Code Generation</h1>
-<blockquote>
-<p><strong>Different ways to generate code</strong></p>
-</blockquote>
-<h2 id="option-1-one-time-build">Option 1: One-time Build</h2>
-<div class="language-bash highlight"><pre><span></span><code><span class="c1"># Generate code once</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build
-
-<span class="c1"># With clean (deletes previous generated files)</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build<span class="w"> </span>--delete-conflicting-outputs
-</code></pre></div>
-<h2 id="option-2-watch-mode-recommended">Option 2: Watch Mode (Recommended)</h2>
-<div class="language-bash highlight"><pre><span></span><code><span class="c1"># Continuously watch and regenerate on changes</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>watch
-
-<span class="c1"># Watch with clean</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>watch<span class="w"> </span>--delete-conflicting-outputs
-</code></pre></div>
-<h2 id="option-3-hot-restart">Option 3: Hot Restart</h2>
-<div class="language-bash highlight"><pre><span></span><code><span class="c1"># Generate then run app</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>flutter<span class="w"> </span>run
-</code></pre></div>
-<h2 id="option-4-web-specific">Option 4: Web-Specific</h2>
-<div class="language-bash highlight"><pre><span></span><code><span class="c1"># Generate for web platform</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build<span class="w"> </span>--define<span class="w"> </span><span class="s2">&quot;drift_dev:builder=web&quot;</span>
-</code></pre></div>
-<blockquote>
-<p><strong>Key insights:</strong>
-- <strong>Watch mode</strong> – Saves time during development
-- <strong>Delete conflicting outputs</strong> – Fixes generator conflicts
-- <strong>Web builds</strong> – May need specific configuration
-- <strong>Build runs on all Dart files</strong> – Scans for <code>@DriftDatabase</code></p>
-</blockquote>
+<h1 id="when-to-use">When to Use</h1>
+<p>Run code generation whenever you:</p>
+<ul>
+<li>Add a new table.</li>
+<li>Modify a table.</li>
+<li>Create or update a DAO.</li>
+<li>Change a database class.</li>
+<li>Add SQL query files.</li>
+<li>Update annotations used by Drift.</li>
+</ul>
 <hr />
-<h1 id="managing-generated-files">Managing Generated Files</h1>
-<blockquote>
-<p><strong>What to do with the generated code</strong></p>
-</blockquote>
-<h2 id="gitignore-setup"><code>.gitignore</code> Setup</h2>
-<div class="language-text highlight"><pre><span></span><code># .gitignore
-*.g.dart
-*.freezed.dart
-*.part.dart
-*.mocks.dart
-
-# Drift specific
-**/database.g.dart
-**/*.g.dart
-</code></pre></div>
-<h2 id="file-structure">File Structure</h2>
-<div class="language-text highlight"><pre><span></span><code>lib/
-├── database/
-│   ├── tables/
-│   │   ├── users.dart          # ✍️ You write
-│   │   └── posts.dart          # ✍️ You write
-│   ├── database.dart           # ✍️ You write
-│   ├── database.g.dart         # 🤖 Generated (DON&#39;T EDIT)
-│   └── database.sql            # 📝 Optional: Raw SQL
-├── models/
-│   └── user.dart               # ✍️ Custom models (optional)
-</code></pre></div>
-<blockquote>
-<p><strong>What's happening here?</strong>
-- <strong>Never edit</strong> <code>*.g.dart</code> files
-- <strong>Always commit</strong> your source <code>.dart</code> files
-- <strong>Never commit</strong> generated files (add to <code>.gitignore</code>)
-- <strong>Regenerate</strong> on every clone or branch switch</p>
-</blockquote>
-<hr />
-<h1 id="customizing-generation">Customizing Generation</h1>
-<blockquote>
-<p><strong>Advanced configuration options</strong></p>
-</blockquote>
-<h2 id="option-1-custom-data-classes">Option 1: Custom Data Classes</h2>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Instead of generated data class, use your own</span>
-<span class="nd">@UseRowClass</span><span class="p">(</span><span class="n">Column</span><span class="p">.</span><span class="n">custom</span><span class="p">)</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">User</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">DateTime</span><span class="w"> </span><span class="n">createdAt</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">User</span><span class="p">({</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">,</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">email</span><span class="p">,</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">createdAt</span><span class="p">,</span>
-<span class="w">  </span><span class="p">});</span>
-
-<span class="w">  </span><span class="c1">// Custom mapping from SQL row</span>
-<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">fromRow</span><span class="p">(</span><span class="n">Row</span><span class="w"> </span><span class="n">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">User</span><span class="p">(</span>
-<span class="w">      </span><span class="nl">id:</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span>
-<span class="w">      </span><span class="nl">name:</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
-<span class="w">      </span><span class="nl">email:</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">),</span>
-<span class="w">      </span><span class="nl">createdAt:</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;createdAt&#39;</span><span class="p">),</span>
-<span class="w">    </span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-<h2 id="option-2-sql-queries-in-files">Option 2: SQL Queries in Files</h2>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// lib/database/queries.sql</span>
-<span class="o">--</span><span class="w"> </span><span class="n">Users</span><span class="w"> </span><span class="kd">with</span><span class="w"> </span><span class="n">email</span>
-<span class="n">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">FROM</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="n">WHERE</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="n">LIKE</span><span class="w"> </span><span class="s1">&#39;%@gmail.com&#39;</span><span class="p">;</span>
-
-<span class="c1">// In database.dart</span>
-<span class="nd">@DriftDatabase</span><span class="p">(</span>
-<span class="w">  </span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">],</span>
-<span class="w">  </span><span class="nl">queries:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="s1">&#39;gmailUsers&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;SELECT * FROM users WHERE email LIKE ?&#39;</span><span class="p">,</span>
-<span class="w">  </span><span class="p">},</span>
-<span class="p">)</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">AppDatabase</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">_$AppDatabase</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="c1">// Generated method: Future&lt;List&lt;User&gt;&gt; gmailUsers(String pattern)</span>
-<span class="p">}</span>
-</code></pre></div>
-<h2 id="option-3-dao-generation">Option 3: DAO Generation</h2>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// lib/database/daos/user_dao.dart</span>
-<span class="nd">@DriftAccessor</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">UserDao</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">DatabaseAccessor</span><span class="o">&lt;</span><span class="n">AppDatabase</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">with</span><span class="w"> </span><span class="n">_$UserDaoMixin</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">UserDao</span><span class="p">(</span><span class="k">super</span><span class="p">.</span><span class="n">db</span><span class="p">);</span>
-
-<span class="w">  </span><span class="nd">@Query</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM users WHERE age &gt; :age&#39;</span><span class="p">)</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getUsersOlderThan</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">);</span>
-
-<span class="w">  </span><span class="nd">@Query</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM users WHERE age &gt; :age&#39;</span><span class="p">)</span>
-<span class="w">  </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">watchUsersOlderThan</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="c1">// Generated: _$UserDaoMixin with all query implementations</span>
-</code></pre></div>
-<h2 id="option-4-custom-type-converters">Option 4: Custom Type Converters</h2>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Define converter</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">StringListConverter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TypeConverter</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">StringListConverter</span><span class="p">();</span>
-
-<span class="w">  </span><span class="nd">@override</span>
-<span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fromSql</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">fromDb</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">fromDb</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="nd">@override</span>
-<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">toSql</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-
-<span class="c1">// Use in table</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">Users</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Table</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">TextColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">tags</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">text</span><span class="p">().</span><span class="n">map</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StringListConverter</span><span class="p">())();</span>
-<span class="p">}</span>
-
-<span class="c1">// Generated code handles conversion automatically</span>
-</code></pre></div>
-<hr />
-<h1 id="real-world-example">Real-World Example</h1>
-<blockquote>
-<p><strong>Complete project with code generation</strong></p>
-</blockquote>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// lib/database/tables/users.dart</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:drift/drift.dart&#39;</span><span class="p">;</span>
-
-<span class="kd">class</span><span class="w"> </span><span class="nc">Users</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Table</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">IntColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">integer</span><span class="p">().</span><span class="n">autoIncrement</span><span class="p">()();</span>
-<span class="w">  </span><span class="n">TextColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">text</span><span class="p">().</span><span class="n">withLength</span><span class="p">(</span><span class="nl">min:</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="nl">max:</span><span class="w"> </span><span class="m">50</span><span class="p">)();</span>
-<span class="w">  </span><span class="n">TextColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">text</span><span class="p">().</span><span class="n">unique</span><span class="p">()();</span>
-<span class="w">  </span><span class="n">DateTimeColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">createdAt</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dateTime</span><span class="p">().</span><span class="n">withDefault</span><span class="p">(</span><span class="n">currentDateAndTime</span><span class="p">)();</span>
-<span class="w">  </span><span class="n">BoolColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">isActive</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">boolean</span><span class="p">().</span><span class="n">withDefault</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Constant</span><span class="p">(</span><span class="kc">true</span><span class="p">))();</span>
-<span class="p">}</span>
-
-<span class="c1">// lib/database/tables/posts.dart</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:drift/drift.dart&#39;</span><span class="p">;</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;users.dart&#39;</span><span class="p">;</span>
-
-<span class="kd">class</span><span class="w"> </span><span class="nc">Posts</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Table</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">IntColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">integer</span><span class="p">().</span><span class="n">autoIncrement</span><span class="p">()();</span>
-<span class="w">  </span><span class="n">TextColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">title</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">text</span><span class="p">()();</span>
-<span class="w">  </span><span class="n">TextColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">content</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">text</span><span class="p">()();</span>
-<span class="w">  </span><span class="n">IntColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">userId</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">integer</span><span class="p">().</span><span class="n">references</span><span class="p">(</span><span class="n">Users</span><span class="p">,</span><span class="w"> </span><span class="err">#</span><span class="n">id</span><span class="p">)();</span>
-<span class="w">  </span><span class="n">DateTimeColumn</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">publishedAt</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">dateTime</span><span class="p">().</span><span class="n">nullable</span><span class="p">()();</span>
-<span class="p">}</span>
-
-<span class="c1">// lib/database/daos/user_dao.dart</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:drift/drift.dart&#39;</span><span class="p">;</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;../database.dart&#39;</span><span class="p">;</span>
-
-<span class="nd">@DriftAccessor</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">,</span><span class="w"> </span><span class="n">Posts</span><span class="p">])</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">UserDao</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">DatabaseAccessor</span><span class="o">&lt;</span><span class="n">AppDatabase</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">with</span><span class="w"> </span><span class="n">_$UserDaoMixin</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">UserDao</span><span class="p">(</span><span class="k">super</span><span class="p">.</span><span class="n">db</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// Generated automatically!</span>
-<span class="w">  </span><span class="c1">// Future&lt;User&gt; getUser(int id)</span>
-<span class="w">  </span><span class="c1">// Stream&lt;User&gt; watchUser(int id)</span>
-<span class="w">  </span><span class="c1">// Future&lt;List&lt;User&gt;&gt; getUsers()</span>
-<span class="w">  </span><span class="c1">// Stream&lt;List&lt;User&gt;&gt; watchUsers()</span>
-
-<span class="w">  </span><span class="c1">// Custom query with join</span>
-<span class="w">  </span><span class="nd">@Query</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">    SELECT users.*, COUNT(posts.id) as postCount </span>
-<span class="s1">    FROM users </span>
-<span class="s1">    LEFT JOIN posts ON users.id = posts.user_id </span>
-<span class="s1">    GROUP BY users.id</span>
-<span class="s1">  &#39;&#39;&#39;</span><span class="p">)</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserWithPostCount</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getUsersWithPostCount</span><span class="p">();</span>
-<span class="p">}</span>
-
-<span class="c1">// lib/database/database.dart</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:drift/drift.dart&#39;</span><span class="p">;</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:drift_flutter/drift_flutter.dart&#39;</span><span class="p">;</span>
-
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;tables/users.dart&#39;</span><span class="p">;</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;tables/posts.dart&#39;</span><span class="p">;</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;daos/user_dao.dart&#39;</span><span class="p">;</span>
-
-<span class="k">part</span><span class="w"> </span><span class="s1">&#39;database.g.dart&#39;</span><span class="p">;</span>
-
-<span class="nd">@DriftDatabase</span><span class="p">(</span>
-<span class="w">  </span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">,</span><span class="w"> </span><span class="n">Posts</span><span class="p">],</span>
-<span class="w">  </span><span class="nl">daos:</span><span class="w"> </span><span class="p">[</span><span class="n">UserDao</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">AppDatabase</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">_$AppDatabase</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">AppDatabase</span><span class="p">([</span><span class="n">QueryExecutor</span><span class="o">?</span><span class="w"> </span><span class="n">executor</span><span class="p">])</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">super</span><span class="p">(</span><span class="n">executor</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="n">_openConnection</span><span class="p">());</span>
-
-<span class="w">  </span><span class="nd">@override</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">schemaVersion</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">QueryExecutor</span><span class="w"> </span><span class="n">_openConnection</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">driftDatabase</span><span class="p">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;my_app&#39;</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// DAO accessor</span>
-<span class="w">  </span><span class="n">UserDao</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">userDao</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UserDao</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="c1">// lib/main.dart - Usage</span>
-<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AppDatabase</span><span class="p">();</span>
-
-<span class="w">  </span><span class="c1">// ✅ All methods are type-safe and auto-generated!</span>
-
-<span class="w">  </span><span class="c1">// Insert user</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">userId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">into</span><span class="p">(</span><span class="n">db</span><span class="p">.</span><span class="n">users</span><span class="p">).</span><span class="n">insert</span><span class="p">(</span>
-<span class="w">    </span><span class="n">UsersCompanion</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span>
-<span class="w">      </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
-<span class="w">      </span><span class="nl">email:</span><span class="w"> </span><span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
-<span class="w">    </span><span class="p">),</span>
-<span class="w">  </span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// Query users</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="n">db</span><span class="p">.</span><span class="n">users</span><span class="p">).</span><span class="kd">get</span><span class="p">();</span>
-<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;All users: </span><span class="si">$</span><span class="n">users</span><span class="s1">&#39;</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// Watch users (reactive!)</span>
-<span class="w">  </span><span class="n">db</span><span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="n">db</span><span class="p">.</span><span class="n">users</span><span class="p">).</span><span class="n">watch</span><span class="p">().</span><span class="n">listen</span><span class="p">((</span><span class="n">users</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Users updated: </span><span class="si">${</span><span class="n">users</span><span class="p">.</span><span class="n">length</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
-<span class="w">  </span><span class="p">});</span>
-
-<span class="w">  </span><span class="c1">// Use DAO</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">activeUsers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">userDao</span><span class="p">.</span><span class="n">watchUsers</span><span class="p">().</span><span class="n">first</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Custom query</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">usersWithPosts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">userDao</span><span class="p">.</span><span class="n">getUsersWithPostCount</span><span class="p">();</span>
-<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Users with post counts: </span><span class="si">$</span><span class="n">usersWithPosts</span><span class="s1">&#39;</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Generated output (simplified)</span>
-<span class="c1">// lib/database/database.g.dart</span>
-
-<span class="c1">// 1. Data classes</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">User</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">DateTime</span><span class="w"> </span><span class="n">createdAt</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isActive</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">User</span><span class="p">({...});</span>
-<span class="p">}</span>
-
-<span class="kd">class</span><span class="w"> </span><span class="nc">Post</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">title</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">content</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">userId</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">DateTime</span><span class="o">?</span><span class="w"> </span><span class="n">publishedAt</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">Post</span><span class="p">({...});</span>
-<span class="p">}</span>
-
-<span class="kd">class</span><span class="w"> </span><span class="nc">UserWithPostCount</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">postCount</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">UserWithPostCount</span><span class="p">({...});</span>
-<span class="p">}</span>
-
-<span class="c1">// 2. Companion classes</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">UsersCompanion</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">UpdateCompanion</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Value</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Value</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Value</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Value</span><span class="o">&lt;</span><span class="n">DateTime</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createdAt</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Value</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">isActive</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">UsersCompanion</span><span class="p">({</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">createdAt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">isActive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">  </span><span class="p">});</span>
-
-<span class="w">  </span><span class="n">UsersCompanion</span><span class="p">.</span><span class="n">insert</span><span class="p">({</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">createdAt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">isActive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">super</span><span class="p">.</span><span class="n">insert</span><span class="p">();</span>
-<span class="p">}</span>
-
-<span class="c1">// 3. Database extensions</span>
-<span class="kd">extension</span><span class="w"> </span><span class="nc">DatabaseExtensions</span><span class="w"> </span><span class="kd">on</span><span class="w"> </span><span class="n">AppDatabase</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">$UsersTable</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">$UsersTable</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-<span class="w">  </span><span class="n">$PostsTable</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">posts</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">$PostsTable</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="c1">// 4. DAO mixin</span>
-<span class="kd">mixin</span><span class="w"> </span><span class="nc">_</span><span class="n">$UserDaoMixin</span><span class="w"> </span><span class="kd">on</span><span class="w"> </span><span class="n">DatabaseAccessor</span><span class="o">&lt;</span><span class="n">AppDatabase</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="c1">// Implementations of all query methods</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getUser</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">id</span><span class="p">))).</span><span class="n">getSingle</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">watchUser</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">id</span><span class="p">))).</span><span class="n">watchSingle</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// ... and more</span>
-<span class="p">}</span>
-</code></pre></div>
-<blockquote>
-<p><strong>Benefits of this approach:</strong>
-- <strong>Zero boilerplate</strong> – All code is generated
-- <strong>Type-safe everywhere</strong> – Everything is strongly typed
-- <strong>Reactive by default</strong> – Streams work out of the box
-- <strong>DAO pattern</strong> – Organize queries logically
-- <strong>Custom queries</strong> – Mix generated and custom SQL
-- <strong>Maintainable</strong> – Change schema, regenerate, everything updates</p>
-</blockquote>
+<h1 id="when-not-to-use">When NOT to Use</h1>
+<p>You should not run code generation if nothing has changed in your annotated files.</p>
+<p>Also, never attempt to replace generated files with manually written implementations.</p>
 <hr />
 <h1 id="best-practices">Best Practices</h1>
 <ul>
-<li><strong>Always run <code>build_runner watch</code></strong> – Saves time during development</li>
-<li><strong>Add <code>*.g.dart</code> to <code>.gitignore</code></strong> – Don't commit generated files</li>
-<li><strong>Use <code>part</code> directive correctly</strong> – Include <code>part 'database.g.dart'</code></li>
-<li><strong>Regenerate after schema changes</strong> – Always rebuild after table changes</li>
-<li><strong>Use DAOs for complex queries</strong> – Better organization</li>
-<li><strong>Customize data classes</strong> – Use <code>@UseRowClass</code> if needed</li>
-<li><strong>Write SQL in .sql files</strong> – Better for complex queries</li>
-<li><strong>Check generation logs</strong> – Look for errors or warnings</li>
-<li><strong>Use build_runner with <code>--delete-conflicting-outputs</code></strong> – Fixes conflicts</li>
-<li><strong>Keep generator version in sync</strong> – Match <code>drift</code> and <code>drift_dev</code> versions</li>
+<li>Use <code>build_runner watch</code> during development.</li>
+<li>Commit generated files if it matches your team's workflow.</li>
+<li>Never modify generated files.</li>
+<li>Keep your annotations clean and organized.</li>
+<li>Regenerate code after every schema change.</li>
 </ul>
 <hr />
 <h1 id="common-mistakes">Common Mistakes</h1>
-<h2 id="mistake-1-forgetting-part-directive">Mistake 1: Forgetting <code>part</code> directive</h2>
-<p>Wrong:
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 🚫 Error: _$AppDatabase not found</span>
-<span class="nd">@DriftDatabase</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">AppDatabase</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">_$AppDatabase</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="c1">// ...</span>
-<span class="p">}</span>
-</code></pre></div></p>
-<p>Correct:
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// ✅ Include part directive</span>
-<span class="k">part</span><span class="w"> </span><span class="s1">&#39;database.g.dart&#39;</span><span class="p">;</span>
+<h2 id="editing-generated-files">Editing generated files</h2>
+<p><strong>Wrong</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// app_database.g.dart</span>
 
-<span class="nd">@DriftDatabase</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">AppDatabase</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">_$AppDatabase</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="c1">// ...</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">_</span><span class="n">$AppDatabase</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Modified manually</span>
 <span class="p">}</span>
-</code></pre></div></p>
-<h2 id="mistake-2-not-running-build_runner">Mistake 2: Not running build_runner</h2>
-<p>Wrong:
-<div class="language-bash highlight"><pre><span></span><code><span class="c1"># Just run the app</span>
-flutter<span class="w"> </span>run<span class="w">  </span><span class="c1"># 🚫 Compilation errors!</span>
-</code></pre></div></p>
-<p>Correct:
-<div class="language-bash highlight"><pre><span></span><code><span class="c1"># Generate first</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build
-<span class="c1"># Then run</span>
-flutter<span class="w"> </span>run
-</code></pre></div></p>
-<h2 id="mistake-3-mismatched-versions">Mistake 3: Mismatched versions</h2>
-<p>Wrong:
-<div class="language-yaml highlight"><pre><span></span><code><span class="nt">dependencies</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">drift</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^2.14.0</span>
-<span class="nt">dev_dependencies</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">drift_dev</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^2.13.0</span><span class="w">  </span><span class="c1"># 🚫 Different version!</span>
-</code></pre></div></p>
-<p>Correct:
-<div class="language-yaml highlight"><pre><span></span><code><span class="nt">dependencies</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">drift</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^2.14.0</span>
-<span class="nt">dev_dependencies</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">drift_dev</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^2.14.0</span><span class="w">  </span><span class="c1"># ✅ Same version!</span>
-</code></pre></div></p>
-<h2 id="mistake-4-editing-generated-files">Mistake 4: Editing generated files</h2>
-<p>Wrong:
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// database.g.dart</span>
-<span class="c1">// ✍️ Manually adding code here</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">User</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="c1">// Custom fields added manually</span>
+</code></pre></div>
+<p>Explanation:</p>
+<ul>
+<li>Your changes will be overwritten the next time code generation runs.</li>
+</ul>
+<p><strong>Correct</strong></p>
+<p>Modify the source file instead.</p>
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">Users</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Table</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Update the table definition here</span>
 <span class="p">}</span>
-<span class="c1">// 🚫 Will be overwritten on next build!</span>
-</code></pre></div></p>
-<p>Correct:
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// database.dart</span>
-<span class="c1">// ✍️ Add custom code in source files</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">MyCustomUser</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="c1">// Custom code here - safe from overwrites</span>
-<span class="p">}</span>
-</code></pre></div></p>
-<h2 id="mistake-5-forgetting-to-import-generated-code">Mistake 5: Forgetting to import generated code</h2>
-<p>Wrong:
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 🚫 Can&#39;t use User class because it&#39;s generated</span>
-<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span><span class="nl">id:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// Error</span>
-<span class="p">}</span>
-</code></pre></div></p>
-<p>Correct:
-<div class="language-dart highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="s1">&#39;database.dart&#39;</span><span class="p">;</span><span class="w"> </span><span class="c1">// ✅ Imports generated code too</span>
-
-<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="p">(</span><span class="nl">id:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;John&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// Works!</span>
-<span class="p">}</span>
-</code></pre></div></p>
+</code></pre></div>
+<p>Explanation:</p>
+<ul>
+<li>Source files are the only files you should edit.</li>
+</ul>
 <hr />
-<h1 id="troubleshooting">Troubleshooting</h1>
-<h2 id="issue-_appdatabase-not-found">Issue: <code>_$AppDatabase</code> not found</h2>
-<div class="language-bash highlight"><pre><span></span><code><span class="c1"># Solution: Run build_runner</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build
+<h2 id="forgetting-to-regenerate">Forgetting to regenerate</h2>
+<p><strong>Wrong</strong></p>
+<p>Adding a new table but not running:</p>
+<div class="language-bash highlight"><pre><span></span><code>dart<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build
 </code></pre></div>
-<h2 id="issue-conflicting-outputs">Issue: Conflicting outputs</h2>
-<div class="language-bash highlight"><pre><span></span><code><span class="c1"># Solution: Delete and rebuild</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build<span class="w"> </span>--delete-conflicting-outputs
+<p>Explanation:</p>
+<ul>
+<li>The generated APIs won't include your changes.</li>
+</ul>
+<p><strong>Correct</strong></p>
+<p>Run the generator after every change to annotated Drift code.</p>
+<hr />
+<h2 id="missing-the-part-directive">Missing the <code>part</code> directive</h2>
+<p><strong>Wrong</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="nd">@DriftDatabase</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AppDatabase</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">_$AppDatabase</span><span class="w"> </span><span class="p">{}</span>
 </code></pre></div>
-<h2 id="issue-generation-taking-too-long">Issue: Generation taking too long</h2>
-<div class="language-bash highlight"><pre><span></span><code><span class="c1"># Solution: Use watch mode</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>watch
+<p>Explanation:</p>
+<ul>
+<li>The generated code cannot be linked without the <code>part</code> directive.</li>
+</ul>
+<p><strong>Correct</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="k">part</span><span class="w"> </span><span class="s1">&#39;app_database.g.dart&#39;</span><span class="p">;</span>
 </code></pre></div>
-<h2 id="issue-web-generation-errors">Issue: Web generation errors</h2>
-<div class="language-bash highlight"><pre><span></span><code><span class="c1"># Solution: Specify web builder</span>
-flutter<span class="w"> </span>pub<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build<span class="w"> </span>--define<span class="w"> </span><span class="s2">&quot;drift_dev:builder=web&quot;</span>
-</code></pre></div>
-<h2 id="issue-version-conflicts">Issue: Version conflicts</h2>
-<div class="language-yaml highlight"><pre><span></span><code><span class="c1"># Solution: Pin versions in pubspec.yaml</span>
-<span class="nt">dependencies</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">drift</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.14.0</span>
-<span class="nt">dev_dependencies</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">drift_dev</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.14.0</span>
-</code></pre></div>
+<p>Explanation:</p>
+<ul>
+<li>Includes the generated implementation in your source file.</li>
+</ul>
+<hr />
+<h1 id="related-apis">Related APIs</h1>
+<ul>
+<li>Installation</li>
+<li>Setting Up a Database</li>
+<li>GeneratedDatabase</li>
+<li>Defining Tables</li>
+<li>Generated Data Classes</li>
+<li>Companions</li>
+</ul>
 <hr />
 <h1 id="summary">Summary</h1>
-<table>
-<thead>
-<tr>
-<th>Concept</th>
-<th>Purpose</th>
-<th>Best Practice</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Code Generation</strong></td>
-<td>Create type-safe database code</td>
-<td>Run <code>build_runner watch</code></td>
-</tr>
-<tr>
-<td><strong>Data Classes</strong></td>
-<td>Typed objects for rows</td>
-<td>Use generated classes</td>
-</tr>
-<tr>
-<td><strong>Companions</strong></td>
-<td>For inserts/updates</td>
-<td>Use <code>Companion.insert()</code></td>
-</tr>
-<tr>
-<td><strong>Table Managers</strong></td>
-<td>CRUD operations</td>
-<td>Access via <code>db.tableName</code></td>
-</tr>
-<tr>
-<td><strong>DAO</strong></td>
-<td>Organize queries</td>
-<td>Use <code>@DriftAccessor</code></td>
-</tr>
-<tr>
-<td><strong>Generated Files</strong></td>
-<td><code>*.g.dart</code></td>
-<td>Never edit, commit to .gitignore</td>
-</tr>
-<tr>
-<td><strong>Build Runner</strong></td>
-<td>Code generation engine</td>
-<td>Always run before build</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h1 id="next-steps">Next Steps</h1>
-<p>Now you understand code generation, let's write your first query:</p>
-<ul>
-<li><a href="link">Your First Query</a> – Write and execute your first type-safe query</li>
-<li><a href="link">Tables Deep Dive</a> – Advanced table definitions</li>
-<li><a href="link">CRUD Operations</a> – Complete CRUD guide</li>
-</ul>
-<hr />
-<h1 id="did-you-know">Did You Know?</h1>
-<ul>
-<li>
-<p><strong>Drift generates over 1000 lines</strong> of code from a single table definition</p>
-</li>
-<li>
-<p><strong>The generated code is fully optimized</strong> – no reflection, all code is static</p>
-</li>
-<li>
-<p><strong><code>build_runner watch</code> can regenerate in under 100ms</strong> for small projects</p>
-</li>
-<li>
-<p><strong>Drift supports incremental generation</strong> – only regenerates changed files</p>
-</li>
-<li>
-<p><strong>You can write raw SQL</strong> and Drift will generate type-safe methods for it</p>
-</li>
-<li>
-<p><strong>The generated <code>$Table</code> classes</strong> contain over 50 methods each</p>
-</li>
-<li>
-<p><strong>Drift's code generator is written in Dart</strong> – no external tools needed</p>
-</li>
-<li>
-<p><strong>You can customize the generated code</strong> using <code>@UseRowClass</code> and other annotations</p>
-</li>
-</ul>
+<p>Code generation is a core part of Drift. It transforms your database definitions into strongly typed Dart code, eliminating boilerplate and providing compile-time safety. By defining your schema and letting Drift generate the implementation, you get a cleaner, safer, and more maintainable database layer.</p>
 
 
 

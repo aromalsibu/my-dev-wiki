@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#tween" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -7113,6 +7118,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,807 @@
 
 
 
-  <h1>Tween</h1>
+<h1 id="tween">Tween</h1>
+<p>Understand how to animate values between a beginning and ending state in Flutter.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Tween is a class that defines the range of values for an animation. It interpolates between a beginning value (begin) and an ending value (end) based on an animation's progress (0.0 to 1.0). Tweens are used with AnimationController to create smooth transitions for any type of value, including numbers, colors, sizes, and custom objects.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Tween exists to:</p>
+<ul>
+<li>Define animation value ranges</li>
+<li>Interpolate between two values</li>
+<li>Support various data types</li>
+<li>Enable custom interpolation</li>
+<li>Create smooth transitions</li>
+<li>Chain and combine animations</li>
+<li>Provide type-safe animations</li>
+</ul>
+<hr />
+<h1 id="basic-tween">Basic Tween</h1>
+<blockquote>
+<p><strong>Creating and using</strong> basic Tweens.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Import required packages</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
 
+<span class="c1">/// Basic Tween example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">BasicTweenExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">BasicTweenExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
 
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicTweenExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_BasicTweenExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_BasicTweenExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">BasicTweenExample</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// 1. Tween for double values</span>
+<span class="w">  </span><span class="c1">// Interpolates between 0.0 and 1.0</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_doubleTween</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// 2. Tween for colors</span>
+<span class="w">  </span><span class="c1">// Interpolates between two colors</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="n">Color</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">_colorTween</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// 3. Tween for sizes</span>
+<span class="w">  </span><span class="c1">// Interpolates between two sizes</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_sizeTween</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">2</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">    </span><span class="p">)..</span><span class="n">repeat</span><span class="p">(</span><span class="nl">reverse:</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4. Double Tween - between 0.0 and 1.0</span>
+<span class="w">    </span><span class="c1">// The most common type of Tween</span>
+<span class="w">    </span><span class="n">_doubleTween</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">end:</span><span class="w"> </span><span class="m">1.0</span><span class="p">,</span>
+<span class="w">    </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 5. Color Tween - between blue and red</span>
+<span class="w">    </span><span class="c1">// ColorTween handles color interpolation</span>
+<span class="w">    </span><span class="n">_colorTween</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ColorTween</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">begin:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">end:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">,</span>
+<span class="w">    </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 6. Size Tween - between 50 and 200</span>
+<span class="w">    </span><span class="n">_sizeTween</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">begin:</span><span class="w"> </span><span class="m">50.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">end:</span><span class="w"> </span><span class="m">200.0</span><span class="p">,</span>
+<span class="w">    </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span>
+<span class="w">      </span><span class="n">CurvedAnimation</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">parent:</span><span class="w"> </span><span class="n">_controller</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">easeInOut</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">)..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Basic Tween&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 7. Use Tween values</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="n">_sizeTween</span><span class="p">.</span><span class="n">value</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="n">_sizeTween</span><span class="p">.</span><span class="n">value</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">color:</span><span class="w"> </span><span class="n">_colorTween</span><span class="p">.</span><span class="n">value</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                  </span><span class="s1">&#39;</span><span class="si">${</span><span class="p">(</span><span class="n">_doubleTween</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 8. Tween values display</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Double: </span><span class="si">${</span><span class="n">_doubleTween</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Color: </span><span class="si">${</span><span class="n">_colorTween</span><span class="p">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Size: </span><span class="si">${</span><span class="n">_sizeTween</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Tween<double>: Interpolates between double values
+- ColorTween: Interpolates between colors
+- begin: Starting value
+- end: Ending value
+- animate(): Connects to AnimationController</p>
+<hr />
+<h1 id="tween-types">Tween Types</h1>
+<blockquote>
+<p><strong>Different Tween</strong> types for different data.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Various Tween types</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">TweenTypesExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TweenTypesExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">TweenTypesExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_TweenTypesExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_TweenTypesExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">TweenTypesExample</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">3</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">    </span><span class="p">)..</span><span class="n">repeat</span><span class="p">(</span><span class="nl">reverse:</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Tween Types&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">SingleChildScrollView</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. IntTween - Between integer values</span>
+<span class="w">            </span><span class="n">_buildTweenDemo</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;IntTween&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="n">IntTween</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">),</span>
+<span class="w">              </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s1">&#39;Count: </span><span class="si">$</span><span class="n">value</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. ColorTween - Between colors</span>
+<span class="w">            </span><span class="n">_buildTweenDemo</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;ColorTween&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="n">ColorTween</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">),</span>
+<span class="w">              </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s1">&#39;Color: </span><span class="si">$</span><span class="n">value</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">isColor:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. AlignmentTween - Between alignments</span>
+<span class="w">            </span><span class="n">_buildTweenDemo</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;AlignmentTween&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="n">AlignmentTween</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">begin:</span><span class="w"> </span><span class="n">Alignment</span><span class="p">.</span><span class="n">topLeft</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">end:</span><span class="w"> </span><span class="n">Alignment</span><span class="p">.</span><span class="n">bottomRight</span><span class="p">,</span>
+<span class="w">              </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">),</span>
+<span class="w">              </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s1">&#39;Alignment: </span><span class="si">${</span><span class="n">value</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="si">}</span><span class="s1">, </span><span class="si">${</span><span class="n">value</span><span class="p">.</span><span class="n">y</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 4. BorderRadiusTween - Between border radii</span>
+<span class="w">            </span><span class="n">_buildTweenDemo</span><span class="p">(</span>
+<span class="w">              </span><span class="s1">&#39;BorderRadiusTween&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="n">BorderRadiusTween</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">begin:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">0</span><span class="p">),</span>
+<span class="w">                </span><span class="nl">end:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">50</span><span class="p">),</span>
+<span class="w">              </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">),</span>
+<span class="w">              </span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s1">&#39;BorderRadius: </span><span class="si">${</span><span class="n">value</span><span class="p">.</span><span class="n">topLeft</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="n">Colors</span><span class="p">.</span><span class="n">orange</span><span class="p">,</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildTweenDemo</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">title</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Animation</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">animation</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="w"> </span><span class="n">display</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Color</span><span class="w"> </span><span class="n">color</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">isColor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">animation</span><span class="p">.</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Card</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">margin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">symmetric</span><span class="p">(</span><span class="nl">vertical:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Padding</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">crossAxisAlignment:</span><span class="w"> </span><span class="n">CrossAxisAlignment</span><span class="p">.</span><span class="n">start</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">              </span><span class="n">title</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">16</span><span class="p">,</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// Visual representation</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isColor</span><span class="p">)</span>
+<span class="w">              </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">width:</span><span class="w"> </span><span class="kt">double</span><span class="p">.</span><span class="n">infinity</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">height:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">animation</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Color</span><span class="p">,</span>
+<span class="w">              </span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">              </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">width:</span><span class="w"> </span><span class="kt">double</span><span class="p">.</span><span class="n">infinity</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">height:</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="n">display</span><span class="p">(</span><span class="n">animation</span><span class="p">.</span><span class="n">value</span><span class="p">),</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- IntTween: Integer values
+- ColorTween: Color transitions
+- AlignmentTween: Alignment changes
+- BorderRadiusTween: Border radius changes
+- Each Tween type handles specific data</p>
+<hr />
+<h1 id="custom-tween">Custom Tween</h1>
+<blockquote>
+<p><strong>Creating custom</strong> Tween classes.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Custom Tween example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CustomTweenExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CustomTweenExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CustomTweenExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_CustomTweenExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_CustomTweenExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">CustomTweenExample</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">2</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">    </span><span class="p">)..</span><span class="n">repeat</span><span class="p">(</span><span class="nl">reverse:</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Custom Tween&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 1. Custom SizeTween</span>
+<span class="w">            </span><span class="n">_buildCustomTweenDemo</span><span class="p">(),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 2. Custom TransformTween</span>
+<span class="w">            </span><span class="n">_buildTransformTweenDemo</span><span class="p">(),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildCustomTweenDemo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Custom Tween for Size</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">sizeTween</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SizeTween</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">begin:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">end:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">),</span>
+<span class="w">    </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">width:</span><span class="w"> </span><span class="n">sizeTween</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">width</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">height:</span><span class="w"> </span><span class="n">sizeTween</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">height</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">          </span><span class="s1">&#39;Size&#39;</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">_buildTransformTweenDemo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Custom Tween for Transform</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">transformTween</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TransformTween</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">begin:</span><span class="w"> </span><span class="n">Transform</span><span class="p">.</span><span class="n">rotate</span><span class="p">(</span><span class="nl">angle:</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">end:</span><span class="w"> </span><span class="n">Transform</span><span class="p">.</span><span class="n">rotate</span><span class="p">(</span><span class="nl">angle:</span><span class="w"> </span><span class="m">3.14159</span><span class="p">),</span>
+<span class="w">    </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">width:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">height:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Transform</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">transform:</span><span class="w"> </span><span class="n">transformTween</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">transform</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">            </span><span class="s1">&#39;Transform&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Custom SizeTween class</span>
+<span class="c1">/// Interpolates between two Size values</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">SizeTween</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="n">Size</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">SizeTween</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">begin</span><span class="p">,</span><span class="w"> </span><span class="k">super</span><span class="p">.</span><span class="n">end</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Size</span><span class="w"> </span><span class="n">lerp</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span>
+<span class="w">      </span><span class="n">begin</span><span class="o">!</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">end</span><span class="o">!</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">begin</span><span class="o">!</span><span class="p">.</span><span class="n">width</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">t</span><span class="p">,</span>
+<span class="w">      </span><span class="n">begin</span><span class="o">!</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">end</span><span class="o">!</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">begin</span><span class="o">!</span><span class="p">.</span><span class="n">height</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">t</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// Custom TransformTween class</span>
+<span class="c1">/// Interpolates between two Transform values</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">TransformTween</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="n">Transform</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">TransformTween</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">begin</span><span class="p">,</span><span class="w"> </span><span class="k">super</span><span class="p">.</span><span class="n">end</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Transform</span><span class="w"> </span><span class="n">lerp</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Interpolate the transform matrix</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">beginMatrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">begin</span><span class="o">!</span><span class="p">.</span><span class="n">transform</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">endMatrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">end</span><span class="o">!</span><span class="p">.</span><span class="n">transform</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Simple interpolation of matrix values</span>
+<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">matrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Matrix4</span><span class="p">.</span><span class="n">zero</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">16</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">beginMatrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">endMatrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">beginMatrix</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">t</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Transform</span><span class="p">(</span><span class="nl">matrix:</span><span class="w"> </span><span class="n">matrix</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- SizeTween: Custom size interpolation
+- TransformTween: Custom transform interpolation
+- Override lerp() for custom logic
+- Type-safe custom Tweens</p>
+<hr />
+<h1 id="tween-sequences">Tween Sequences</h1>
+<blockquote>
+<p><strong>Chaining Tweens</strong> for sequences.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Tween sequence example</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">TweenSequenceExample</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TweenSequenceExample</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">TweenSequenceExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_TweenSequenceExampleState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_TweenSequenceExampleState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">TweenSequenceExample</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_sequenceAnimation</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">4</span><span class="p">),</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">    </span><span class="p">)..</span><span class="n">repeat</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 1. Sequence of tweens</span>
+<span class="w">    </span><span class="c1">// Each tween runs in sequence</span>
+<span class="w">    </span><span class="n">_sequenceAnimation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TweenSequence</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">([</span>
+<span class="w">      </span><span class="c1">// First: Grow from 0 to 1 (0-1 seconds)</span>
+<span class="w">      </span><span class="n">TweenSequenceItem</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">tween:</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">1.0</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">weight:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="c1">// Equal weight</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="c1">// Second: Stay at 1 (1-2 seconds)</span>
+<span class="w">      </span><span class="n">TweenSequenceItem</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">tween:</span><span class="w"> </span><span class="n">ConstantTween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="m">1.0</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">weight:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="c1">// Third: Shrink from 1 to 0 (2-3 seconds)</span>
+<span class="w">      </span><span class="n">TweenSequenceItem</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">tween:</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">1.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">0.0</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">weight:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="c1">// Fourth: Stay at 0 (3-4 seconds)</span>
+<span class="w">      </span><span class="n">TweenSequenceItem</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">tween:</span><span class="w"> </span><span class="n">ConstantTween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="m">0.0</span><span class="p">),</span>
+<span class="w">        </span><span class="nl">weight:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">]).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Scaffold</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">appBar:</span><span class="w"> </span><span class="n">AppBar</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Tween Sequence&#39;</span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">      </span><span class="nl">body:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">mainAxisAlignment:</span><span class="w"> </span><span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="c1">// 2. Visual representation of sequence</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">width:</span><span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_sequenceAnimation</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">height:</span><span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_sequenceAnimation</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                  </span><span class="s1">&#39;</span><span class="si">${</span><span class="p">(</span><span class="n">_sequenceAnimation</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">24</span><span class="p">),</span>
+
+<span class="w">            </span><span class="c1">// 3. Sequence status</span>
+<span class="w">            </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">              </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">              </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">                </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">              </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;Sequence:&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">4</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Value: </span><span class="si">${</span><span class="n">_sequenceAnimation</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Grow → Stay → Shrink → Stay&#39;</span><span class="p">),</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">              </span><span class="p">),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- TweenSequence combines multiple tweens
+- Each TweenSequenceItem has a tween and weight
+- weight determines duration proportion
+- ConstantTween holds a constant value</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> with Tween.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Animated counter with IntTween</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AnimatedCounter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">AnimatedCounter</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">targetValue</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">duration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">2</span><span class="p">),</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">targetValue</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="n">duration</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">AnimatedCounter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_AnimatedCounterState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_AnimatedCounterState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">AnimatedCounter</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_animation</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">duration</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// IntTween for counting</span>
+<span class="w">    </span><span class="n">_animation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IntTween</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">begin:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">end:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">targetValue</span><span class="p">,</span>
+<span class="w">    </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">forward</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">didUpdateWidget</span><span class="p">(</span><span class="kd">covariant</span><span class="w"> </span><span class="n">AnimatedCounter</span><span class="w"> </span><span class="n">oldWidget</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">didUpdateWidget</span><span class="p">(</span><span class="n">oldWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">widget</span><span class="p">.</span><span class="n">targetValue</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">oldWidget</span><span class="p">.</span><span class="n">targetValue</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_animation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IntTween</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">begin:</span><span class="w"> </span><span class="n">oldWidget</span><span class="p">.</span><span class="n">targetValue</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">end:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">targetValue</span><span class="p">,</span>
+<span class="w">      </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">)</span>
+<span class="w">        </span><span class="p">..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+<span class="w">      </span><span class="n">_controller</span><span class="p">.</span><span class="n">forward</span><span class="p">(</span><span class="nl">from:</span><span class="w"> </span><span class="m">0.0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">      </span><span class="n">_animation</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">toString</span><span class="p">(),</span>
+<span class="w">      </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">48</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">      </span><span class="p">),</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Animated progress with ColorTween</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">AnimatedProgress</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">StatefulWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">AnimatedProgress</span><span class="p">({</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">progress</span><span class="p">,</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">duration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">),</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">progress</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="n">duration</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">State</span><span class="o">&lt;</span><span class="n">AnimatedProgress</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createState</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_AnimatedProgressState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nc">_AnimatedProgressState</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">State</span><span class="o">&lt;</span><span class="n">AnimatedProgress</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">SingleTickerProviderStateMixin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">AnimationController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_progressAnimation</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">Animation</span><span class="o">&lt;</span><span class="n">Color</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">_colorAnimation</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">initState</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AnimationController</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">duration:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">duration</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">vsync:</span><span class="w"> </span><span class="k">this</span><span class="p">,</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Progress animation</span>
+<span class="w">    </span><span class="n">_progressAnimation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">end:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">progress</span><span class="p">,</span>
+<span class="w">    </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// Color animation based on progress</span>
+<span class="w">    </span><span class="n">_colorAnimation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ColorTween</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">begin:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">,</span>
+<span class="w">      </span><span class="nl">end:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">,</span>
+<span class="w">    </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">)</span>
+<span class="w">      </span><span class="p">..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">forward</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">didUpdateWidget</span><span class="p">(</span><span class="kd">covariant</span><span class="w"> </span><span class="n">AnimatedProgress</span><span class="w"> </span><span class="n">oldWidget</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">didUpdateWidget</span><span class="p">(</span><span class="n">oldWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">widget</span><span class="p">.</span><span class="n">progress</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">oldWidget</span><span class="p">.</span><span class="n">progress</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">_progressAnimation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">        </span><span class="nl">begin:</span><span class="w"> </span><span class="n">oldWidget</span><span class="p">.</span><span class="n">progress</span><span class="p">,</span>
+<span class="w">        </span><span class="nl">end:</span><span class="w"> </span><span class="n">widget</span><span class="p">.</span><span class="n">progress</span><span class="p">,</span>
+<span class="w">      </span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">_controller</span><span class="p">)</span>
+<span class="w">        </span><span class="p">..</span><span class="n">addListener</span><span class="p">(()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="p">{});</span><span class="w"> </span><span class="p">});</span>
+<span class="w">      </span><span class="n">_controller</span><span class="p">.</span><span class="n">forward</span><span class="p">(</span><span class="nl">from:</span><span class="w"> </span><span class="m">0.0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dispose</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">_controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">    </span><span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+<span class="w">      </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">          </span><span class="nl">height:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<span class="w">          </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">grey</span><span class="p">[</span><span class="m">200</span><span class="p">],</span>
+<span class="w">            </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">10</span><span class="p">),</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">AnimatedBuilder</span><span class="p">(</span>
+<span class="w">            </span><span class="nl">animation:</span><span class="w"> </span><span class="n">_progressAnimation</span><span class="p">,</span>
+<span class="w">            </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="k">return</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+<span class="w">                </span><span class="nl">width:</span><span class="w"> </span><span class="n">_progressAnimation</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+<span class="w">                </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">color:</span><span class="w"> </span><span class="n">_colorAnimation</span><span class="p">.</span><span class="n">value</span><span class="p">,</span>
+<span class="w">                  </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">10</span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">                </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+<span class="w">                  </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">&#39;</span><span class="si">${</span><span class="p">(</span><span class="n">_progressAnimation</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="p">).</span><span class="n">round</span><span class="p">()</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nl">style:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span>
+<span class="w">                      </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">,</span>
+<span class="w">                      </span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">12</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">),</span>
+<span class="w">                  </span><span class="p">),</span>
+<span class="w">                </span><span class="p">),</span>
+<span class="w">              </span><span class="p">);</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">          </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- AnimatedCounter with IntTween
+- AnimatedProgress with Tween and ColorTween
+- Updated on value changes
+- Smooth transitions between values</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="use-appropriate-tween-type">Use Appropriate Tween Type</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Correct tween type</span>
+<span class="n">IntTween</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">100</span><span class="p">)</span><span class="w"> </span><span class="c1">// For integers</span>
+<span class="n">ColorTween</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">)</span><span class="w"> </span><span class="c1">// For colors</span>
+
+<span class="c1">// Bad - Wrong tween type</span>
+<span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">100.0</span><span class="p">)</span><span class="w"> </span><span class="c1">// Should be IntTween if used for integers</span>
+</code></pre></div>
+<h2 id="use-curves-with-tweens">Use Curves with Tweens</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - With curve</span>
+<span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">1.0</span><span class="p">).</span><span class="n">animate</span><span class="p">(</span>
+<span class="w">  </span><span class="n">CurvedAnimation</span><span class="p">(</span><span class="nl">parent:</span><span class="w"> </span><span class="n">controller</span><span class="p">,</span><span class="w"> </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">easeInOut</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1">// Bad - Linear</span>
+<span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">1.0</span><span class="p">).</span><span class="n">animate</span><span class="p">(</span><span class="n">controller</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="create-custom-tweens-for-complex-types">Create Custom Tweens for Complex Types</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Custom tween for complex type</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">CustomTween</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Tween</span><span class="o">&lt;</span><span class="n">CustomType</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">CustomTween</span><span class="p">({</span><span class="k">super</span><span class="p">.</span><span class="n">begin</span><span class="p">,</span><span class="w"> </span><span class="k">super</span><span class="p">.</span><span class="n">end</span><span class="p">});</span>
+
+<span class="w">  </span><span class="nd">@override</span>
+<span class="w">  </span><span class="n">CustomType</span><span class="w"> </span><span class="n">lerp</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Custom interpolation logic</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="wrong-tween-type">Wrong Tween Type</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Using double Tween for integers</span>
+<span class="n">Tween</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">10.0</span><span class="p">)</span><span class="w"> </span><span class="c1">// Returns double, not int</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Using IntTween for integers</span>
+<span class="n">IntTween</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="m">10</span><span class="p">)</span><span class="w"> </span><span class="c1">// Returns integer</span>
+</code></pre></div></p>
+<h2 id="not-handling-null-values">Not Handling Null Values</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// begin or end might be null</span>
+<span class="n">ColorTween</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">)</span><span class="w"> </span><span class="c1">// Causes issues</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Always provide values</span>
+<span class="n">ColorTween</span><span class="p">(</span><span class="nl">begin:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span><span class="w"> </span><span class="nl">end:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Tween defines the range of values for animations. Use Tween<double> for numbers, ColorTween for colors, IntTween for integers, and custom Tweens for custom types. TweenSequence combines multiple tweens in sequence. Tweens are essential for creating smooth animations.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="hero.md">Hero</a></li>
+<li><a href="animatedbuilder.md">AnimatedBuilder</a></li>
+<li><a href="custompainter-animation.md">CustomPainter Animation</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Tween interpolates between values</li>
+<li>ColorTween handles color interpolation</li>
+<li>IntTween handles integer values</li>
+<li>AlignmentTween handles alignments</li>
+<li>BorderRadiusTween handles border radii</li>
+<li>TweenSequence chains animations</li>
+<li>ConstantTween holds constant values</li>
+<li>Custom Tweens can be created</li>
+</ul>
 
 
 

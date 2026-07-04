@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#integration-tests" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -9009,6 +9014,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -18068,6 +18075,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -18084,9 +18093,540 @@
 
 
 
-  <h1>Integration Tests</h1>
+<h1 id="integration-tests">Integration Tests</h1>
+<p>Understand how to write and run integration tests in Flutter to verify your app works correctly as a whole.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>Integration Tests (also called End-to-End Tests) are tests that verify your entire application works correctly by simulating real user interactions. They run on a real device or emulator and test the app as a whole, including UI, business logic, and platform integration. Integration tests are the most comprehensive type of test but are also the slowest to run.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Integration Tests exist to:</p>
+<ul>
+<li>Test the app as a whole</li>
+<li>Verify user flows work correctly</li>
+<li>Test platform integration</li>
+<li>Catch bugs that unit tests miss</li>
+<li>Ensure app works on real devices</li>
+<li>Validate UI and interactions</li>
+<li>Test app performance</li>
+</ul>
+<hr />
+<h1 id="setting-up-integration-tests">Setting Up Integration Tests</h1>
+<blockquote>
+<p><strong>Configuring</strong> integration tests in your project.</p>
+</blockquote>
+<div class="language-yaml highlight"><pre><span></span><code><span class="c1"># 1. Add integration_test dependency in pubspec.yaml</span>
+<span class="nt">dev_dependencies</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">flutter_test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">sdk</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flutter</span>
+<span class="w">  </span><span class="nt">integration_test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">sdk</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flutter</span>
 
+<span class="c1"># 2. Create test structure</span>
+<span class="c1"># integration_test/</span>
+<span class="c1">#   app_test.dart</span>
+<span class="c1">#   login_test.dart</span>
+<span class="c1">#   navigation_test.dart</span>
+</code></pre></div>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 3. integration_test/app_test.dart</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter/material.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:flutter_test/flutter_test.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:integration_test/integration_test.dart&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:my_app/main.dart&#39;</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">app</span><span class="p">;</span>
 
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 4. Initialize integration test</span>
+<span class="w">  </span><span class="n">IntegrationTestWidgetsFlutterBinding</span><span class="p">.</span><span class="n">ensureInitialized</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;App Integration Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 5. Test basic app launch</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should launch the app&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify app launched</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;My App&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 6. Test navigation flow</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should navigate between screens&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Navigate to detail screen</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">detailButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;go_to_detail&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">detailButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify detail screen appears</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Detail Screen&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- integration_test package for integration tests
+- IntegrationTestWidgetsFlutterBinding initializes
+- pumpAndSettle waits for animations
+- Testing full app flows</p>
+<hr />
+<h1 id="testing-user-flows">Testing User Flows</h1>
+<blockquote>
+<p><strong>Testing complete</strong> user journeys.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Login flow test</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">IntegrationTestWidgetsFlutterBinding</span><span class="p">.</span><span class="n">ensureInitialized</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Login Flow Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Test successful login</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should login successfully with valid credentials&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Enter email</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">emailField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;email_field&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">emailField</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;test@example.com&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Enter password</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">passwordField</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;password_field&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">passwordField</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;password123&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Tap login button</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">loginButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;login_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">loginButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify logged in</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Welcome, User!&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Dashboard&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test failed login</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should show error with invalid credentials&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Enter invalid credentials</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;email_field&#39;</span><span class="p">)),</span><span class="w"> </span><span class="s1">&#39;wrong@example.com&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;password_field&#39;</span><span class="p">)),</span><span class="w"> </span><span class="s1">&#39;wrongpass&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;login_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify error message</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Invalid credentials&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Dashboard&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 3. Test logout</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should logout successfully&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch and login</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;email_field&#39;</span><span class="p">)),</span><span class="w"> </span><span class="s1">&#39;test@example.com&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;password_field&#39;</span><span class="p">)),</span><span class="w"> </span><span class="s1">&#39;password123&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;login_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Logout</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">logoutButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;logout_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">logoutButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify logged out</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Login&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Dashboard&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Testing complete user flows
+- Successful and failed login
+- Logout flow testing
+- Full app interaction</p>
+<hr />
+<h1 id="testing-navigation">Testing Navigation</h1>
+<blockquote>
+<p><strong>Testing</strong> screen navigation.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Navigation tests</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">IntegrationTestWidgetsFlutterBinding</span><span class="p">.</span><span class="n">ensureInitialized</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Navigation Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Test navigation with parameters</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should navigate with parameters&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Navigate to product detail</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">productCard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;product_card_1&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">productCard</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Verify product details</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Product 1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\$</span><span class="s1">99.99&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Description&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test back navigation</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should navigate back correctly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Navigate to detail</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;product_card_1&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Detail screen is shown</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Product 1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Act: Press back</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">backButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;back_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">backButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Back to home</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Product 1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Home&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 3. Test deep navigation</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should navigate through multiple screens&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Navigate to profile</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;profile_tab&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Navigate to settings</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;settings_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Navigate to security</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;security_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Security screen is shown</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Security Settings&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Navigation testing
+- Parameter passing
+- Back navigation
+- Deep navigation flows</p>
+<hr />
+<h1 id="testing-data-persistence">Testing Data Persistence</h1>
+<blockquote>
+<p><strong>Testing</strong> data storage and retrieval.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Data persistence tests</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">IntegrationTestWidgetsFlutterBinding</span><span class="p">.</span><span class="n">ensureInitialized</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Data Persistence Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Test saving data</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should save data locally&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Enter data</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;data_input&#39;</span><span class="p">)),</span>
+<span class="w">        </span><span class="s1">&#39;Test data&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;save_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Restart app</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">restartAndRestore</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Data is still there</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Test data&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test deleting data</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should delete data&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Add data</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;data_input&#39;</span><span class="p">)),</span>
+<span class="w">        </span><span class="s1">&#39;Data to delete&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;save_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Delete data</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">deleteButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;delete_button_0&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">deleteButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Data is gone</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Data to delete&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 3. Test multiple data items</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should handle multiple data items&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Add multiple items</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">dataInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;data_input&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">saveButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;save_button&#39;</span><span class="p">));</span>
+
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span><span class="n">dataInput</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Item </span><span class="si">$</span><span class="n">i</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">saveButton</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="c1">// Assert: All items are present</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Item 1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Item 2&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Item 3&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Data persistence testing
+- Save and delete operations
+- App restart testing
+- Multiple data items</p>
+<hr />
+<h1 id="performance-testing">Performance Testing</h1>
+<blockquote>
+<p><strong>Testing</strong> app performance.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// Performance tests</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">IntegrationTestWidgetsFlutterBinding</span><span class="p">.</span><span class="n">ensureInitialized</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Performance Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Test scrolling performance</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should scroll smoothly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Scroll through list</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">listView</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;long_list&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">fling</span><span class="p">(</span><span class="n">listView</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="m">500</span><span class="p">),</span><span class="w"> </span><span class="m">1000</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Still responsive</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Item 50&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 2. Test animation performance</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should animate smoothly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Trigger animation</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">animateButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;animate_button&#39;</span><span class="p">));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">animateButton</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Animation completed</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Animation Complete&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 3. Test app startup time</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should start quickly&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">stopwatch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Stopwatch</span><span class="p">()..</span><span class="n">start</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Act: Launch the app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Assert: Startup time is acceptable</span>
+<span class="w">      </span><span class="n">stopwatch</span><span class="p">.</span><span class="n">stop</span><span class="p">();</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">stopwatch</span><span class="p">.</span><span class="n">elapsedMilliseconds</span><span class="p">,</span><span class="w"> </span><span class="n">lessThan</span><span class="p">(</span><span class="m">3000</span><span class="p">));</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Scrolling performance
+- Animation testing
+- Startup time measurement
+- Performance validation</p>
+<hr />
+<h1 id="real-world-examples">Real-World Examples</h1>
+<blockquote>
+<p><strong>Common patterns</strong> in integration testing.</p>
+</blockquote>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">/// 1. Shopping cart flow</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">IntegrationTestWidgetsFlutterBinding</span><span class="p">.</span><span class="n">ensureInitialized</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Shopping Cart Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should complete checkout flow&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// 1. Launch app</span>
+<span class="w">      </span><span class="n">app</span><span class="p">.</span><span class="n">main</span><span class="p">();</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// 2. Add item to cart</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;add_to_cart_1&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// 3. Go to cart</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;cart_icon&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// 4. Verify item in cart</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Item 1&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// 5. Proceed to checkout</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;checkout_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// 6. Enter shipping info</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;address_input&#39;</span><span class="p">)),</span>
+<span class="w">        </span><span class="s1">&#39;123 Main St&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;continue_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// 7. Enter payment info</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">enterText</span><span class="p">(</span>
+<span class="w">        </span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;card_input&#39;</span><span class="p">)),</span>
+<span class="w">        </span><span class="s1">&#39;4111 1111 1111 1111&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;place_order_button&#39;</span><span class="p">)));</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// 8. Verify order confirmation</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Order Confirmed&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="c1">/// 2. Multi-platform testing</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">IntegrationTestWidgetsFlutterBinding</span><span class="p">.</span><span class="n">ensureInitialized</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Multi-Platform Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should work on Android&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Platform-specific tests</span>
+<span class="w">      </span><span class="c1">// Test Android-specific features</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should work on iOS&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Platform-specific tests</span>
+<span class="w">      </span><span class="c1">// Test iOS-specific features</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should handle different screen sizes&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">WidgetTester</span><span class="w"> </span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Test with different screen sizes</span>
+<span class="w">      </span><span class="n">tester</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">physicalSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Size</span><span class="p">(</span><span class="m">800</span><span class="p">,</span><span class="w"> </span><span class="m">600</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="w">      </span><span class="c1">// Verify layout adapts</span>
+<span class="w">      </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byType</span><span class="p">(</span><span class="n">AdaptiveLayout</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>What's happening here?
+- Complete checkout flow
+- Multi-platform testing
+- Different screen sizes
+- Real-world scenarios</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<h2 id="test-critical-user-flows">Test Critical User Flows</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Test critical flows</span>
+<span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should complete purchase flow&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Login -&gt; Add to cart -&gt; Checkout -&gt; Confirm</span>
+<span class="p">});</span>
+
+<span class="c1">// Bad - Testing trivial flows</span>
+<span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;should display logo&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Only tests logo presence</span>
+<span class="p">});</span>
+</code></pre></div>
+<h2 id="use-real-devices">Use Real Devices</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Test on real devices</span>
+<span class="n">flutter</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">integration_test</span><span class="w"> </span><span class="o">--</span><span class="n">device</span><span class="o">-</span><span class="n">id</span><span class="o">=</span><span class="n">emulator</span><span class="o">-</span><span class="m">5554</span>
+
+<span class="c1">// Bad - Only testing on emulator</span>
+</code></pre></div>
+<h2 id="handle-async-operations">Handle Async Operations</h2>
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Good - Wait for async operations</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+
+<span class="c1">// Bad - Not waiting</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pump</span><span class="p">();</span>
+<span class="c1">// May miss async updates</span>
+</code></pre></div>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="not-waiting-for-animations">Not Waiting for Animations</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Missing wait</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">button</span><span class="p">);</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Loaded&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Wait for animations</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">button</span><span class="p">);</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Loaded&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+</code></pre></div></p>
+<h2 id="testing-implementation-details">Testing Implementation Details</h2>
+<p>Wrong:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Tests internal state</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">widget</span><span class="p">.</span><span class="n">state</span><span class="p">.</span><span class="n">isLoading</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+</code></pre></div></p>
+<p>Correct:
+<div class="language-dart highlight"><pre><span></span><code><span class="c1">// Tests visible behavior</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;Loading...&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+</code></pre></div></p>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>Integration Tests verify your entire application works correctly by simulating real user interactions. Use integration_test package for integration tests, test complete user flows, and run tests on real devices. Integration tests catch bugs that unit tests miss and ensure your app works as expected.</p>
+<hr />
+<h1 id="next-steps">Next Steps</h1>
+<ul>
+<li><a href="golden-tests.md">Golden Tests</a></li>
+<li><a href="test-utilities.md">Test Utilities</a></li>
+<li><a href="performance-testing.md">Performance Testing</a></li>
+</ul>
+<hr />
+<h1 id="did-you-know">Did You Know?</h1>
+<ul>
+<li>Integration tests run on real devices</li>
+<li>pumpAndSettle waits for animations</li>
+<li>Integration tests are comprehensive</li>
+<li>Tests can be run on multiple devices</li>
+<li>Real user flows are tested</li>
+<li>Integration tests catch UI bugs</li>
+<li>Performance can be measured</li>
+<li>Integration tests are essential for quality</li>
+</ul>
 
 
 
