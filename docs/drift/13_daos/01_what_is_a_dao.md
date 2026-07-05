@@ -1,512 +1,353 @@
-## What is a DAO?
+# DAOs (Data Access Objects)
 
-**Understanding the Data Access Object pattern with Drift's modern API**
+A **DAO (Data Access Object)** is a structured way to group database operations (queries, inserts, updates, deletes) into a dedicated class instead of spreading them across your app.
 
 ---
 
 # What is it?
 
-**DAO (Data Access Object)** is a design pattern that provides an abstract interface to a database. In Drift, a DAO encapsulates all database operations for a specific entity using **type-safe query builder** methods instead of raw SQL strings. This gives you full type safety, IDE autocomplete, refactoring support, and compile-time validation.
+In Drift, a DAO is a class that contains **database logic for a specific feature or table group**.
 
-> **Think of a DAO like a "type-safe API client"** – instead of writing raw HTTP requests (SQL), you call well-defined methods with typed parameters and get typed responses back. The underlying complexity is completely hidden.
+Instead of writing queries directly in UI or services:
 
 ```dart
-// 👇 Modern DAO with type-safe query builder
-@DriftAccessor(tables: [Users])
-class UserDao extends DatabaseAccessor<AppDatabase> with _$UserDaoMixin {
-  UserDao(super.db);
-
-  // 👇 Type-safe query builder (no SQL strings!)
-  Future<List<User>> getActiveUsers() {
-    return (select(users)
-      ..where((u) => u.isActive.equals(true)))
-      .get();
-  }
-
-  Future<User?> getUserById(int id) {
-    return (select(users)
-      ..where((u) => u.id.equals(id)))
-      .getSingleOrNull();
-  }
-
-  // 👇 Reactive query (stream)
-  Stream<List<User>> watchActiveUsers() {
-    return (select(users)
-      ..where((u) => u.isActive.equals(true)))
-      .watch();
-  }
-}
-
-// 👇 Using the DAO (clean, type-safe API)
-final userDao = UserDao(db);
-final users = await userDao.getActiveUsers(); // List<User>
-final user = await userDao.getUserById(1);    // User?
-final stream = userDao.watchActiveUsers();     // Stream<List<User>>
+await into(users).insert(...);
+await select(users).get();
 ```
 
-> **What's happening here?**
-> - **`@DriftAccessor`** – Marks the class as a DAO
-> - **Type-safe queries** – Dart methods instead of SQL strings
-> - **IDE support** – Autocomplete and refactoring
-> - **Reactive** – `.watch()` for streams
-> - **Type safety** – Compile-time validation
+You move them into a dedicated class:
+
+* `UserDao`
+* `OrderDao`
+* `TaskDao`
+
+This keeps your database layer organized and maintainable.
 
 ---
 
 # Why does it exist?
 
-- **Type Safety** – Catch errors at compile-time, not runtime
-- **IDE Support** – Autocomplete, refactoring, navigation
-- **Abstraction** – Hide database complexity from business logic
-- **Maintainability** – Easy to find and update queries
-- **Reusability** – Same DAO used throughout the app
-- **Testability** – DAOs can be easily mocked
-- **Organization** – Queries grouped by entity
+Without DAOs, database code tends to spread everywhere:
+
+* UI widgets
+* ViewModels
+* Repositories
+* Services
+
+This leads to:
+
+* Duplicated queries
+* Hard-to-test logic
+* Tight coupling with UI
+* Difficult refactoring
+
+DAOs solve this by:
+
+* Centralizing database logic
+* Improving testability
+* Enforcing separation of concerns
+* Making queries reusable
 
 ---
 
-# Benefits of the Modern DAO Approach
+# Syntax
 
-> **Why use the query builder instead of raw SQL?**
+A DAO is created using `@DriftAccessor`.
 
-## 1. Type Safety
-
-```dart
-// ❌ CLASSIC: Raw SQL (no type safety)
-@Query('SELECT * FROM users WHERE age > :minAge')
-Future<List<User>> getUsersOlderThan(int minAge);
-// SQL errors only caught at runtime!
-
-// ✅ MODERN: Query builder (compile-time safety)
-Future<List<User>> getUsersOlderThan(int minAge) {
-  return (select(users)
-    ..where((u) => u.age > const Variable(minAge))) // 👈 Type-safe!
-    .get();
-}
-// Errors caught at compile-time!
-```
-
-## 2. IDE Support
-
-```dart
-// ✅ MODERN: Full IDE support
-Future<List<User>> getActiveUsers() {
-  return (select(users)
-    ..where((u) => u.isActive.equals(true))) // 👈 Autocomplete works!
-    .get();
-}
-```
-
-## 3. Refactoring
-
-```dart
-// ✅ MODERN: Safe refactoring
-// If you rename a column, the query builder catches it
-Future<List<User>> getActiveUsers() {
-  return (select(users)
-    ..where((u) => u.isActive.equals(true))) // 👈 Refactoring works!
-    .get();
-}
-```
-
-## 4. Composability
-
-```dart
-// ✅ MODERN: Queries are composable
-Future<List<User>> getActiveUsers() {
-  final query = select(users)
-    ..where((u) => u.isActive.equals(true));
-  return query.get();
-}
-
-Future<List<User>> getActiveAdults() {
-  final query = select(users)
-    ..where((u) => u.isActive.equals(true))
-    ..where((u) => u.age > const Variable(18));
-  return query.get();
-}
-```
-
----
-
-# DAO vs Repository
-
-> **Understanding the difference**
-
-```dart
-// 👇 DAO: Type-safe database operations
+```dart id="d1k9qp"
 @DriftAccessor(tables: [Users])
-class UserDao extends DatabaseAccessor<AppDatabase> with _$UserDaoMixin {
-  UserDao(super.db);
-
-  // Type-safe queries
-  Future<User?> getUserById(int id) {
-    return (select(users)
-      ..where((u) => u.id.equals(id)))
-      .getSingleOrNull();
-  }
-
-  Future<User> createUser(String name, String email) async {
-    final id = await into(users).insert(
-      UsersCompanion.insert(name: name, email: email),
-    );
-    return await getUserById(id);
-  }
+class UserDao extends DatabaseAccessor<AppDatabase>
+    with _$UserDaoMixin {
+  UserDao(AppDatabase db) : super(db);
 }
+```
 
-// 👇 Repository: Business logic + DAO
-class UserRepository {
-  final UserDao _userDao;
-  final CacheService _cacheService;
+**Explanation:**
 
-  UserRepository(this._userDao, this._cacheService);
+* `DatabaseAccessor<AppDatabase>` gives access to the database
+* `tables` defines which tables the DAO can access
+* `_ $UserDaoMixin` is generated by Drift
 
-  // 👇 Adds business logic (caching, validation)
-  Future<User?> getUserById(int id) async {
-    // Check cache first
-    final cached = await _cacheService.getUser(id);
-    if (cached != null) return cached;
+---
 
-    // Get from database
-    final user = await _userDao.getUserById(id);
+# Basic Queries Inside DAO
 
-    // Cache for next time
-    if (user != null) await _cacheService.cacheUser(user);
+## Insert
 
-    return user;
+```dart id="u2m8qp"
+Future<int> createUser(UsersCompanion user) {
+  return into(users).insert(user);
+}
+```
+
+**Explanation:**
+
+* Wraps insert logic in a reusable method
+* Returns inserted row ID
+
+---
+
+## Select All
+
+```dart id="v8k2qp"
+Future<List<User>> getAllUsers() {
+  return select(users).get();
+}
+```
+
+**Explanation:**
+
+* Encapsulates query logic
+* Keeps UI layer clean
+
+---
+
+## Filtered Query
+
+```dart id="p3m9qp"
+Future<User?> findById(int id) {
+  return (select(users)..where((u) => u.id.equals(id)))
+      .getSingleOrNull();
+}
+```
+
+**Explanation:**
+
+* Encapsulates filtering logic
+* Prevents query duplication
+
+---
+
+# Mental Model
+
+```text id="t8k2qp"
+UI / Service Layer
+        │
+        ▼
+     UserDao
+        │
+        ▼
+   Drift Queries
+        │
+        ▼
+    SQLite DB
+```
+
+DAO acts as a **controlled gateway** to the database.
+
+---
+
+# Examples
+
+## Example 1: Simple User DAO
+
+```dart id="c9m2qp"
+@DriftAccessor(tables: [Users])
+class UserDao extends DatabaseAccessor<AppDatabase>
+    with _$UserDaoMixin {
+  UserDao(AppDatabase db) : super(db);
+
+  Future<int> createUser(UsersCompanion user) {
+    return into(users).insert(user);
+  }
+
+  Future<List<User>> getAllUsers() {
+    return select(users).get();
+  }
+
+  Future<User?> getUserById(int id) {
+    return (select(users)..where((u) => u.id.equals(id)))
+        .getSingleOrNull();
+  }
+
+  Future<int> deleteUser(int id) {
+    return (delete(users)..where((u) => u.id.equals(id)))
+        .go();
   }
 }
 ```
 
+**Explanation:**
+
+* All user-related queries are centralized
+* UI never touches raw SQL or Drift queries directly
+* Easy to extend and test
+
 ---
 
-# Real-World Example
+## Example 2: DAO with Business Logic
 
-> **Complete e-commerce UserDao with modern API**
+```dart id="m7k2qp"
+@DriftAccessor(tables: [Tasks])
+class TaskDao extends DatabaseAccessor<AppDatabase>
+    with _$TaskDaoMixin {
+  TaskDao(AppDatabase db) : super(db);
 
-```dart
-// lib/database/daos/user_dao.dart
-import 'package:drift/drift.dart';
-import '../database.dart';
-import '../tables/users.dart';
-
-@DriftAccessor(tables: [Users])
-class UserDao extends DatabaseAccessor<AppDatabase> with _$UserDaoMixin {
-  UserDao(super.db);
-
-  // ==================== READ OPERATIONS ====================
-
-  // 👇 All users
-  Future<List<User>> getAllUsers() => select(users).get();
-
-  // 👇 By ID
-  Future<User?> getUserById(int id) {
-    return (select(users)
-      ..where((u) => u.id.equals(id)))
-      .getSingleOrNull();
+  Future<int> createTask(TasksCompanion task) {
+    return into(tasks).insert(task);
   }
 
-  // 👇 By email
-  Future<User?> getUserByEmail(String email) {
-    return (select(users)
-      ..where((u) => u.email.equals(email)))
-      .getSingleOrNull();
+  Future<List<Task>> getPendingTasks() {
+    return (select(tasks)
+          ..where((t) => t.isCompleted.equals(false)))
+        .get();
   }
 
-  // 👇 Active users
-  Future<List<User>> getActiveUsers() {
-    return (select(users)
-      ..where((u) => u.isActive.equals(true)))
-      .get();
-  }
-
-  // 👇 Verified users
-  Future<List<User>> getVerifiedUsers() {
-    return (select(users)
-      ..where((u) => u.isVerified.equals(true)))
-      .get();
-  }
-
-  // 👇 Users by age range
-  Future<List<User>> getUsersByAgeRange(int minAge, int maxAge) {
-    return (select(users)
-      ..where((u) => u.age.isBetweenValues(minAge, maxAge)))
-      .get();
-  }
-
-  // 👇 Search users
-  Future<List<User>> searchUsers(String query) {
-    final searchTerm = '%$query%';
-    return (select(users)
-      ..where((u) => 
-        u.username.like(searchTerm) |
-        u.email.like(searchTerm) |
-        u.fullName.like(searchTerm)
-      ))
-      .get();
-  }
-
-  // 👇 Counts
-  Future<int> getUserCount() => select(users).count();
-
-  Future<int> getActiveUserCount() {
-    return (select(users)
-      ..where((u) => u.isActive.equals(true)))
-      .count();
-  }
-
-  // 👇 Recent users
-  Future<List<User>> getRecentUsers(int limit) {
-    return (select(users)
-      ..orderBy([(u) => OrderingTerm.desc(u.createdAt)])
-      ..limit(limit))
-      .get();
-  }
-
-  // ==================== WATCH OPERATIONS ====================
-
-  // 👇 Watch active users (reactive)
-  Stream<List<User>> watchActiveUsers() {
-    return (select(users)
-      ..where((u) => u.isActive.equals(true)))
-      .watch();
-  }
-
-  // 👇 Watch user by ID
-  Stream<User?> watchUserById(int id) {
-    return (select(users)
-      ..where((u) => u.id.equals(id)))
-      .watchSingleOrNull();
-  }
-
-  // 👇 Watch all users
-  Stream<List<User>> watchAllUsers() => select(users).watch();
-
-  // 👇 Watch user stats
-  Stream<UserStats> watchUserStats() {
-    return select(users)
-      .watch()
-      .map((users) {
-        return UserStats(
-          total: users.length,
-          active: users.where((u) => u.isActive).length,
-          verified: users.where((u) => u.isVerified).length,
-        );
-      });
-  }
-
-  // ==================== WRITE OPERATIONS ====================
-
-  // 👇 Create user
-  Future<User> createUser({
-    required String username,
-    required String email,
-    required String password,
-    String? fullName,
-    int? age,
-  }) async {
-    final id = await into(users).insert(
-      UsersCompanion.insert(
-        username: username,
-        email: email,
-        passwordHash: _hashPassword(password),
-        fullName: Value(fullName),
-        age: Value(age),
-        isActive: true,
-        isVerified: false,
+  Future<int> markCompleted(int id) {
+    return (update(tasks)..where((t) => t.id.equals(id)))
+        .write(
+      const TasksCompanion(
+        isCompleted: Value(true),
       ),
     );
-    return await getUserById(id);
-  }
-
-  // 👇 Update user
-  Future<void> updateUser(User user) async {
-    await update(users).replace(user);
-  }
-
-  // 👇 Update user profile
-  Future<void> updateUserProfile({
-    required int userId,
-    String? username,
-    String? email,
-    String? fullName,
-    int? age,
-  }) async {
-    await (update(users)
-      ..where((u) => u.id.equals(userId)))
-      .write(UsersCompanion(
-        username: username != null ? Value(username) : const Value.absent(),
-        email: email != null ? Value(email) : const Value.absent(),
-        fullName: fullName != null ? Value(fullName) : const Value.absent(),
-        age: age != null ? Value(age) : const Value.absent(),
-        updatedAt: Value(DateTime.now()),
-      ));
-  }
-
-  // 👇 Status updates
-  Future<void> activateUser(int userId) async {
-    await (update(users)
-      ..where((u) => u.id.equals(userId)))
-      .write(UsersCompanion(isActive: const Value(true)));
-  }
-
-  Future<void> deactivateUser(int userId) async {
-    await (update(users)
-      ..where((u) => u.id.equals(userId)))
-      .write(UsersCompanion(isActive: const Value(false)));
-  }
-
-  Future<void> verifyUser(int userId) async {
-    await (update(users)
-      ..where((u) => u.id.equals(userId)))
-      .write(UsersCompanion(isVerified: const Value(true)));
-  }
-
-  // 👇 Delete user
-  Future<void> deleteUser(int userId) async {
-    await (delete(users)
-      ..where((u) => u.id.equals(userId)))
-      .go();
-  }
-
-  // 👇 Batch operations
-  Future<void> activateMultipleUsers(List<int> userIds) async {
-    await into(users).batch((batch) {
-      for (final id in userIds) {
-        batch.update(
-          users,
-          UsersCompanion(isActive: const Value(true)),
-          (u) => u.id.equals(id),
-        );
-      }
-    });
-  }
-
-  // 👇 Bulk delete
-  Future<void> deleteMultipleUsers(List<int> userIds) async {
-    await into(users).batch((batch) {
-      for (final id in userIds) {
-        batch.delete(users, (u) => u.id.equals(id));
-      }
-    });
-  }
-
-  // 👇 Upsert
-  Future<User> upsertUser(User user) async {
-    await into(users).insert(
-      user,
-      onConflict: DoUpdate(
-        target: users.id,
-        update: UsersCompanion.fromUser(user),
-      ),
-    );
-    return await getUserById(user.id);
-  }
-
-  // ==================== TRANSACTIONS ====================
-
-  Future<void> activateMultipleUsersWithTransaction(List<int> userIds) async {
-    await db.transaction(() async {
-      for (final id in userIds) {
-        await activateUser(id);
-      }
-    });
-  }
-
-  // ==================== PRIVATE HELPERS ====================
-
-  String _hashPassword(String password) {
-    return 'hashed_$password';
   }
 }
 ```
 
-```dart
-// lib/database/database.dart
-@DriftDatabase(
-  tables: [Users],
-  daos: [UserDao],
-)
-class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+**Explanation:**
 
-  @override
-  int get schemaVersion => 1;
+* DAO contains both queries and business-level operations
+* UI only calls meaningful methods like `markCompleted`
 
-  static QueryExecutor _openConnection() {
-    return driftDatabase(name: 'app_database');
+---
+
+## Example 3: DAO with Streams
+
+```dart id="x2m9qp"
+@DriftAccessor(tables: [Messages])
+class MessageDao extends DatabaseAccessor<AppDatabase>
+    with _$MessageDaoMixin {
+  MessageDao(AppDatabase db) : super(db);
+
+  Stream<List<Message>> watchMessages() {
+    return select(messages).watch();
+  }
+
+  Stream<List<Message>> watchLatestMessages() {
+    return (select(messages)
+          ..orderBy([
+            (m) => OrderingTerm(
+                  expression: m.sentAt,
+                  mode: OrderingMode.desc,
+                ),
+          ])
+          ..limit(20))
+        .watch();
   }
 }
 ```
 
----
+**Explanation:**
 
-# DAO Best Practices (Modern API)
-
-- **Use query builder** – Never use raw SQL strings
-- **Use `.watch()`** – For reactive queries
-- **Use `.get()`** – For one-time queries
-- **Use `.getSingleOrNull()`** – For optional results
-- **Use transactions** – For multiple related operations
-- **Use batch operations** – For bulk operations
-- **Use `@DriftAccessor`** – For DAO classes
-- **Use type-safe Companions** – For inserts and updates
+* DAO exposes reactive streams
+* UI can automatically rebuild on changes
+* Keeps query logic centralized
 
 ---
 
-# Classic vs Modern DAO Comparison
+# When to Use
 
-| Feature | Classic (@Query) | Modern (Query Builder) |
-|---------|------------------|----------------------|
-| **Type Safety** | ❌ Runtime errors | ✅ Compile-time errors |
-| **IDE Support** | ❌ No autocomplete | ✅ Full autocomplete |
-| **Refactoring** | ❌ Manual updates | ✅ Automatic refactoring |
-| **SQL Injection** | ⚠️ Risk if not careful | ✅ Built-in protection |
-| **Reactive** | ⚠️ Limited | ✅ Full `.watch()` support |
-| **Code Clarity** | ⚠️ Mix of Dart + SQL | ✅ Pure Dart code |
-| **Testing** | ❌ Harder to test | ✅ Easy to test |
+Use DAOs when:
+
+* Your app has multiple tables
+* Queries are reused in multiple places
+* You want clean architecture separation
+* You need testable database logic
+* You are building medium/large applications
+
+---
+
+# When NOT to Use
+
+Avoid DAOs when:
+
+* Your app is extremely small
+* You only have 1–2 simple queries
+* Adding abstraction would overcomplicate things
+
+---
+
+# Best Practices
+
+* One DAO per feature or table group
+* Keep methods meaningful (e.g. `markTaskDone`, not `updateTask`)
+* Avoid UI logic inside DAOs
+* Prefer streams for reactive UI needs
+* Keep queries small and focused
+* Inject DAOs via dependency injection
+
+---
+
+# Common Mistakes
+
+## Putting Business Logic in UI Instead of DAO
+
+**Wrong**
+
+```dart id="q8m2qp"
+await update(tasks).write(...);
+```
+
+inside UI layer.
+
+**Correct**
+
+```dart id="v3k9qp"
+await taskDao.markCompleted(id);
+```
+
+---
+
+## Making DAOs Too Large
+
+**Wrong**
+
+One giant DAO handling everything:
+
+```dart id="m1k9qp"
+class AppDao {
+  // users + orders + tasks + messages all together
+}
+```
+
+**Correct**
+
+Split by domain:
+
+* `UserDao`
+* `TaskDao`
+* `OrderDao`
+
+---
+
+## Exposing Raw Queries Everywhere
+
+**Wrong**
+
+```dart id="z9m2qp"
+select(users).get();
+```
+
+in multiple files.
+
+**Correct**
+
+```dart id="p2k8qp"
+userDao.getAllUsers();
+```
+
+---
+
+# Related APIs
+
+* DatabaseAccessor
+* DriftAccessor
+* SelectStatement
+* InsertStatement
+* Streams
 
 ---
 
 # Summary
 
-| Aspect | Description | Benefit |
-|--------|-------------|---------|
-| **Type-Safe** | Query builder | Compile-time safety |
-| **IDE Support** | Autocomplete | Faster development |
-| **Refactoring** | Safe renaming | Easier maintenance |
-| **Reactive** | `.watch()` | Real-time updates |
-| **Clean Code** | No SQL strings | Better readability |
-
----
-
-# Next Steps
-
-Now you understand what a modern DAO is, let's dive deeper:
-
-- [Defining DAOs](link) – How to define DAOs
-- [Organizing Queries](link) – Organizing queries in DAOs
-- [Injecting Dependencies](link) – Dependency injection for DAOs
-
----
-
-# Did You Know?
-
-- **Query builder compiles to SQL** – At compile-time
-
-- **Query builder is fully type-safe** – No runtime surprises
-
-- **Query builder is the modern way** – Recommended by Drift team
-
-- **Query builder supports all SQL features** – Joins, aggregations, CTEs
-
-- **Query builder is composable** – Build complex queries piece by piece
-
-- **Query builder has better performance** – Optimized SQL generation
-
-- **Query builder is more maintainable** – Pure Dart code
-
-- **Query builder is the future** – Of Drift development
-
----
-
+DAOs in Drift provide a clean abstraction layer over raw database operations by grouping related queries into dedicated classes. They improve code organization, testability, and maintainability by centralizing all database logic in one place per domain or feature.

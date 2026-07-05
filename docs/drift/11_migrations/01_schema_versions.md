@@ -1,641 +1,333 @@
-## Schema Versions
+# Schema Versions
 
-**Managing database schema versions in Drift**
+A **schema version** is a number that represents the current structure of your database.
 
 ---
 
 # What is it?
 
-**Schema Versions** are a way to track and manage changes to your database structure over time. Every time you add, remove, or modify tables or columns, you increment the schema version number. Drift uses this version number to determine which migrations need to be applied when your app starts up.
+Every Drift database has a `schemaVersion` getter that returns an integer. This number tells Drift which version of your database schema the application expects.
 
-> **Think of Schema Versions like "software version numbers"** – just as your app has a version number to track releases, your database has a version number to track structural changes. When the version changes, you know what updates need to be applied.
+Whenever you make changes to your database structure—such as adding tables, removing columns, or modifying constraints—you should increment the schema version.
 
-```dart
-// 👇 Schema version management in Drift
-@DriftDatabase(tables: [Users, Posts])
-class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+When Drift opens the database, it compares:
 
-  // 👇 Current schema version
-  @override
-  int get schemaVersion => 5;
+* The schema version stored in the existing database.
+* The schema version defined in your application.
 
-  // 👇 Migration strategy handles version changes
-  @override
-  MigrationStrategy get migration => MigrationStrategy(
-    onCreate: (migrator) async {
-      // Fresh database creation
-      await migrator.createAll();
-    },
-    onUpgrade: (migrator, from, to) async {
-      // Migrate from version to version
-      if (from == 1) {
-        await migrator.addColumn(users, users.newColumn);
-      }
-      if (from == 2) {
-        await migrator.createTable(newTable);
-      }
-      // ... more migrations
-    },
-  );
-}
-```
-
-> **What's happening here?**
-> - **schemaVersion** – Current version number
-> - **onCreate** – Runs when database is first created
-> - **onUpgrade** – Runs when version changes
-> - **Migration steps** – Incremental changes
+If they differ, Drift knows that a migration is required.
 
 ---
 
 # Why does it exist?
 
-- **Schema Evolution** – Change database structure over time
-- **Data Preservation** – Keep existing data when updating
-- **Version Tracking** – Know what schema version is installed
-- **Automated Upgrades** – Apply migrations automatically
-- **Rollback Support** – Handle downgrades if needed
-- **Testing** – Test migrations before deployment
+Applications evolve over time. New features often require changes to the database schema.
+
+For example:
+
+* Add a new table
+* Add a new column
+* Remove an old column
+* Rename a table
+* Create new indexes
+
+Existing users already have a database on their device. Simply changing your table definitions doesn't update their database automatically.
+
+Schema versions allow Drift to detect these changes and run the appropriate migration steps.
+
+Without schema versions, users could end up with an outdated database structure, causing queries to fail or data to become inaccessible.
 
 ---
 
-# Setting Schema Versions
+# Syntax
 
-> **How to manage schema versions**
-
-## Basic Version Management
+Every `GeneratedDatabase` must define a schema version.
 
 ```dart
-// 👇 Simple version management
-@DriftDatabase(tables: [Users, Posts])
+@DriftDatabase(tables: [Users])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  AppDatabase(super.executor);
 
-  // 👇 Start with version 1
   @override
   int get schemaVersion => 1;
-
-  @override
-  MigrationStrategy get migration => MigrationStrategy(
-    onCreate: (migrator) async {
-      // 👇 Create all tables on first run
-      await migrator.createAll();
-      print('✅ Database created with all tables');
-    },
-  );
 }
 ```
 
-## Incrementing Versions
+Explanation:
 
-```dart
-// 👇 Version 1 -> 2 migration
-@DriftDatabase(tables: [Users, Posts])
-class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
-
-  // 👇 Increment version when schema changes
-  @override
-  int get schemaVersion => 2;
-
-  @override
-  MigrationStrategy get migration => MigrationStrategy(
-    onCreate: (migrator) async {
-      // Fresh database
-      await migrator.createAll();
-    },
-    onUpgrade: (migrator, from, to) async {
-      // 👇 Migrate from version 1 to 2
-      if (from == 1) {
-        await migrator.addColumn(users, users.age);
-        await migrator.addColumn(users, users.status);
-        print('✅ Migrated users table: added age and status columns');
-      }
-    },
-  );
-}
-```
+* `schemaVersion` specifies the expected database schema.
+* New databases are created using this version.
+* Existing databases compare their stored version against this value.
 
 ---
 
-# Migration Strategies
-
-> **Handling schema migrations**
-
-## Basic Migration
+When you change the database schema, increment the version.
 
 ```dart
-// 👇 Complete migration strategy
 @override
-MigrationStrategy get migration => MigrationStrategy(
-  // 👇 Fresh database creation
-  onCreate: (migrator) async {
-    await migrator.createAll();
-    await _seedInitialData();
-  },
-  
-  // 👇 Upgrade path
-  onUpgrade: (migrator, from, to) async {
-    print('🔄 Upgrading from version $from to $to');
-    
-    // Version 1 -> 2: Add columns
-    if (from == 1 && to == 2) {
-      await migrator.addColumn(users, users.age);
-      await migrator.addColumn(users, users.status);
-    }
-    
-    // Version 2 -> 3: Create new table
-    if (from == 2 && to == 3) {
-      await migrator.createTable(profiles);
-      await migrator.addColumn(users, users.profileId);
-    }
-    
-    // Version 3 -> 4: Add constraints
-    if (from == 3 && to == 4) {
-      await migrator.addForeignKey(
-        users,
-        users.profileId,
-        profiles,
-        profiles.id,
-      );
-    }
-  },
-  
-  // 👇 Downgrade handling (optional)
-  onDowngrade: (migrator, from, to) async {
-    print('⬇️ Downgrading from version $from to $to');
-    // Handle downgrades carefully
-    throw Exception('Downgrades not supported');
-  },
-  
-  // 👇 Called before database opens
-  beforeOpen: (details) async {
-    print('📂 Opening database version ${details.version}');
-  },
-);
-
-Future<void> _seedInitialData() async {
-  // Insert default data
-  await into(users).insert(
-    UsersCompanion.insert(
-      name: 'Admin',
-      email: 'admin@example.com',
-    ),
-  );
-}
+int get schemaVersion => 2;
 ```
+
+Explanation:
+
+* Increasing the version tells Drift that the schema has changed.
+* Drift will invoke your migration strategy when opening an existing database.
 
 ---
 
-# Real-World Example
+# Mental Model
 
-> **Complete e-commerce migration system**
+Think of the schema version as a version number for your database blueprint.
+
+```text
+Version 1
+┌─────────────────────┐
+│ Users               │
+│ id                  │
+│ name                │
+└─────────────────────┘
+
+        ↓ Update App
+
+Version 2
+┌─────────────────────┐
+│ Users               │
+│ id                  │
+│ name                │
+│ email               │
+└─────────────────────┘
+```
+
+When the app starts, Drift checks:
+
+```text
+Database on device: Version 1
+Application expects: Version 2
+
+        ↓
+
+Run migration
+
+        ↓
+
+Database becomes Version 2
+```
+
+The schema version acts as a checkpoint that keeps the database structure synchronized with your application.
+
+---
+
+# Examples
+
+## Simple Example
+
+Version 1:
 
 ```dart
-// lib/database/migration_service.dart
-import 'package:drift/drift.dart';
+@override
+int get schemaVersion => 1;
+```
 
-class MigrationService {
-  final AppDatabase db;
-  
-  MigrationService(this.db);
+Explanation:
 
-  // ==================== MIGRATION STRATEGY ====================
-  
-  // 👇 Complete migration strategy
-  MigrationStrategy get migrationStrategy => MigrationStrategy(
-    onCreate: (migrator) async {
-      print('📦 Creating fresh database...');
-      await _createAllTables(migrator);
-      await _seedInitialData();
-      print('✅ Database creation complete');
-    },
-    
-    onUpgrade: (migrator, from, to) async {
-      print('🔄 Upgrading from v$from to v$to...');
-      
-      // 👇 Version 1 -> 2: Add user columns
-      if (from == 1 && to == 2) {
-        await _migrateV1toV2(migrator);
-      }
-      
-      // 👇 Version 2 -> 3: Create orders
-      if (from == 2 && to == 3) {
-        await _migrateV2toV3(migrator);
-      }
-      
-      // 👇 Version 3 -> 4: Create reviews
-      if (from == 3 && to == 4) {
-        await _migrateV3toV4(migrator);
-      }
-      
-      // 👇 Version 4 -> 5: Add indexes
-      if (from == 4 && to == 5) {
-        await _migrateV4toV5(migrator);
-      }
-      
-      print('✅ Migration to v$to complete');
-    },
-    
-    onDowngrade: (migrator, from, to) async {
-      print('⬇️ Downgrading from v$from to v$to...');
-      throw Exception('Downgrades are not supported');
-    },
-    
-    beforeOpen: (details) async {
-      print('📂 Opening database v${details.version}');
-      await _validateSchema(details.version);
-    },
-  );
+* The application expects the initial database structure.
 
-  // ==================== MIGRATION STEPS ====================
-  
-  // 👇 V1 -> V2: Add user columns
-  Future<void> _migrateV1toV2(Migrator migrator) async {
-    print('  ➕ Adding user columns...');
-    await migrator.addColumn(db.users, db.users.age);
-    await migrator.addColumn(db.users, db.users.status);
-    await migrator.addColumn(db.users, db.users.phone);
-    await migrator.addColumn(db.users, db.users.birthDate);
-    
-    // Set default values
-    await db.customUpdate('''
-      UPDATE users 
-      SET status = 'active', age = 18
-      WHERE status IS NULL OR age IS NULL
-    ''').go();
-    
-    print('  ✅ User columns added');
-  }
-  
-  // 👇 V2 -> V3: Create orders
-  Future<void> _migrateV2toV3(Migrator migrator) async {
-    print('  ➕ Creating orders table...');
-    await migrator.createTable(db.orders);
-    
-    print('  ➕ Creating order_items table...');
-    await migrator.createTable(db.orderItems);
-    
-    // Add foreign keys
-    await migrator.addForeignKey(
-      db.orderItems,
-      db.orderItems.orderId,
-      db.orders,
-      db.orders.id,
-    );
-    await migrator.addForeignKey(
-      db.orderItems,
-      db.orderItems.productId,
-      db.products,
-      db.products.id,
-    );
-    
-    // Add indexes
-    await migrator.addIndex(db.orders, 'idx_orders_user', [db.orders.userId]);
-    await migrator.addIndex(db.orderItems, 'idx_order_items_order', [db.orderItems.orderId]);
-    
-    print('  ✅ Orders tables created');
-  }
-  
-  // 👇 V3 -> V4: Create reviews
-  Future<void> _migrateV3toV4(Migrator migrator) async {
-    print('  ➕ Creating reviews table...');
-    await migrator.createTable(db.reviews);
-    
-    await migrator.addForeignKey(
-      db.reviews,
-      db.reviews.userId,
-      db.users,
-      db.users.id,
-    );
-    await migrator.addForeignKey(
-      db.reviews,
-      db.reviews.productId,
-      db.products,
-      db.products.id,
-    );
-    
-    // Add indexes
-    await migrator.addIndex(db.reviews, 'idx_reviews_user', [db.reviews.userId]);
-    await migrator.addIndex(db.reviews, 'idx_reviews_product', [db.reviews.productId]);
-    
-    print('  ✅ Reviews table created');
-  }
-  
-  // 👇 V4 -> V5: Add indexes
-  Future<void> _migrateV4toV5(Migrator migrator) async {
-    print('  📇 Adding indexes...');
-    
-    await migrator.addIndex(db.users, 'idx_users_email', [db.users.email]);
-    await migrator.addIndex(db.users, 'idx_users_status', [db.users.status]);
-    
-    await migrator.addIndex(db.orders, 'idx_orders_status', [db.orders.status]);
-    await migrator.addIndex(db.orders, 'idx_orders_date', [db.orders.orderDate]);
-    
-    await migrator.addIndex(db.products, 'idx_products_price', [db.products.price]);
-    await migrator.addIndex(db.products, 'idx_products_stock', [db.products.stock]);
-    
-    print('  ✅ Indexes added');
-  }
+---
 
-  // ==================== INITIAL SETUP ====================
-  
-  Future<void> _createAllTables(Migrator migrator) async {
-    // 👇 Create all tables
-    await migrator.createAll();
-    print('  ✅ All tables created');
-    
-    // 👇 Add indexes
-    await migrator.addIndex(db.users, 'idx_users_email', [db.users.email]);
-    await migrator.addIndex(db.orders, 'idx_orders_user', [db.orders.userId]);
-    await migrator.addIndex(db.orderItems, 'idx_order_items_order', [db.orderItems.orderId]);
-    print('  ✅ Indexes created');
-  }
-  
-  Future<void> _seedInitialData() async {
-    print('  🌱 Seeding initial data...');
-    
-    // 👇 Create admin user
-    await db.into(db.users).insert(
-      UsersCompanion.insert(
-        name: 'Admin',
-        email: 'admin@example.com',
-        status: Value('active'),
-        age: Value(30),
-      ),
-    );
-    
-    // 👇 Create default categories
-    await db.into(db.categories).insertAll([
-      CategoriesCompanion.insert(name: 'Electronics'),
-      CategoriesCompanion.insert(name: 'Clothing'),
-      CategoriesCompanion.insert(name: 'Books'),
-    ]);
-    
-    print('  ✅ Initial data seeded');
-  }
+Later, you add a new `email` column.
 
-  // ==================== SCHEMA VALIDATION ====================
-  
-  Future<void> _validateSchema(int version) async {
-    try {
-      // 👇 Check if all tables exist
-      final tables = await db.customSelect('''
-        SELECT name FROM sqlite_master 
-        WHERE type = 'table' 
-        AND name NOT LIKE 'sqlite_%'
-      ''').get();
-      
-      print('  📊 Tables: ${tables.map((t) => t.data['name']).join(', ')}');
-      
-      // 👇 Check schema integrity
-      final integrity = await db.customSelect('PRAGMA integrity_check').get();
-      final status = integrity.first.data['integrity_check'] as String;
-      
-      if (status == 'ok') {
-        print('  ✅ Schema integrity check passed');
-      } else {
-        print('  ⚠️ Schema integrity check: $status');
-      }
-      
-    } catch (e) {
-      print('  ❌ Schema validation failed: $e');
-    }
-  }
+```dart
+@override
+int get schemaVersion => 2;
+```
 
-  // ==================== MIGRATION TESTING ====================
-  
-  // 👇 Test migrations
-  Future<void> testMigrations() async {
-    print('🧪 Testing migrations...');
-    
-    // Test each migration step
-    final steps = [
-      _testV1toV2,
-      _testV2toV3,
-      _testV3toV4,
-      _testV4toV5,
-    ];
-    
-    for (final step in steps) {
-      await step();
-    }
-    
-    print('✅ All migration tests passed');
-  }
-  
-  Future<void> _testV1toV2() async {
-    print('  ✅ V1->V2 migration tested');
-  }
-  
-  Future<void> _testV2toV3() async {
-    print('  ✅ V2->V3 migration tested');
-  }
-  
-  Future<void> _testV3toV4() async {
-    print('  ✅ V3->V4 migration tested');
-  }
-  
-  Future<void> _testV4toV5() async {
-    print('  ✅ V4->V5 migration tested');
-  }
+Explanation:
 
-  // ==================== VERSION INFO ====================
-  
-  // 👇 Get schema version info
-  Future<SchemaInfo> getSchemaInfo() async {
-    final results = await db.customSelect('''
-      SELECT 
-        name,
-        sql,
-        type
-      FROM sqlite_master 
-      WHERE type IN ('table', 'index', 'trigger')
-      ORDER BY type, name
-    ''').get();
-    
-    final tables = results.where((r) => r.data['type'] == 'table').length;
-    final indexes = results.where((r) => r.data['type'] == 'index').length;
-    final triggers = results.where((r) => r.data['type'] == 'trigger').length;
-    
-    return SchemaInfo(
-      version: db.schemaVersion,
-      tableCount: tables,
-      indexCount: indexes,
-      triggerCount: triggers,
-      details: results.map((r) {
-        return SchemaDetail(
-          name: r.data['name'] as String,
-          type: r.data['type'] as String,
-          sql: r.data['sql'] as String?,
-        );
-      }).toList(),
-    );
-  }
-}
+* The schema has changed.
+* Drift will look for a migration from version 1 to version 2.
 
-// ==================== DATA CLASSES ====================
+---
 
-class SchemaInfo {
-  final int version;
-  final int tableCount;
-  final int indexCount;
-  final int triggerCount;
-  final List<SchemaDetail> details;
-  
-  SchemaInfo({
-    required this.version,
-    required this.tableCount,
-    required this.indexCount,
-    required this.triggerCount,
-    required this.details,
-  });
-}
+## Real-World Example
 
-class SchemaDetail {
-  final String name;
-  final String type;
-  final String? sql;
-  
-  SchemaDetail({
-    required this.name,
-    required this.type,
-    this.sql,
-  });
+Imagine you're building a task management app.
+
+### Version 1
+
+```dart
+class Tasks extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text()();
 }
 ```
 
 ```dart
-// lib/database/database.dart
-import 'package:drift/drift.dart';
-
-@DriftDatabase(tables: [
-  Users,
-  Products,
-  Categories,
-  Orders,
-  OrderItems,
-  Reviews,
-])
-class AppDatabase extends _$AppDatabase {
-  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
-
-  @override
-  int get schemaVersion => 5; // 👈 Current version
-
-  @override
-  MigrationStrategy get migration => MigrationService(this).migrationStrategy;
-
-  static QueryExecutor _openConnection() {
-    return driftDatabase(name: 'app_database');
-  }
-}
+@override
+int get schemaVersion => 1;
 ```
+
+Explanation:
+
+* Tasks only store a title.
 
 ---
 
-# Schema Version Checklist
+Months later, you introduce due dates.
 
-| Practice | Description | Impact |
-|----------|-------------|--------|
-| **Version Increment** | Bump version on schema change | High |
-| **Migration Testing** | Test each migration | High |
-| **Data Migration** | Migrate existing data | High |
-| **Backup Before Migration** | Backup database | High |
-| **Rollback Strategy** | Plan for rollbacks | Medium |
-| **Documentation** | Document changes | Medium |
-| **Testing** | Test with production data | High |
+```dart
+class Tasks extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text()();
+  DateTimeColumn get dueDate => dateTime().nullable()();
+}
+```
+
+```dart
+@override
+int get schemaVersion => 2;
+```
+
+Explanation:
+
+* The table structure has changed.
+* Existing users need a migration to add the new column.
+* New users receive the latest schema directly.
+
+---
+
+# When to Use
+
+Use schema versions whenever your database schema changes, including:
+
+* Adding tables
+* Removing tables
+* Adding columns
+* Removing columns
+* Renaming tables
+* Renaming columns
+* Changing constraints
+* Adding indexes
+* Modifying views or triggers
+
+---
+
+# When NOT to Use
+
+Do **not** change the schema version when:
+
+* Updating query logic.
+* Changing DAO methods.
+* Refactoring Dart code.
+* Modifying business logic.
+* Changing repository implementations.
+
+Only increment the version when the actual SQLite schema changes.
+
+---
+
+# Best Practices
+
+* Start with version `1`.
+* Increment the version by one for each schema change.
+* Keep migration logic synchronized with schema versions.
+* Never skip writing migrations for released versions.
+* Test migrations before releasing updates.
+* Treat schema versions as part of your application's public data model.
 
 ---
 
 # Common Mistakes
 
-## Mistake 1: Forgetting to increment version
+## Forgetting to Increment the Version
 
-Wrong:
+**Wrong**
+
 ```dart
-// 🚫 Version stays at 1 after changes
+class Users extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get email => text()();
+}
+
 @override
 int get schemaVersion => 1;
 ```
 
-Correct:
+The table changed, but the version didn't.
+
+As a result, Drift won't run a migration, and existing databases won't have the `email` column.
+
+**Correct**
+
 ```dart
-// ✅ Increment when schema changes
 @override
 int get schemaVersion => 2;
 ```
 
-## Mistake 2: Not handling data migration
+Increment the version whenever the schema changes.
 
-Wrong:
+---
+
+## Incrementing the Version Without a Migration
+
+**Wrong**
+
 ```dart
-// 🚫 New column added but no default values
-await migrator.addColumn(users, users.status);
+@override
+int get schemaVersion => 3;
 ```
 
-Correct:
+If users upgrade from an older version, Drift detects the version change, but without migration logic, the database can't be safely updated.
+
+**Correct**
+
 ```dart
-// ✅ Add default values
-await migrator.addColumn(users, users.status);
-await db.customUpdate('UPDATE users SET status = "active"').go();
+@override
+MigrationStrategy get migration => MigrationStrategy(
+  onUpgrade: (migrator, from, to) async {
+    // Apply schema changes here.
+  },
+);
 ```
 
-## Mistake 3: Destructive migrations without backup
+Always provide migration logic for released schema changes.
 
-Wrong:
+---
+
+## Incrementing the Version for Non-Schema Changes
+
+**Wrong**
+
 ```dart
-// 🚫 Dropping table without backup
-await migrator.dropTable(users);
+Future<List<Task>> getCompletedTasks() {
+  // Improved query
+}
 ```
 
-Correct:
 ```dart
-// ✅ Backup before destructive operations
-await db.customSelect('CREATE TABLE users_backup AS SELECT * FROM users').go();
-await migrator.dropTable(users);
+@override
+int get schemaVersion => 4;
 ```
+
+Only application code changed, not the database schema.
+
+**Correct**
+
+Leave the schema version unchanged.
+
+Increment it only when the database structure itself changes.
+
+---
+
+# Related APIs
+
+* MigrationStrategy
+* Migrator
+* GeneratedDatabase
+* Table
+* TableMigration
 
 ---
 
 # Summary
 
-| Feature | Purpose | Best Practice |
-|---------|---------|---------------|
-| **schemaVersion** | Track schema version | Increment on changes |
-| **onCreate** | Fresh database setup | Create all tables |
-| **onUpgrade** | Version-to-version migration | Test thoroughly |
-| **onDowngrade** | Handle rollbacks | Plan carefully |
-
----
-
-# Next Steps
-
-Now you understand schema versions, let's dive deeper:
-
-- [Migration Strategy](link) – Advanced migration patterns
-- [Migration Examples](link) – Real-world migrations
-- [Testing Migrations](link) – Migration testing
-
----
-
-# Did You Know?
-
-- **Schema version is stored in the database** – In `PRAGMA user_version`
-
-- **Migrations are run in order** – From current version to target
-
-- **Migrations are transactions** – All or nothing
-
-- **OnCreate runs only once** – When database is first created
-
-- **OnUpgrade runs on version changes** – Every time
-
-- **OnDowngrade is optional** – Handle version decreases
-
-- **Migrations can be complex** – Data migration + schema changes
-
-- **Migrations are critical** – For data integrity
-
----
+The `schemaVersion` identifies the current structure of your database. Drift compares this version with the one stored in the existing database to determine whether a migration is needed. Every structural database change should be accompanied by a schema version increment and the corresponding migration logic to ensure existing users can safely upgrade their databases.

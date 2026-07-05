@@ -1,769 +1,394 @@
-## Testing Migrations
+# Testing Migrations
 
-**Ensuring migration safety with comprehensive testing in Drift**
+**Migration testing** verifies that your database can be upgraded from an older schema version to the latest one without losing data or producing an invalid database.
 
 ---
 
 # What is it?
 
-**Testing Migrations** is the practice of verifying that your database migrations work correctly before deploying them to production. This involves testing both the upgrade path (moving from one version to another) and the downgrade path (rolling back to a previous version). Drift's in-memory database support makes it easy to test migrations in isolation.
+Whenever you change your database schema, you should test that existing users can upgrade successfully.
 
-> **Think of Testing Migrations like "test driving a new route"** – before taking the highway with your family, you drive it alone first to check for construction, traffic patterns, and potential issues. Similarly, you test migrations before running them on production data.
+A migration test typically performs four steps:
 
-```dart
-// 👇 Testing a migration
-void testMigration() {
-  // Create an in-memory database at version 1
-  final db = AppDatabase(NativeDatabase.memory());
-  
-  // Run the migration
-  await db.migrateTo(2);
-  
-  // Verify the migration worked
-  final hasColumn = await db.customSelect(
-    'PRAGMA table_info(users)'
-  ).get();
-  
-  // Assert the new column exists
-  expect(hasColumn.any((c) => c.data['name'] == 'status'), true);
-}
-```
+1. Create a database with an old schema.
+2. Insert sample data.
+3. Run the migration.
+4. Verify both the data and the new schema.
 
-> **What's happening here?**
-> - **In-memory database** – Fast and isolated testing
-> - **Version targeting** – Test specific migrations
-> - **Verification** – Check schema and data integrity
-> - **Isolation** – No impact on real data
+Unlike testing normal CRUD operations, migration testing focuses on the upgrade process itself.
 
 ---
 
 # Why does it exist?
 
-- **Safety** – Catch errors before production
-- **Confidence** – Ensure migrations work
-- **Data Integrity** – Verify data preservation
-- **Performance** – Check migration speed
-- **Rollback** – Test downgrade path
-- **Automation** – CI/CD integration
+A migration may work perfectly on a fresh database but fail for existing users.
+
+Common migration issues include:
+
+* Missing columns
+* Lost data
+* Incorrect default values
+* Broken foreign keys
+* Failed startup after upgrading
+
+Migration tests catch these problems before your users do.
 
 ---
 
-# Basic Migration Testing
+# Typical Migration Test Flow
 
-> **Simple migration tests**
-
-## Testing a Single Migration
-
-```dart
-// test/migrations/migration_001_test.dart
-import 'package:test/test.dart';
-import 'package:drift/native.dart';
-import '../lib/database/database.dart';
-
-void main() {
-  test('Migration 1: Add status column', () async {
-    // 1️⃣ Create database at version 1
-    final db = AppDatabase(NativeDatabase.memory());
-    await db.ensureOpen();
-    
-    // 2️⃣ Verify schema before migration
-    final beforeColumns = await db.customSelect(
-      'PRAGMA table_info(users)'
-    ).get();
-    expect(beforeColumns.length, 3);
-    
-    // 3️⃣ Run migration to version 2
-    await db.migrateTo(2);
-    
-    // 4️⃣ Verify schema after migration
-    final afterColumns = await db.customSelect(
-      'PRAGMA table_info(users)'
-    ).get();
-    expect(afterColumns.length, 4);
-    
-    // 5️⃣ Verify data integrity
-    final hasStatus = afterColumns.any((c) => c.data['name'] == 'status');
-    expect(hasStatus, true);
-    
-    // 6️⃣ Verify data migration
-    final rows = await db.select(db.users).get();
-    for (final row in rows) {
-      expect(row.status, 'active'); // Default value set
-    }
-    
-    await db.close();
-  });
-}
+```text
+Create Old Database
+        │
+        ▼
+Insert Test Data
+        │
+        ▼
+Run Migration
+        │
+        ▼
+Verify Schema
+        │
+        ▼
+Verify Existing Data
+        │
+        ▼
+Verify New Features
 ```
 
----
-
-## Testing Multiple Migrations
-
-```dart
-// test/migrations/full_migration_test.dart
-void main() {
-  test('Full migration path: v1 -> v5', () async {
-    final db = AppDatabase(NativeDatabase.memory());
-    await db.ensureOpen();
-    
-    // Start at version 1
-    expect(db.schemaVersion, 1);
-    
-    // Migrate to version 5
-    await db.migrateTo(5);
-    expect(db.schemaVersion, 5);
-    
-    // Verify all tables exist
-    final tables = await db.customSelect(
-      'SELECT name FROM sqlite_master WHERE type = "table"'
-    ).get();
-    final tableNames = tables.map((t) => t.data['name'] as String).toList();
-    
-    expect(tableNames.contains('users'), true);
-    expect(tableNames.contains('orders'), true);
-    expect(tableNames.contains('profiles'), true);
-    expect(tableNames.contains('reviews'), true);
-    
-    // Verify all columns exist
-    final columns = await db.customSelect(
-      'PRAGMA table_info(users)'
-    ).get();
-    final columnNames = columns.map((c) => c.data['name'] as String).toList();
-    
-    expect(columnNames.contains('status'), true);
-    expect(columnNames.contains('last_login'), true);
-    expect(columnNames.contains('is_deleted'), true);
-    
-    await db.close();
-  });
-}
-```
+A migration isn't successful until **both the schema and the existing data are correct**.
 
 ---
 
-# Data Integrity Testing
+# Examples
 
-> **Verifying data survives migrations**
+## Example 1: Verify Existing Data After a Migration
+
+Suppose version 2 adds an `email` column to the `Users` table.
 
 ```dart
-// test/migrations/data_integrity_test.dart
-void main() {
-  test('Data integrity: User data preserved', () async {
-    final db = AppDatabase(NativeDatabase.memory());
-    await db.ensureOpen();
-    
-    // 1️⃣ Insert test data at version 1
-    await db.into(db.users).insert(
-      UsersCompanion.insert(
-        name: 'John Doe',
-        email: 'john@example.com',
-      ),
+test('migration preserves existing users', () async {
+  final database = AppDatabase(NativeDatabase.memory());
+
+  await database.customStatement('''
+    CREATE TABLE users (
+      id INTEGER PRIMARY KEY,
+      name TEXT NOT NULL
     );
-    
-    final userId = await db.into(db.users).insert(
-      UsersCompanion.insert(
-        name: 'Jane Doe',
-        email: 'jane@example.com',
-      ),
+  ''');
+
+  await database.customStatement("""
+    INSERT INTO users (name)
+    VALUES ('Alice');
+  """);
+
+  await database.migration.onUpgrade!(
+    database.migrator,
+    1,
+    2,
+  );
+
+  final result = await database.customSelect(
+    'SELECT name FROM users',
+  ).getSingle();
+
+  expect(result.data['name'], 'Alice');
+});
+```
+
+Explanation:
+
+* Create a database using the old schema.
+* Insert representative data.
+* Run the migration.
+* Verify that the existing row still exists after the upgrade.
+
+---
+
+## Example 2: Verify a Newly Added Column
+
+Suppose the migration adds an `email` column.
+
+```dart
+test('migration adds email column', () async {
+  final database = AppDatabase(NativeDatabase.memory());
+
+  await database.customStatement('''
+    CREATE TABLE users (
+      id INTEGER PRIMARY KEY,
+      name TEXT NOT NULL
     );
-    
-    // 2️⃣ Verify data exists
-    var users = await db.select(db.users).get();
-    expect(users.length, 2);
-    
-    // 3️⃣ Migrate to version 2
-    await db.migrateTo(2);
-    
-    // 4️⃣ Verify data still exists
-    users = await db.select(db.users).get();
-    expect(users.length, 2);
-    
-    // 5️⃣ Verify specific user data
-    final jane = users.firstWhere((u) => u.id == userId);
-    expect(jane.name, 'Jane Doe');
-    expect(jane.email, 'jane@example.com');
-    
-    // 6️⃣ Verify new column data
-    expect(jane.status, 'active'); // Default value set
-    
-    await db.close();
-  });
-}
+  ''');
+
+  await database.migration.onUpgrade!(
+    database.migrator,
+    1,
+    2,
+  );
+
+  final columns = await database.customSelect(
+    "PRAGMA table_info(users);",
+  ).get();
+
+  expect(
+    columns.any((column) => column.data['name'] == 'email'),
+    isTrue,
+  );
+});
 ```
+
+Explanation:
+
+* `PRAGMA table_info()` returns metadata about a table.
+* The test verifies that the migration actually created the new column.
 
 ---
 
-# Advanced Migration Testing
+## Example 3: Verify Default Values
 
-> **Complex test scenarios**
-
-## Testing Rollbacks
+Suppose a migration introduces a required `status` column with a default value.
 
 ```dart
-// test/migrations/rollback_test.dart
-void main() {
-  test('Rollback: v2 -> v1', () async {
-    final db = AppDatabase(NativeDatabase.memory());
-    await db.ensureOpen();
-    
-    // 1️⃣ Migrate to version 2
-    await db.migrateTo(2);
-    expect(db.schemaVersion, 2);
-    
-    // 2️⃣ Insert data using new schema
-    await db.into(db.users).insert(
-      UsersCompanion.insert(
-        name: 'Test User',
-        email: 'test@example.com',
-        status: Value('active'),
-      ),
+test('existing rows receive default status', () async {
+  final database = AppDatabase(NativeDatabase.memory());
+
+  await database.customStatement('''
+    CREATE TABLE users (
+      id INTEGER PRIMARY KEY,
+      name TEXT NOT NULL
     );
-    
-    // 3️⃣ Rollback to version 1
-    await db.migrateTo(1);
-    expect(db.schemaVersion, 1);
-    
-    // 4️⃣ Verify schema reverted
-    final columns = await db.customSelect(
-      'PRAGMA table_info(users)'
-    ).get();
-    final columnNames = columns.map((c) => c.data['name'] as String).toList();
-    expect(columnNames.contains('status'), false);
-    
-    // 5️⃣ Verify data preserved (status column dropped)
-    final users = await db.select(db.users).get();
-    expect(users.length, 1);
-    
-    await db.close();
-  });
-}
+  ''');
+
+  await database.customStatement("""
+    INSERT INTO users (name)
+    VALUES ('John');
+  """);
+
+  await database.migration.onUpgrade!(
+    database.migrator,
+    1,
+    2,
+  );
+
+  final row = await database.customSelect(
+    '''
+    SELECT status
+    FROM users
+    WHERE name = 'John'
+    ''',
+  ).getSingle();
+
+  expect(row.data['status'], 'active');
+});
 ```
+
+Explanation:
+
+* Existing rows should receive the transformed value defined during the migration.
+* Verify that the migration populated the new column correctly.
 
 ---
 
-## Testing Destructive Migrations
+## Real-World Example
+
+A production migration often needs to preserve data while introducing new schema elements.
 
 ```dart
-// test/migrations/destructive_test.dart
-void main() {
-  test('Destructive migration: Drop column', () async {
-    final db = AppDatabase(NativeDatabase.memory());
-    await db.ensureOpen();
-    
-    // 1️⃣ Migrate to version with column to drop
-    await db.migrateTo(2);
-    
-    // 2️⃣ Insert data
-    await db.into(db.users).insert(
-      UsersCompanion.insert(
-        name: 'Test User',
-        email: 'test@example.com',
-        status: Value('active'),
-      ),
+test('database upgrades safely', () async {
+  final database = AppDatabase(NativeDatabase.memory());
+
+  await database.customStatement('''
+    CREATE TABLE tasks (
+      id INTEGER PRIMARY KEY,
+      title TEXT NOT NULL
     );
-    
-    // 3️⃣ Verify column exists
-    var columns = await db.customSelect(
-      'PRAGMA table_info(users)'
-    ).get();
-    expect(columns.any((c) => c.data['name'] == 'status'), true);
-    
-    // 4️⃣ Migrate to version 3 (drops status)
-    await db.migrateTo(3);
-    
-    // 5️⃣ Verify column dropped
-    columns = await db.customSelect(
-      'PRAGMA table_info(users)'
-    ).get();
-    expect(columns.any((c) => c.data['name'] == 'status'), false);
-    
-    // 6️⃣ Verify data preserved (without dropped column)
-    final users = await db.select(db.users).get();
-    expect(users.length, 1);
-    expect(users.first.name, 'Test User');
-    expect(users.first.email, 'test@example.com');
-    
-    await db.close();
-  });
-}
+  ''');
+
+  await database.customStatement("""
+    INSERT INTO tasks(title)
+    VALUES ('Finish Drift Handbook');
+  """);
+
+  await database.migration.onUpgrade!(
+    database.migrator,
+    1,
+    2,
+  );
+
+  final task = await database.customSelect(
+    '''
+    SELECT title
+    FROM tasks
+    ''',
+  ).getSingle();
+
+  expect(task.data['title'], 'Finish Drift Handbook');
+
+  final schema = await database.customSelect(
+    "PRAGMA table_info(tasks);",
+  ).get();
+
+  expect(
+    schema.any((column) => column.data['name'] == 'due_date'),
+    isTrue,
+  );
+});
 ```
 
----
+Explanation:
 
-# Performance Testing
-
-> **Checking migration speed**
-
-```dart
-// test/migrations/performance_test.dart
-void main() {
-  test('Migration performance: v1 -> v5 with 10k users', () async {
-    final db = AppDatabase(NativeDatabase.memory());
-    await db.ensureOpen();
-    
-    // 1️⃣ Insert 10,000 users
-    print('Inserting 10,000 users...');
-    final insertStart = DateTime.now();
-    
-    for (var i = 0; i < 10000; i++) {
-      await db.into(db.users).insert(
-        UsersCompanion.insert(
-          name: 'User $i',
-          email: 'user$i@example.com',
-        ),
-      );
-    }
-    
-    final insertTime = DateTime.now().difference(insertStart);
-    print('✅ Inserted 10,000 users in ${insertTime.inSeconds}s');
-    
-    // 2️⃣ Run migration
-    print('Running migration v1 -> v5...');
-    final migrationStart = DateTime.now();
-    
-    await db.migrateTo(5);
-    
-    final migrationTime = DateTime.now().difference(migrationStart);
-    print('✅ Migration completed in ${migrationTime.inSeconds}s');
-    
-    // 3️⃣ Validate results
-    final users = await db.select(db.users).get();
-    expect(users.length, 10000);
-    
-    // 4️⃣ Check performance constraints
-    expect(migrationTime.inSeconds, lessThan(10));
-    
-    await db.close();
-  });
-}
-```
+* Existing task data survives the migration.
+* The new schema is available after upgrading.
+* Both the data and the structure are verified.
 
 ---
 
-# Real-World Example
+# What Should You Test?
 
-> **Complete e-commerce migration testing system**
+Every migration test should verify:
 
-```dart
-// test/migrations/migration_test_suite.dart
-import 'package:test/test.dart';
-import 'package:drift/native.dart';
-import '../../lib/database/database.dart';
-import '../../lib/database/migrations/migration_service.dart';
-
-void main() {
-  group('Migration Tests', () {
-    late AppDatabase db;
-    
-    setUp(() async {
-      // Create fresh in-memory database for each test
-      db = AppDatabase(NativeDatabase.memory());
-      await db.ensureOpen();
-    });
-    
-    tearDown(() async {
-      await db.close();
-    });
-
-    // ==================== VERSION TESTS ====================
-    
-    test('Initial version is 1', () async {
-      expect(db.schemaVersion, 1);
-    });
-
-    test('Can migrate to each version', () async {
-      final versions = [1, 2, 3, 4, 5];
-      
-      for (final version in versions) {
-        await db.migrateTo(version);
-        expect(db.schemaVersion, version);
-        
-        // Verify schema for each version
-        await _verifySchema(db, version);
-      }
-    });
-
-    // ==================== SCHEMA TESTS ====================
-    
-    test('v1 schema: Users table only', () async {
-      await db.migrateTo(1);
-      await _verifyV1Schema(db);
-    });
-
-    test('v2 schema: Users with status column', () async {
-      await db.migrateTo(2);
-      await _verifyV2Schema(db);
-    });
-
-    test('v3 schema: Orders and order items', () async {
-      await db.migrateTo(3);
-      await _verifyV3Schema(db);
-    });
-
-    test('v4 schema: Reviews table', () async {
-      await db.migrateTo(4);
-      await _verifyV4Schema(db);
-    });
-
-    test('v5 schema: All indexes', () async {
-      await db.migrateTo(5);
-      await _verifyV5Schema(db);
-    });
-
-    // ==================== DATA TESTS ====================
-    
-    test('Data preserved across migrations', () async {
-      // 1️⃣ Insert data at v1
-      await db.migrateTo(1);
-      await db.into(db.users).insert(
-        UsersCompanion.insert(
-          name: 'Test User',
-          email: 'test@example.com',
-        ),
-      );
-      
-      // 2️⃣ Migrate through all versions
-      await db.migrateTo(5);
-      
-      // 3️⃣ Verify data
-      final users = await db.select(db.users).get();
-      expect(users.length, 1);
-      expect(users.first.name, 'Test User');
-      expect(users.first.email, 'test@example.com');
-      
-      // 4️⃣ Verify new fields have defaults
-      expect(users.first.status, 'active');
-    });
-
-    test('Data migrated correctly: v1 -> v2', () async {
-      await db.migrateTo(1);
-      
-      // Insert users before migration
-      await db.into(db.users).insertAll([
-        UsersCompanion.insert(name: 'User 1', email: 'user1@example.com'),
-        UsersCompanion.insert(name: 'User 2', email: 'user2@example.com'),
-      ]);
-      
-      // Migrate to v2
-      await db.migrateTo(2);
-      
-      // Verify status column set
-      final users = await db.select(db.users).get();
-      for (final user in users) {
-        expect(user.status, 'active');
-      }
-    });
-
-    // ==================== PERFORMANCE TESTS ====================
-    
-    test('Migration performance: v1 -> v5 with 1000 users', () async {
-      await db.migrateTo(1);
-      
-      // Insert 1000 users
-      for (var i = 0; i < 1000; i++) {
-        await db.into(db.users).insert(
-          UsersCompanion.insert(
-            name: 'User $i',
-            email: 'user$i@example.com',
-          ),
-        );
-      }
-      
-      final start = DateTime.now();
-      await db.migrateTo(5);
-      final duration = DateTime.now().difference(start);
-      
-      print('Migration time: ${duration.inMilliseconds}ms');
-      expect(duration.inSeconds, lessThan(5));
-    });
-
-    // ==================== ROLLBACK TESTS ====================
-    
-    test('Rollback from v2 to v1', () async {
-      await db.migrateTo(2);
-      
-      // Insert user with status
-      await db.into(db.users).insert(
-        UsersCompanion.insert(
-          name: 'Test User',
-          email: 'test@example.com',
-          status: Value('active'),
-        ),
-      );
-      
-      // Rollback to v1
-      await db.migrateTo(1);
-      
-      // Verify status column removed
-      final columns = await db.customSelect(
-        'PRAGMA table_info(users)'
-      ).get();
-      expect(columns.any((c) => c.data['name'] == 'status'), false);
-      
-      // Verify data preserved
-      final users = await db.select(db.users).get();
-      expect(users.length, 1);
-      expect(users.first.name, 'Test User');
-    });
-
-    // ==================== INTEGRITY TESTS ====================
-    
-    test('Foreign key integrity preserved', () async {
-      await db.migrateTo(5);
-      
-      // Create user
-      final userId = await db.into(db.users).insert(
-        UsersCompanion.insert(
-          name: 'Test User',
-          email: 'test@example.com',
-        ),
-      );
-      
-      // Create order
-      final orderId = await db.into(db.orders).insert(
-        OrdersCompanion.insert(
-          orderNumber: 'ORD-001',
-          userId: userId,
-          total: 100.0,
-          status: 'pending',
-        ),
-      );
-      
-      // Create order items
-      await db.into(db.orderItems).insert(
-        OrderItemsCompanion.insert(
-          orderId: orderId,
-          productId: 1,
-          quantity: 1,
-          unitPrice: 100.0,
-        ),
-      );
-      
-      // Verify relationships
-      final orders = await db.select(db.orders)
-        .where((o) => o.userId.equals(userId))
-        .get();
-      expect(orders.length, 1);
-      
-      final items = await db.select(db.orderItems)
-        .where((i) => i.orderId.equals(orderId))
-        .get();
-      expect(items.length, 1);
-    });
-
-    // ==================== ERROR HANDLING TESTS ====================
-    
-    test('Invalid migration throws error', () async {
-      // Attempt to migrate to non-existent version
-      expect(
-        () => db.migrateTo(99),
-        throwsException,
-      );
-    });
-  });
-}
-
-// ==================== VERIFICATION HELPERS ====================
-
-Future<void> _verifyV1Schema(AppDatabase db) async {
-  final tables = await db.customSelect(
-    'SELECT name FROM sqlite_master WHERE type = "table"'
-  ).get();
-  final tableNames = tables.map((t) => t.data['name'] as String).toList();
-  expect(tableNames.contains('users'), true);
-  expect(tableNames.contains('orders'), false);
-}
-
-Future<void> _verifyV2Schema(AppDatabase db) async {
-  final columns = await db.customSelect(
-    'PRAGMA table_info(users)'
-  ).get();
-  final columnNames = columns.map((c) => c.data['name'] as String).toList();
-  expect(columnNames.contains('status'), true);
-  expect(columnNames.contains('last_login'), false);
-}
-
-Future<void> _verifyV3Schema(AppDatabase db) async {
-  final tables = await db.customSelect(
-    'SELECT name FROM sqlite_master WHERE type = "table"'
-  ).get();
-  final tableNames = tables.map((t) => t.data['name'] as String).toList();
-  expect(tableNames.contains('orders'), true);
-  expect(tableNames.contains('order_items'), true);
-}
-
-Future<void> _verifyV4Schema(AppDatabase db) async {
-  final tables = await db.customSelect(
-    'SELECT name FROM sqlite_master WHERE type = "table"'
-  ).get();
-  final tableNames = tables.map((t) => t.data['name'] as String).toList();
-  expect(tableNames.contains('reviews'), true);
-}
-
-Future<void> _verifyV5Schema(AppDatabase db) async {
-  final indexes = await db.customSelect(
-    "SELECT name FROM sqlite_master WHERE type = 'index'"
-  ).get();
-  final indexNames = indexes.map((i) => i.data['name'] as String).toList();
-  expect(indexNames.any((i) => i.contains('idx_users_email')), true);
-  expect(indexNames.any((i) => i.contains('idx_orders_user')), true);
-}
-
-Future<void> _verifySchema(AppDatabase db, int version) async {
-  switch (version) {
-    case 1:
-      await _verifyV1Schema(db);
-      break;
-    case 2:
-      await _verifyV2Schema(db);
-      break;
-    case 3:
-      await _verifyV3Schema(db);
-      break;
-    case 4:
-      await _verifyV4Schema(db);
-      break;
-    case 5:
-      await _verifyV5Schema(db);
-      break;
-  }
-}
-```
+* Existing rows are preserved.
+* New columns exist.
+* New tables are created.
+* Renamed columns contain the correct data.
+* Default values are applied correctly.
+* Foreign keys still work.
+* Indexes are recreated if needed.
+* Queries continue to work.
 
 ---
 
-# Migration Testing Best Practices
+# When to Use
 
-- **Test each migration** – Verify each step individually
-- **Test full migration path** – From start to end
-- **Test with data** – Verify data integrity
-- **Test rollbacks** – Ensure downgrades work
-- **Test performance** – Check migration speed
-- **Test with realistic data** – Use production-like data
-- **Test destructive operations** – Handle careful testing
-- **Automate tests** – CI/CD integration
+Write migration tests whenever you:
+
+* Add a table.
+* Remove a table.
+* Add a column.
+* Rename a column.
+* Change a column type.
+* Use `TableMigration`.
+* Perform data transformations.
+
+In short, **every released migration should have a corresponding test**.
 
 ---
 
-# Migration Testing Checklist
+# When NOT to Use
 
-| Test Type | Purpose | Priority |
-|-----------|---------|----------|
-| **Schema Verification** | Check structure | High |
-| **Data Preservation** | No data loss | High |
-| **Data Migration** | Correct data | High |
-| **Rollback** | Undo changes | High |
-| **Performance** | Speed check | Medium |
-| **Integrity** | Constraints | Medium |
-| **Error Handling** | Graceful failure | Medium |
-| **CI/CD** | Automated tests | Medium |
+Migration tests aren't necessary when:
+
+* Your database schema hasn't changed.
+* You're still prototyping and haven't released the app.
+* The database is recreated every time the app starts.
+
+Once real users depend on your database, migration tests become essential.
+
+---
+
+# Best Practices
+
+* Test every released migration.
+* Insert realistic sample data before migrating.
+* Verify both the schema and the data.
+* Test upgrades from every supported version.
+* Keep migration tests in your automated test suite.
+* Never assume a migration works just because the app starts.
 
 ---
 
 # Common Mistakes
 
-## Mistake 1: Not testing with data
+## Testing Only an Empty Database
 
-Wrong:
+**Wrong**
+
 ```dart
-// 🚫 Empty database migration test
-test('Migration works', () async {
-  await db.migrateTo(2);
-  // Only schema checked, no data
+test('migration works', () async {
+  // Upgrade an empty database.
 });
 ```
 
-Correct:
+An empty database doesn't verify whether existing user data survives.
+
+**Correct**
+
 ```dart
-// ✅ Test with data
-test('Migration works with data', () async {
-  await insertTestData(db);
-  await db.migrateTo(2);
-  await verifyDataIntegrity(db);
-});
+await database.customStatement("""
+  INSERT INTO users(name)
+  VALUES ('Alice');
+""");
 ```
 
-## Mistake 2: Not testing rollbacks
+Always migrate databases that contain representative data.
 
-Wrong:
+---
+
+## Only Checking That the Migration Completes
+
+**Wrong**
+
 ```dart
-// 🚫 Only testing upgrade
-test('Migration works', () async {
-  await db.migrateTo(5);
-});
+await database.migration.onUpgrade!(
+  database.migrator,
+  1,
+  2,
+);
 ```
 
-Correct:
+The migration may complete while silently losing data.
+
+**Correct**
+
 ```dart
-// ✅ Test both upgrade and downgrade
-test('Migration and rollback work', () async {
-  await db.migrateTo(5);
-  await db.migrateTo(3);
-  await verifySchemaVersion(db, 3);
-});
+final users = await database.customSelect(
+  'SELECT * FROM users',
+).get();
+
+expect(users.length, 1);
 ```
 
-## Mistake 3: Not testing with realistic data
+Always verify the migrated data.
 
-Wrong:
+---
+
+## Forgetting to Verify the New Schema
+
+**Wrong**
+
 ```dart
-// 🚫 Only 1-2 test records
-for (var i = 0; i < 2; i++) {
-  await insertUser(db);
-}
+expect(users.single.data['name'], 'Alice');
 ```
 
-Correct:
+The data survived, but the new schema might still be incorrect.
+
+**Correct**
+
 ```dart
-// ✅ Test with realistic data volume
-for (var i = 0; i < 1000; i++) {
-  await insertRealisticUser(db);
-}
+final columns = await database.customSelect(
+  'PRAGMA table_info(users);',
+).get();
+
+expect(
+  columns.any((c) => c.data['name'] == 'email'),
+  isTrue,
+);
 ```
+
+Verify both the schema and the preserved data.
+
+---
+
+# Related APIs
+
+* Schema Versions
+* MigrationStrategy
+* Migrator
+* TableMigration
+* In-Memory Database
 
 ---
 
 # Summary
 
-| Test Type | Purpose | Example |
-|-----------|---------|---------|
-| **Schema** | Verify structure | Table/column existence |
-| **Data** | Preserve data | Count/values check |
-| **Rollback** | Undo changes | Version verification |
-| **Performance** | Speed check | Migration timing |
-| **Integrity** | Constraints | Foreign keys |
-| **Error** | Graceful failure | Invalid migration |
-
----
-
-# Next Steps
-
-Now you understand testing migrations, let's dive deeper:
-
-- [Best Practices](link) – Migration best practices
-- [Type Converters](link) – Custom type converters
-- [DAO](link) – Data Access Objects
-
----
-
-# Did You Know?
-
-- **In-memory databases are perfect** – For fast migration tests
-
-- **Migration tests should be fast** – Run in CI/CD
-
-- **Data volume matters** – Test with realistic data
-
-- **Rollbacks are as important** – As upgrades
-
-- **Automated testing is essential** – For confidence
-
-- **Migration tests catch bugs** – Before production
-
-- **Testing should be comprehensive** – Cover all paths
-
-- **Migration testing saves time** – Prevents production issues
-
----
-
+Migration testing ensures that users can safely upgrade to newer versions of your application. A good migration test creates an old database, inserts representative data, runs the migration, and verifies both the updated schema and the preserved data. By testing every released migration, you can confidently evolve your database without risking data loss or broken upgrades.

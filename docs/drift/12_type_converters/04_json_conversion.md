@@ -1,607 +1,395 @@
-## JSON Conversion
+# JSON Conversion
 
-**Storing and retrieving JSON data in Drift**
+**JSON conversion** allows Drift to store complex Dart objects as JSON while automatically converting them back into structured Dart types when reading from the database.
 
 ---
 
 # What is it?
 
-**JSON Conversion** is the process of storing Dart objects, maps, and lists as JSON strings in your SQLite database. This allows you to store complex, nested data structures in a single column without creating multiple tables. Drift's `TypeConverter` handles the serialization and deserialization automatically.
+SQLite does not understand Dart objects like maps, lists, or custom classes.
 
-> **Think of JSON Conversion like "packing for a trip"** – you take all your items (Dart objects), pack them into a single suitcase (JSON string), and unpack them when you arrive (back to Dart objects).
+However, it can store **text** or **blob data**, which makes JSON a natural fit for representing structured data.
 
-```dart
-// 👇 JSON converter for maps
-class JsonMapConverter extends TypeConverter<Map<String, dynamic>, String> {
-  const JsonMapConverter();
-  
-  @override
-  Map<String, dynamic> fromSql(String fromDb) {
-    return jsonDecode(fromDb) as Map<String, dynamic>;
-  }
-  
-  @override
-  String toSql(Map<String, dynamic> value) {
-    return jsonEncode(value);
-  }
-}
-
-// 👇 Using in a table
-class Users extends Table {
-  TextColumn get preferences => text().map(const JsonMapConverter())();
-}
-
-// Now you can store Map objects directly!
-final user = User(
-  id: 1,
-  name: 'John',
-  preferences: {'theme': 'dark', 'language': 'en', 'notifications': true},
-);
-```
-
-> **What's happening here?**
-> - **`toSql`** – Converts Dart object to JSON string
-> - **`fromSql`** – Converts JSON string back to Dart object
-> - **Type safety** – Database operations use typed objects
-> - **Flexibility** – Store any JSON-serializable data
+A `TypeConverter` can serialize Dart objects into JSON strings when writing to the database and deserialize them back into Dart objects when reading.
 
 ---
 
 # Why does it exist?
 
-- **Store Complex Data** – Lists, maps, nested objects
-- **Flexible Schema** – No need for separate tables
-- **Performance** – Single column vs multiple joins
-- **API Integration** – Store API responses directly
-- **Configuration** – User preferences, settings
-- **Dynamic Data** – Store dynamic structures
+Without JSON conversion, storing structured data becomes verbose and repetitive.
+
+```dart id="k2m9qp"
+await into(users).insert(
+  UsersCompanion.insert(
+    preferences: '{"darkMode":true,"fontSize":14}',
+  ),
+);
+
+final row = await select(users).getSingle();
+
+final prefs = jsonDecode(row.preferences);
+```
+
+This leads to:
+
+* Manual encoding/decoding everywhere
+* No type safety
+* Hard-to-maintain string-based logic
+* Increased risk of runtime errors
+
+JSON conversion solves this by letting you work with **typed Dart objects directly**.
 
 ---
 
-# Basic JSON Conversion
+# Syntax
 
-> **Simple JSON converters**
+A JSON converter typically uses `String` as the SQLite type.
 
-## Map Converter
-
-```dart
-// 👇 Map converter
-class JsonMapConverter extends TypeConverter<Map<String, dynamic>, String> {
-  const JsonMapConverter();
-  
-  @override
-  Map<String, dynamic> fromSql(String fromDb) {
-    if (fromDb.isEmpty) return {};
-    return jsonDecode(fromDb) as Map<String, dynamic>;
-  }
-  
-  @override
-  String toSql(Map<String, dynamic> value) {
-    return jsonEncode(value);
-  }
-}
-
-// 👇 Using in table
-class Settings extends Table {
-  TextColumn get preferences => text()
-    .withDefault(const Constant('{}'))
-    .map(const JsonMapConverter())();
-}
-```
-
-## List Converter
-
-```dart
-// 👇 List converter
-class JsonListConverter extends TypeConverter<List<dynamic>, String> {
-  const JsonListConverter();
-  
-  @override
-  List<dynamic> fromSql(String fromDb) {
-    if (fromDb.isEmpty) return [];
-    return jsonDecode(fromDb) as List<dynamic>;
-  }
-  
-  @override
-  String toSql(List<dynamic> value) {
-    return jsonEncode(value);
-  }
-}
-
-// 👇 Typed list converter
-class StringListConverter extends TypeConverter<List<String>, String> {
-  const StringListConverter();
-  
-  @override
-  List<String> fromSql(String fromDb) {
-    if (fromDb.isEmpty) return [];
-    final list = jsonDecode(fromDb) as List<dynamic>;
-    return list.map((e) => e as String).toList();
-  }
-  
-  @override
-  String toSql(List<String> value) {
-    return jsonEncode(value);
-  }
-}
-```
-
----
-
-# Advanced JSON Conversion
-
-> **Complex JSON converters**
-
-## Generic JSON Converter
-
-```dart
-// 👇 Generic converter for any type
-class JsonConverter<T> extends TypeConverter<T, String> {
-  final T Function(Map<String, dynamic>) fromJson;
-  final Map<String, dynamic> Function(T) toJson;
-  
-  const JsonConverter({
-    required this.fromJson,
-    required this.toJson,
-  });
-  
-  @override
-  T fromSql(String fromDb) {
-    if (fromDb.isEmpty) return null;
-    final json = jsonDecode(fromDb) as Map<String, dynamic>;
-    return fromJson(json);
-  }
-  
-  @override
-  String toSql(T value) {
-    return jsonEncode(toJson(value));
-  }
-}
-
-// 👇 Custom Dart class
-class Address {
-  final String street;
-  final String city;
-  final String country;
-  
-  Address({required this.street, required this.city, required this.country});
-  
-  Map<String, dynamic> toJson() => {
-    'street': street,
-    'city': city,
-    'country': country,
-  };
-  
-  factory Address.fromJson(Map<String, dynamic> json) => Address(
-    street: json['street'] as String,
-    city: json['city'] as String,
-    country: json['country'] as String,
-  );
-}
-
-// 👇 Using generic converter
-class Users extends Table {
-  TextColumn get address => text().map(
-    const JsonConverter<Address>(
-      fromJson: Address.fromJson,
-      toJson: (a) => a.toJson(),
-    ),
-  )();
-}
-```
-
-## Nested JSON Converter
-
-```dart
-// 👇 Nested JSON structure
-class ProductVariant {
-  final String sku;
-  final String size;
-  final String color;
-  final double price;
-  
-  ProductVariant({
-    required this.sku,
-    required this.size,
-    required this.color,
-    required this.price,
-  });
-  
-  Map<String, dynamic> toJson() => {
-    'sku': sku,
-    'size': size,
-    'color': color,
-    'price': price,
-  };
-  
-  factory ProductVariant.fromJson(Map<String, dynamic> json) => ProductVariant(
-    sku: json['sku'] as String,
-    size: json['size'] as String,
-    color: json['color'] as String,
-    price: json['price'] as double,
-  );
-}
-
-class ProductVariantsConverter extends TypeConverter<List<ProductVariant>, String> {
-  const ProductVariantsConverter();
-  
-  @override
-  List<ProductVariant> fromSql(String fromDb) {
-    if (fromDb.isEmpty) return [];
-    final list = jsonDecode(fromDb) as List<dynamic>;
-    return list.map((e) => ProductVariant.fromJson(e as Map<String, dynamic>)).toList();
-  }
-  
-  @override
-  String toSql(List<ProductVariant> value) {
-    return jsonEncode(value.map((v) => v.toJson()).toList());
-  }
-}
-```
-
----
-
-# Real-World Example
-
-> **Complete e-commerce JSON conversion system**
-
-```dart
-// lib/database/converters/json_converters.dart
-import 'package:drift/drift.dart';
+```dart id="q8x2mp"
 import 'dart:convert';
 
-// 👇 Map converter
-class JsonMapConverter extends TypeConverter<Map<String, dynamic>, String> {
+class JsonMapConverter
+    extends TypeConverter<Map<String, dynamic>, String> {
   const JsonMapConverter();
-  
+
   @override
   Map<String, dynamic> fromSql(String fromDb) {
-    if (fromDb.isEmpty) return {};
     return jsonDecode(fromDb) as Map<String, dynamic>;
   }
-  
+
   @override
   String toSql(Map<String, dynamic> value) {
     return jsonEncode(value);
   }
 }
+```
 
-// 👇 String list converter
-class StringListConverter extends TypeConverter<List<String>, String> {
-  const StringListConverter();
-  
+**Explanation:**
+
+* Dart object → JSON string when saving
+* JSON string → Dart `Map` when reading
+
+Apply it to a column:
+
+```dart id="w1p9qs"
+class Users extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get name => text()();
+
+  TextColumn get preferences =>
+      text().map(const JsonMapConverter())();
+}
+```
+
+**Explanation:**
+
+* `preferences` is exposed as a `Map<String, dynamic>`
+* SQLite stores it as a JSON string
+
+---
+
+# Mental Model
+
+```text id="t7k3qn"
+Dart Map
+{darkMode: true, fontSize: 14}
+        │
+        ▼
+   JSON Encode
+        │
+        ▼
+'{"darkMode":true,"fontSize":14}'
+        │
+        ▼
+      SQLite
+```
+
+Reading:
+
+```text id="h2v8ld"
+'{"darkMode":true,"fontSize":14}'
+        │
+        ▼
+   JSON Decode
+        │
+        ▼
+Dart Map
+```
+
+Your app always works with structured objects.
+
+---
+
+# Examples
+
+## Example 1: Store User Preferences
+
+```dart id="m8v2qp"
+class Users extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get name => text()();
+
+  TextColumn get preferences =>
+      text().map(const JsonMapConverter())();
+}
+```
+
+Insert user:
+
+```dart id="z3q8nt"
+await into(users).insert(
+  UsersCompanion.insert(
+    name: 'Alice',
+    preferences: {
+      'darkMode': true,
+      'fontSize': 16,
+    },
+  ),
+);
+```
+
+Read user:
+
+```dart id="c9k2mv"
+final user = await select(users).getSingle();
+
+print(user.preferences['darkMode']); // true
+```
+
+**Explanation:**
+
+* No manual JSON encoding required
+* Dart Map is stored and retrieved automatically
+
+---
+
+## Example 2: Store Lists in JSON
+
+```dart id="v5n2lp"
+class TagsConverter
+    extends TypeConverter<List<String>, String> {
+  const TagsConverter();
+
   @override
   List<String> fromSql(String fromDb) {
-    if (fromDb.isEmpty) return [];
-    final list = jsonDecode(fromDb) as List<dynamic>;
-    return list.map((e) => e as String).toList();
+    return List<String>.from(jsonDecode(fromDb));
   }
-  
+
   @override
   String toSql(List<String> value) {
     return jsonEncode(value);
   }
 }
 
-// 👇 Custom object converter
-class Address {
-  final String street;
-  final String city;
-  final String state;
-  final String zipCode;
-  final String country;
-  
-  Address({
-    required this.street,
-    required this.city,
-    required this.state,
-    required this.zipCode,
-    required this.country,
-  });
-  
-  Map<String, dynamic> toJson() => {
-    'street': street,
-    'city': city,
-    'state': state,
-    'zipCode': zipCode,
-    'country': country,
-  };
-  
-  factory Address.fromJson(Map<String, dynamic> json) => Address(
-    street: json['street'] as String,
-    city: json['city'] as String,
-    state: json['state'] as String,
-    zipCode: json['zipCode'] as String,
-    country: json['country'] as String,
-  );
-}
-
-class AddressConverter extends TypeConverter<Address, String> {
-  const AddressConverter();
-  
-  @override
-  Address fromSql(String fromDb) {
-    if (fromDb.isEmpty) return null;
-    final json = jsonDecode(fromDb) as Map<String, dynamic>;
-    return Address.fromJson(json);
-  }
-  
-  @override
-  String toSql(Address value) {
-    return jsonEncode(value.toJson());
-  }
-}
-
-// 👇 Metadata converter (nested JSON)
-class MetadataConverter extends TypeConverter<Map<String, dynamic>, String> {
-  const MetadataConverter();
-  
-  @override
-  Map<String, dynamic> fromSql(String fromDb) {
-    if (fromDb.isEmpty) return {};
-    return jsonDecode(fromDb) as Map<String, dynamic>;
-  }
-  
-  @override
-  String toSql(Map<String, dynamic> value) {
-    return jsonEncode(value);
-  }
-}
-
-// lib/database/tables/products.dart
-import '../converters/json_converters.dart';
-
-class Products extends Table {
+class Posts extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get sku => text().unique()();
-  TextColumn get name => text()();
-  TextColumn get description => text().nullable()();
-  RealColumn get price => real()();
-  IntColumn get stock => integer()();
 
-  // 👇 JSON metadata
-  TextColumn get metadata => text()
-    .withDefault(const Constant('{}'))
-    .map(const MetadataConverter())();
+  TextColumn get title => text()();
 
-  // 👇 JSON tags
-  TextColumn get tags => text()
-    .withDefault(const Constant('[]'))
-    .map(const StringListConverter())();
-
-  // 👇 Address (custom object)
-  TextColumn get warehouseAddress => text()
-    .nullable()
-    .map(const AddressConverter())
-    .named('warehouse_address')();
-
-  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-}
-
-// lib/database/tables/users.dart
-import '../converters/json_converters.dart';
-
-class Users extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get username => text().unique()();
-  TextColumn get email => text().unique()();
-
-  // 👇 Preferences (Map)
-  TextColumn get preferences => text()
-    .withDefault(const Constant('{}'))
-    .map(const JsonMapConverter())();
-
-  // 👇 Address (custom object)
-  TextColumn get address => text()
-    .nullable()
-    .map(const AddressConverter())();
-
-  // 👇 Tags (List)
-  TextColumn get interests => text()
-    .withDefault(const Constant('[]'))
-    .map(const StringListConverter())();
-
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get tags =>
+      text().map(const TagsConverter())();
 }
 ```
+
+Insert post:
+
+```dart id="r1k7mq"
+await into(posts).insert(
+  PostsCompanion.insert(
+    title: 'Drift Guide',
+    tags: ['flutter', 'drift', 'sqlite'],
+  ),
+);
+```
+
+**Explanation:**
+
+* Lists are stored as JSON arrays
+* Retrieved as typed `List<String>`
+
+---
+
+## Real-World Example
+
+A settings screen stores flexible configuration data.
+
+```dart id="b9x2qp"
+class AppSettings extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get config =>
+      text().map(const JsonMapConverter())();
+}
+```
+
+Insert settings:
+
+```dart id="k3m9xt"
+await into(appSettings).insert(
+  AppSettingsCompanion.insert(
+    config: {
+      'theme': 'dark',
+      'notifications': true,
+      'layout': {
+        'grid': true,
+        'columns': 3,
+      },
+    },
+  ),
+);
+```
+
+Read settings:
+
+```dart id="u8q1nv"
+final settings = await select(appSettings).getSingle();
+
+final theme = settings.config['theme'];
+final grid = settings.config['layout']['grid'];
+```
+
+**Explanation:**
+
+* Nested JSON structures are supported
+* No schema changes required for flexible data
+* Ideal for dynamic configuration
+
+---
+
+# When to Use
+
+Use JSON conversion when storing:
+
+* User preferences
+* App settings
+* Flexible metadata
+* Lists of tags or IDs
+* Nested configuration objects
+* API response caching
+
+---
+
+# When NOT to Use
+
+Avoid JSON conversion when:
+
+* You need to query individual fields frequently
+* Data is relational (use tables instead)
+* You need indexing on inner fields
+* Schema is stable and structured
+
+Example:
+
+❌ Bad:
 
 ```dart
-// lib/ui/pages/product_detail_page.dart
-class ProductDetailPage extends StatelessWidget {
-  final AppDatabase db;
-  final int productId;
-
-  const ProductDetailPage({required this.db, required this.productId});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _loadProduct(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return CircularProgressIndicator();
-
-        final product = snapshot.data!;
-
-        return Scaffold(
-          appBar: AppBar(title: Text(product.name)),
-          body: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('SKU: ${product.sku}'),
-                Text('Price: \$${product.price}'),
-                Text('Stock: ${product.stock}'),
-
-                // 👇 Metadata (Map)
-                if (product.metadata.isNotEmpty) ...[
-                  SizedBox(height: 16),
-                  Text('Details:', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ...product.metadata.entries.map((entry) {
-                    return Text('${entry.key}: ${entry.value}');
-                  }).toList(),
-                ],
-
-                // 👇 Tags (List)
-                if (product.tags.isNotEmpty) ...[
-                  SizedBox(height: 16),
-                  Text('Tags:', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Wrap(
-                    spacing: 8,
-                    children: product.tags.map((tag) {
-                      return Chip(label: Text(tag));
-                    }).toList(),
-                  ),
-                ],
-
-                // 👇 Address (Custom object)
-                if (product.warehouseAddress != null) ...[
-                  SizedBox(height: 16),
-                  Text('Warehouse:', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(product.warehouseAddress!.street),
-                  Text('${product.warehouseAddress!.city}, ${product.warehouseAddress!.state}'),
-                  Text('${product.warehouseAddress!.zipCode}, ${product.warehouseAddress!.country}'),
-                ],
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<Product> _loadProduct() async {
-    return await (db.select(db.products)
-      ..where((p) => p.id.equals(productId)))
-      .getSingle();
-  }
-}
+preferences = '{"darkMode":true}'
 ```
 
----
-
-# JSON Conversion Best Practices
-
-- **Use JSON for complex data** – Maps, lists, nested objects
-- **Handle empty values** – Default to `{}` or `[]`
-- **Validate data** – Ensure JSON is valid
-- **Use const constructors** – Better performance
-- **Document structure** – Explain JSON schema
-- **Test conversion** – Verify serialization
-- **Consider performance** – JSON has overhead
-- **Use typed converters** – Type-safe access
+If you need to query `darkMode`, use a proper column instead.
 
 ---
 
-# JSON Conversion Checklist
+# Best Practices
 
-| Practice | Description | Priority |
-|----------|-------------|----------|
-| **Default Values** | Handle empty | High |
-| **Validation** | Ensure valid JSON | High |
-| **Const Constructor** | Performance | High |
-| **Documentation** | Explain schema | Medium |
-| **Testing** | Verify conversion | High |
-| **Performance** | Monitor overhead | Medium |
-| **Type Safety** | Use typed converters | High |
+* Prefer JSON only for flexible or semi-structured data
+* Keep JSON structure stable once used in production
+* Always validate decoded data if it comes from external sources
+* Use strongly typed models instead of raw `Map` where possible
+* Avoid deeply nested JSON when performance matters
 
 ---
 
 # Common Mistakes
 
-## Mistake 1: Not handling empty values
+## Storing Complex Logic in JSON
 
-Wrong:
-```dart
-// 🚫 Empty string causes error
-@override
-Map fromSql(String fromDb) {
-  return jsonDecode(fromDb);
+**Wrong**
+
+```dart id="x9q2kd"
+preferences: {
+  'theme': {
+    'dark': true,
+    'rules': {
+      'autoSwitch': true,
+    }
+  }
 }
 ```
 
-Correct:
-```dart
-// ✅ Handle empty
-@override
-Map fromSql(String fromDb) {
-  if (fromDb.isEmpty) return {};
-  return jsonDecode(fromDb);
+Overly complex JSON becomes hard to maintain.
+
+**Correct**
+
+Flatten or normalize structure when possible.
+
+```dart id="n4v8pq"
+preferences: {
+  'darkMode': true,
+  'autoSwitchTheme': true,
 }
 ```
 
-## Mistake 2: Incorrect type mapping
+---
 
-Wrong:
-```dart
-// 🚫 Type mismatch
-List<String> tags = jsonDecode(tagsJson); // Dynamic list
+## Forgetting Type Safety
+
+**Wrong**
+
+```dart id="v3m9kp"
+final darkMode = user.preferences['darkMode'];
 ```
 
-Correct:
-```dart
-// ✅ Correct type casting
-final list = jsonDecode(tagsJson) as List<dynamic>;
-return list.map((e) => e as String).toList();
+No type guarantees.
+
+**Correct**
+
+```dart id="q7n2ld"
+final darkMode = user.preferences['darkMode'] as bool;
 ```
 
-## Mistake 3: Storing large JSON
+Or better: use a typed model instead of raw maps.
 
-Wrong:
-```dart
-// 🚫 Storing 10MB JSON in a column
-TextColumn get largeData => text().map(const JsonMapConverter())();
+---
+
+## Storing Query-Critical Data in JSON
+
+**Wrong**
+
+```dart id="k1p8qd"
+TextColumn get preferences => text().map(JsonMapConverter())();
 ```
 
-Correct:
-```dart
-// ✅ Separate table for large data
-class LargeDataTable extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get data => text().map(const JsonMapConverter())();
-}
+Then trying to filter:
+
+```dart id="x8v3qp"
+where: (u) => u.preferences.equals('dark')
 ```
+
+This is inefficient and unsupported.
+
+**Correct**
+
+```dart id="m5q8vn"
+BoolColumn get darkMode => boolean()();
+```
+
+Use proper columns for queryable fields.
+
+---
+
+# Related APIs
+
+* TypeConverter
+* Enum Conversion
+* DateTime Conversion
+* Custom Objects
+* Reusable Converters
 
 ---
 
 # Summary
 
-| Converter | Use Case | Example |
-|-----------|----------|---------|
-| **Map** | Key-value pairs | Preferences, settings |
-| **List** | Arrays | Tags, categories |
-| **Custom Object** | Structured data | Address, variants |
-| **Generic** | Any type | Reusable converters |
-
----
-
-# Next Steps
-
-Now you understand JSON conversion, let's dive deeper:
-
-- [Custom Objects](link) – Complex object mapping
-- [Reusable Converters](link) – Sharing converters
-
----
-
-# Did You Know?
-
-- **JSON is flexible** – Store any structure
-
-- **JSON is readable** – Human-readable format
-
-- **JSON is compact** – When minified
-
-- **JSON is standard** – Universal format
-
-- **JSON can be nested** – Deep structures
-
-- **JSON has overhead** – Parsing cost
-
-- **JSON is typed** – Strings, numbers, booleans
-
-- **JSON is common** – Used in most apps
-
----
-
+JSON conversion allows Drift to store complex Dart objects inside SQLite by encoding them as JSON strings. It provides flexibility for dynamic or semi-structured data while keeping your application code type-safe and clean. However, it should be used carefully and avoided for data that needs to be queried or indexed frequently.

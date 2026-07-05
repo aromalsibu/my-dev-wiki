@@ -1,95 +1,65 @@
-## DateTime Conversion
+# DateTime Conversion
 
-**Handling dates and times in Drift with custom converters**
+**DateTime conversion** allows Drift to store `DateTime` objects in SQLite and automatically convert them back when reading data.
 
 ---
 
 # What is it?
 
-**DateTime Conversion** is the process of storing and retrieving Dart `DateTime` objects in your SQLite database. SQLite doesn't have a native DateTime type, so dates are typically stored as TEXT (ISO 8601 strings), INTEGER (Unix timestamps), or REAL (Julian day numbers). Drift's `TypeConverter` allows you to choose the best format for your needs.
+SQLite does not have a native `DateTime` type. It only understands:
 
-> **Think of DateTime Conversion like "translating between calendar formats"** – the database stores dates in a specific format, while your app uses Dart's powerful DateTime objects. The converter handles the translation seamlessly.
+* `INTEGER`
+* `TEXT`
+* `REAL`
+* `BLOB`
 
-```dart
-// 👇 Unix timestamp converter (stored as INTEGER)
-class UnixDateTimeConverter extends TypeConverter<DateTime, int> {
-  const UnixDateTimeConverter();
-  
-  @override
-  DateTime fromSql(int fromDb) {
-    return DateTime.fromMillisecondsSinceEpoch(fromDb * 1000);
-  }
-  
-  @override
-  int toSql(DateTime value) {
-    return value.millisecondsSinceEpoch ~/ 1000;
-  }
-}
+So when you store a `DateTime` in Drift, it must be converted into one of these formats.
 
-// 👇 Using in a table
-class Events extends Table {
-  // Store as Unix timestamp
-  IntColumn get eventDate => integer().map(const UnixDateTimeConverter())();
-}
-
-// Now you can use DateTime objects directly!
-final event = Event(
-  id: 1,
-  name: 'Conference',
-  eventDate: DateTime(2024, 12, 15), // 👈 Dart DateTime!
-);
-```
-
-> **What's happening here?**
-> - **Format choice** – Unix timestamp, ISO string, or Julian day
-> - **`fromSql`** – Converts database value to `DateTime`
-> - **`toSql`** – Converts `DateTime` to database value
-> - **Type safety** – Database operations use `DateTime`
+A `TypeConverter` handles this transformation so your Dart code always works with `DateTime`, while SQLite stores a supported representation.
 
 ---
 
 # Why does it exist?
 
-- **Date Storage** – Store dates in SQLite
-- **Timezone Handling** – Manage timezones
-- **Date Arithmetic** – Perform calculations
-- **Format Flexibility** – Choose storage format
-- **Compatibility** – Work with existing databases
-- **Precision** – Store milliseconds or just dates
+Without conversion, you would need to manually transform every timestamp.
+
+```dart id="d8s1qk"
+await into(tasks).insert(
+  TasksCompanion.insert(
+    createdAt: DateTime.now().millisecondsSinceEpoch,
+  ),
+);
+
+final row = await select(tasks).getSingle();
+
+final createdAt =
+    DateTime.fromMillisecondsSinceEpoch(row.createdAt);
+```
+
+This becomes repetitive and error-prone.
+
+A converter ensures:
+
+* You always work with `DateTime` in Dart
+* SQLite stores a consistent format
+* No manual conversion is required anywhere in your code
 
 ---
 
-# Unix Timestamp Conversion
+# Syntax
 
-> **Storing dates as Unix timestamps (INTEGER)**
+A `DateTime` converter typically stores values as Unix timestamps (`int`).
 
-## Basic Unix Converter
+```dart id="xk2p9v"
+class DateTimeConverter
+    extends TypeConverter<DateTime, int> {
+  const DateTimeConverter();
 
-```dart
-// 👇 Unix timestamp (seconds since epoch)
-class UnixDateTimeConverter extends TypeConverter<DateTime, int> {
-  const UnixDateTimeConverter();
-  
-  @override
-  DateTime fromSql(int fromDb) {
-    return DateTime.fromMillisecondsSinceEpoch(fromDb * 1000);
-  }
-  
-  @override
-  int toSql(DateTime value) {
-    return value.millisecondsSinceEpoch ~/ 1000;
-  }
-}
-
-// 👇 Unix timestamp with milliseconds
-class UnixMillisDateTimeConverter extends TypeConverter<DateTime, int> {
-  const UnixMillisDateTimeConverter();
-  
   @override
   DateTime fromSql(int fromDb) {
     return DateTime.fromMillisecondsSinceEpoch(fromDb);
   }
-  
+
   @override
   int toSql(DateTime value) {
     return value.millisecondsSinceEpoch;
@@ -97,454 +67,320 @@ class UnixMillisDateTimeConverter extends TypeConverter<DateTime, int> {
 }
 ```
 
-## Using Unix Converter
+**Explanation:**
 
-```dart
-// 👇 Using in table
-class Orders extends Table {
-  IntColumn get createdAt => integer()
-    .map(const UnixDateTimeConverter())
-    .named('created_at')();
-  
-  IntColumn get updatedAt => integer()
-    .nullable()
-    .map(const UnixDateTimeConverter())
-    .named('updated_at')();
+* SQLite stores `int` (Unix time in milliseconds)
+* Drift converts it into a `DateTime`
+* Dart code never sees the raw integer
+
+Apply the converter to a column:
+
+```dart id="q7m0dn"
+class Tasks extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get title => text()();
+
+  IntColumn get createdAt =>
+      integer().map(const DateTimeConverter())();
 }
+```
 
-// Usage
-final order = Order(
-  id: 1,
-  createdAt: DateTime.now(), // 👈 Automatic conversion
+**Explanation:**
+
+* `createdAt` is exposed as a `DateTime` in Dart
+* Internally stored as an integer timestamp
+
+---
+
+# Mental Model
+
+```text id="m2q8vp"
+DateTime.now()
+      │
+      ▼
+DateTimeConverter
+      │
+      ▼
+1700000000000  (SQLite INTEGER)
+```
+
+Reading:
+
+```text id="p9k3xl"
+1700000000000
+      │
+      ▼
+DateTimeConverter
+      │
+      ▼
+DateTime object
+```
+
+Your application never deals with raw timestamps directly.
+
+---
+
+# Examples
+
+## Example 1: Store Creation Time
+
+```dart id="t3w8qa"
+class Tasks extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get title => text()();
+
+  IntColumn get createdAt =>
+      integer().map(const DateTimeConverter())();
+}
+```
+
+Insert a task:
+
+```dart id="f1v9kc"
+await into(tasks).insert(
+  TasksCompanion.insert(
+    title: 'Write Drift Docs',
+    createdAt: DateTime.now(),
+  ),
 );
 ```
 
----
+Read it:
 
-# ISO 8601 String Conversion
+```dart id="v0x7lz"
+final task = await select(tasks).getSingle();
 
-> **Storing dates as ISO 8601 strings (TEXT)**
-
-## Basic ISO Converter
-
-```dart
-// 👇 ISO 8601 string converter
-class IsoDateTimeConverter extends TypeConverter<DateTime, String> {
-  const IsoDateTimeConverter();
-  
-  @override
-  DateTime fromSql(String fromDb) {
-    return DateTime.parse(fromDb);
-  }
-  
-  @override
-  String toSql(DateTime value) {
-    return value.toIso8601String();
-  }
-}
-
-// 👇 ISO 8601 date only (no time)
-class IsoDateConverter extends TypeConverter<DateTime, String> {
-  const IsoDateConverter();
-  
-  @override
-  DateTime fromSql(String fromDb) {
-    return DateTime.parse(fromDb);
-  }
-  
-  @override
-  String toSql(DateTime value) {
-    return value.toIso8601String().substring(0, 10);
-  }
-}
-```
-
-## Using ISO Converter
-
-```dart
-// 👇 Using in table
-class Users extends Table {
-  TextColumn get birthDate => text()
-    .nullable()
-    .map(const IsoDateConverter())
-    .named('birth_date')();
-  
-  TextColumn get lastLogin => text()
-    .nullable()
-    .map(const IsoDateTimeConverter())
-    .named('last_login')();
-}
+print(task.createdAt); // DateTime instance
 ```
 
 ---
 
-# Custom Date Formats
+## Example 2: Track Updates and Events
 
-> **Storing dates in custom formats**
-
-```dart
-// 👇 Custom date format converter
-class CustomDateConverter extends TypeConverter<DateTime, String> {
-  final String format;
-  
-  const CustomDateConverter({this.format = 'yyyy-MM-dd HH:mm:ss'});
-  
-  @override
-  DateTime fromSql(String fromDb) {
-    // Parse custom format
-    final parts = fromDb.split(' ');
-    final dateParts = parts[0].split('-');
-    final timeParts = parts.length > 1 ? parts[1].split(':') : ['00', '00', '00'];
-    
-    return DateTime(
-      int.parse(dateParts[0]),
-      int.parse(dateParts[1]),
-      int.parse(dateParts[2]),
-      int.parse(timeParts[0]),
-      int.parse(timeParts[1]),
-      int.parse(timeParts[2]),
-    );
-  }
-  
-  @override
-  String toSql(DateTime value) {
-    return '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')} '
-           '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}:${value.second.toString().padLeft(2, '0')}';
-  }
-}
-```
-
----
-
-# Real-World Example
-
-> **Complete e-commerce date/time conversion system**
-
-```dart
-// lib/database/converters/date_converters.dart
-import 'package:drift/drift.dart';
-
-// 👇 Unix timestamp converter (seconds)
-class UnixDateTimeConverter extends TypeConverter<DateTime, int> {
-  const UnixDateTimeConverter();
-  
-  @override
-  DateTime fromSql(int fromDb) {
-    return DateTime.fromMillisecondsSinceEpoch(fromDb * 1000);
-  }
-  
-  @override
-  int toSql(DateTime value) {
-    return value.millisecondsSinceEpoch ~/ 1000;
-  }
-}
-
-// 👇 ISO 8601 string converter
-class IsoDateTimeConverter extends TypeConverter<DateTime, String> {
-  const IsoDateTimeConverter();
-  
-  @override
-  DateTime fromSql(String fromDb) {
-    return DateTime.parse(fromDb);
-  }
-  
-  @override
-  String toSql(DateTime value) {
-    return value.toIso8601String();
-  }
-}
-
-// 👇 Date only (no time)
-class IsoDateConverter extends TypeConverter<DateTime, String> {
-  const IsoDateConverter();
-  
-  @override
-  DateTime fromSql(String fromDb) {
-    return DateTime.parse(fromDb);
-  }
-  
-  @override
-  String toSql(DateTime value) {
-    return value.toIso8601String().substring(0, 10);
-  }
-}
-
-// 👇 Human-readable format
-class HumanDateConverter extends TypeConverter<DateTime, String> {
-  const HumanDateConverter();
-  
-  @override
-  DateTime fromSql(String fromDb) {
-    return DateTime.parse(fromDb);
-  }
-  
-  @override
-  String toSql(DateTime value) {
-    return '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
-  }
-}
-
-// 👇 Month/year only converter
-class MonthYearConverter extends TypeConverter<DateTime, String> {
-  const MonthYearConverter();
-  
-  @override
-  DateTime fromSql(String fromDb) {
-    final parts = fromDb.split('-');
-    return DateTime(int.parse(parts[0]), int.parse(parts[1]));
-  }
-  
-  @override
-  String toSql(DateTime value) {
-    return '${value.year}-${value.month.toString().padLeft(2, '0')}';
-  }
-}
-
-// lib/database/tables/orders.dart
-import '../converters/date_converters.dart';
-
-class Orders extends Table {
+```dart id="h4s9cd"
+class Events extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get orderNumber => text().unique()();
-  IntColumn get userId => integer().references(Users, #id)();
-  RealColumn get total => real()();
-  TextColumn get status => text()();
 
-  // 👇 Unix timestamp (compact, easy to sort)
-  IntColumn get orderDate => integer()
-    .withDefault(currentDateAndTime)
-    .map(const UnixDateTimeConverter())
-    .named('order_date')();
+  TextColumn get name => text()();
 
-  // 👇 ISO string (human-readable)
-  TextColumn get shippedDate => text()
-    .nullable()
-    .map(const IsoDateTimeConverter())
-    .named('shipped_date')();
-
-  // 👇 Date only (no time)
-  TextColumn get deliveryDate => text()
-    .nullable()
-    .map(const IsoDateConverter())
-    .named('delivery_date')();
-
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-  DateTimeColumn get updatedAt => dateTime().nullable()();
+  IntColumn get eventTime =>
+      integer().map(const DateTimeConverter())();
 }
+```
 
-// lib/database/tables/users.dart
-import '../converters/date_converters.dart';
+Insert an event:
 
-class Users extends Table {
+```dart id="g6k2lm"
+await into(events).insert(
+  EventsCompanion.insert(
+    name: 'User Logged In',
+    eventTime: DateTime.now(),
+  ),
+);
+```
+
+Filter by time:
+
+```dart id="z8r3tn"
+final recentEvents = await (select(events)
+      ..where((e) =>
+          e.eventTime.isBiggerThanValue(
+            DateTime.now().subtract(
+              const Duration(hours: 1),
+            ),
+          )))
+    .get();
+```
+
+**Explanation:**
+
+* You can use `DateTime` directly in queries
+* Drift handles conversion automatically
+
+---
+
+## Real-World Example
+
+A messaging app stores when each message was sent.
+
+```dart id="c9x1dp"
+class Messages extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get username => text().unique()();
-  TextColumn get email => text().unique()();
 
-  // 👇 ISO date (birthday, no time)
-  TextColumn get birthDate => text()
-    .nullable()
-    .map(const IsoDateConverter())
-    .named('birth_date')();
+  TextColumn get sender => text()();
 
-  // 👇 Last login (ISO with time)
-  TextColumn get lastLogin => text()
-    .nullable()
-    .map(const IsoDateTimeConverter())
-    .named('last_login')();
+  TextColumn get content => text()();
 
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-  DateTimeColumn get updatedAt => dateTime().nullable()();
+  IntColumn get sentAt =>
+      integer().map(const DateTimeConverter())();
 }
 ```
 
-```dart
-// lib/ui/pages/order_history_page.dart
-class OrderHistoryPage extends StatelessWidget {
-  final AppDatabase db;
-  final int userId;
+Insert a message:
 
-  const OrderHistoryPage({required this.db, required this.userId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Order History')),
-      body: FutureBuilder(
-        future: _loadOrders(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return CircularProgressIndicator();
-
-          final orders = snapshot.data!;
-
-          return ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final order = orders[index];
-
-              return Card(
-                margin: EdgeInsets.all(8),
-                child: ListTile(
-                  title: Text('Order #${order.orderNumber}'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 👇 Formatted dates
-                      Text('Ordered: ${_formatDate(order.orderDate)}'),
-                      if (order.shippedDate != null)
-                        Text('Shipped: ${_formatDate(order.shippedDate!)}'),
-                      if (order.deliveryDate != null)
-                        Text('Delivered: ${_formatDate(order.deliveryDate!)}'),
-                      Text('Total: \$${order.total}'),
-                    ],
-                  ),
-                  trailing: Text(order.status),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  Future<List<Order>> _loadOrders() async {
-    return await (db.select(db.orders)
-      ..where((o) => o.userId.equals(userId))
-      ..orderBy([(o) => OrderingTerm.desc(o.orderDate)]))
-      .get();
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.month}/${date.day}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
-  }
-}
+```dart id="k2m7rt"
+await into(messages).insert(
+  MessagesCompanion.insert(
+    sender: 'Alice',
+    content: 'Hello!',
+    sentAt: DateTime.now(),
+  ),
+);
 ```
 
+Query recent messages:
+
+```dart id="n5q8yv"
+final messages = await (select(messages)
+      ..orderBy([
+        (m) => OrderingTerm(
+              expression: m.sentAt,
+              mode: OrderingMode.desc,
+            ),
+      ])
+      ..limit(20))
+    .get();
+```
+
+**Explanation:**
+
+* Messages are sorted by real `DateTime` values
+* No manual timestamp handling is required
+* Code remains readable and type-safe
+
 ---
 
-# DateTime Conversion Best Practices
+# When to Use
 
-- **Choose appropriate format** – Unix for performance, ISO for readability
-- **Handle null values** – Use nullable columns
-- **Use timezone-aware** – Consider timezone handling
-- **Use const constructors** – Better performance
-- **Document format choice** – Explain why
-- **Test conversions** – Verify date handling
-- **Consider precision** – Milliseconds or seconds
-- **Be consistent** – Use same format throughout
+Use `DateTime` conversion when storing:
+
+* Created timestamps
+* Updated timestamps
+* Event logs
+* Scheduled tasks
+* Message times
+* Audit logs
 
 ---
 
-# DateTime Conversion Checklist
+# When NOT to Use
 
-| Practice | Description | Priority |
-|----------|-------------|----------|
-| **Format Choice** | Unix, ISO, or custom | High |
-| **Null Handling** | Use nullable | High |
-| **Timezone** | Consider timezone | Medium |
-| **Const Constructor** | Performance | High |
-| **Testing** | Verify conversion | High |
-| **Consistency** | Same format | Medium |
+Avoid `DateTime` conversion when:
+
+* You need timezone-aware strings (use ISO 8601 text instead)
+* You store only relative durations (use `Duration`)
+* The value is not a timestamp (e.g., just a numeric counter)
+
+---
+
+# Best Practices
+
+* Prefer storing `DateTime` as **millisecondsSinceEpoch (int)**
+* Keep all timestamps in UTC internally
+* Convert to local time only in the UI layer
+* Reuse a single converter across tables
+* Avoid mixing string-based and integer-based timestamps
 
 ---
 
 # Common Mistakes
 
-## Mistake 1: Timezone issues
+## Storing DateTime as String
 
-Wrong:
-```dart
-// 🚫 Losing timezone info
-@override
-DateTime fromSql(String fromDb) {
-  return DateTime.parse(fromDb); // Local timezone may be wrong
+**Wrong**
+
+```dart id="y1k8pm"
+class DateTimeConverter
+    extends TypeConverter<DateTime, String> {
+  const DateTimeConverter();
+
+  @override
+  DateTime fromSql(String fromDb) =>
+      DateTime.parse(fromDb);
+
+  @override
+  String toSql(DateTime value) =>
+      value.toIso8601String();
 }
 ```
 
-Correct:
-```dart
-// ✅ Handle timezone
-@override
-DateTime fromSql(String fromDb) {
-  return DateTime.parse(fromDb).toLocal();
+This works but is slower and harder to query.
+
+**Correct**
+
+```dart id="r7v3ql"
+class DateTimeConverter
+    extends TypeConverter<DateTime, int> {
+  const DateTimeConverter();
+
+  @override
+  DateTime fromSql(int fromDb) =>
+      DateTime.fromMillisecondsSinceEpoch(fromDb);
+
+  @override
+  int toSql(DateTime value) =>
+      value.millisecondsSinceEpoch;
 }
 ```
 
-## Mistake 2: Wrong format
+Integer storage is more efficient and query-friendly.
 
-Wrong:
-```dart
-// 🚫 Invalid date format
-final date = DateTime.parse('2024-15-01'); // Month 15 invalid
+---
+
+## Forgetting UTC Consistency
+
+**Wrong**
+
+```dart id="w3x9hb"
+DateTime.now()
 ```
 
-Correct:
-```dart
-// ✅ Valid format
-final date = DateTime.parse('2024-01-15');
+Stored values may vary depending on device time zones.
+
+**Correct**
+
+```dart id="u8k2ld"
+DateTime.now().toUtc()
 ```
 
-## Mistake 3: Not handling null
+Always store timestamps in UTC.
 
-Wrong:
-```dart
-// 🚫 Null throws error
-@override
-DateTime fromSql(String fromDb) {
-  return DateTime.parse(fromDb); // Null error
-}
+---
+
+## Manual Conversion in Queries
+
+**Wrong**
+
+```dart id="v4n6qp"
+where: (t) => t.createdAt
+    .equals(DateTime.now().millisecondsSinceEpoch)
 ```
 
-Correct:
-```dart
-// ✅ Handle null
-@override
-DateTime fromSql(String fromDb) {
-  if (fromDb == null) return null;
-  return DateTime.parse(fromDb);
-}
+This bypasses type safety.
+
+**Correct**
+
+```dart id="j9m2xq"
+where: (t) => t.createdAt
+    .isBiggerThanValue(DateTime.now().subtract(Duration(days: 1)))
 ```
+
+Let Drift handle conversion automatically.
+
+---
+
+# Related APIs
+
+* TypeConverter
+* Enum Conversion
+* JSON Conversion
+* Custom Objects
+* Reusable Converters
 
 ---
 
 # Summary
 
-| Format | Storage | Use Case | Example |
-|--------|---------|----------|---------|
-| **Unix Timestamp** | INTEGER | Sorting, performance | `1704067200` |
-| **ISO 8601** | TEXT | Readability | `'2024-01-01T12:00:00'` |
-| **Date Only** | TEXT | Dates only | `'2024-01-01'` |
-| **Custom** | TEXT | Specific needs | `'01/01/2024'` |
-
----
-
-# Next Steps
-
-Now you understand DateTime conversion, let's dive deeper:
-
-- [JSON Conversion](link) – JSON data
-- [Custom Objects](link) – Complex object mapping
-- [Reusable Converters](link) – Sharing converters
-
----
-
-# Did You Know?
-
-- **Unix timestamps are compact** – Only 4-8 bytes
-
-- **ISO strings are human-readable** – Easy to debug
-
-- **SQLite has date functions** – `DATE()`, `TIME()`, `STRFTIME()`
-
-- **Timezones are important** – Consider UTC vs local
-
-- **Date precision matters** – Seconds vs milliseconds
-
-- **Date formats are flexible** – Use any format you want
-
-- **Dates can be calculated** – In SQL or Dart
-
-- **Date conversion is common** – Used in almost every app
-
----
-
+DateTime conversion allows Drift to store timestamps in SQLite while exposing them as strongly-typed `DateTime` objects in Dart. By converting between `DateTime` and Unix timestamps, you get efficient storage, safe queries, and clean application code without manual serialization logic.
