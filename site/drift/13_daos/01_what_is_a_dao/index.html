@@ -21,7 +21,7 @@
     
     
       
-        <title>01 what is a dao - My Wiki</title>
+        <title>DAOs (Data Access Objects) - My Wiki</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#what-is-a-dao" class="md-skip">
+        <a href="#daos-data-access-objects" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              01 what is a dao
+              DAOs (Data Access Objects)
             
           </span>
         </div>
@@ -29161,185 +29161,8 @@
   
   
   
+    
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#what-is-a-dao" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What is a DAO?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#what-is-it" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What is it?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-does-it-exist" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why does it exist?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#benefits-of-the-modern-dao-approach" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Benefits of the Modern DAO Approach
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Benefits of the Modern DAO Approach">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-type-safety" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Type Safety
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-ide-support" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. IDE Support
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-refactoring" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Refactoring
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-composability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Composability
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dao-vs-repository" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DAO vs Repository
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#real-world-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Real-World Example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dao-best-practices-modern-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DAO Best Practices (Modern API)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#classic-vs-modern-dao-comparison" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Classic vs Modern DAO Comparison
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#did-you-know" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Did You Know?
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -29356,555 +29179,298 @@
 
 
 
-<h2 id="what-is-a-dao">What is a DAO?</h2>
-<p><strong>Understanding the Data Access Object pattern with Drift's modern API</strong></p>
+<h1 id="daos-data-access-objects">DAOs (Data Access Objects)</h1>
+<p>A <strong>DAO (Data Access Object)</strong> is a structured way to group database operations (queries, inserts, updates, deletes) into a dedicated class instead of spreading them across your app.</p>
 <hr />
 <h1 id="what-is-it">What is it?</h1>
-<p><strong>DAO (Data Access Object)</strong> is a design pattern that provides an abstract interface to a database. In Drift, a DAO encapsulates all database operations for a specific entity using <strong>type-safe query builder</strong> methods instead of raw SQL strings. This gives you full type safety, IDE autocomplete, refactoring support, and compile-time validation.</p>
-<blockquote>
-<p><strong>Think of a DAO like a "type-safe API client"</strong> – instead of writing raw HTTP requests (SQL), you call well-defined methods with typed parameters and get typed responses back. The underlying complexity is completely hidden.</p>
-</blockquote>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 👇 Modern DAO with type-safe query builder</span>
-<span class="nd">@DriftAccessor</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">UserDao</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">DatabaseAccessor</span><span class="o">&lt;</span><span class="n">AppDatabase</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">with</span><span class="w"> </span><span class="n">_$UserDaoMixin</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">UserDao</span><span class="p">(</span><span class="k">super</span><span class="p">.</span><span class="n">db</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// 👇 Type-safe query builder (no SQL strings!)</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getActiveUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isActive</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">true</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">getUserById</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">id</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">getSingleOrNull</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Reactive query (stream)</span>
-<span class="w">  </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">watchActiveUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isActive</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">true</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">watch</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-
-<span class="c1">// 👇 Using the DAO (clean, type-safe API)</span>
-<span class="kd">final</span><span class="w"> </span><span class="n">userDao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UserDao</span><span class="p">(</span><span class="n">db</span><span class="p">);</span>
-<span class="kd">final</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">userDao</span><span class="p">.</span><span class="n">getActiveUsers</span><span class="p">();</span><span class="w"> </span><span class="c1">// List&lt;User&gt;</span>
-<span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">userDao</span><span class="p">.</span><span class="n">getUserById</span><span class="p">(</span><span class="m">1</span><span class="p">);</span><span class="w">    </span><span class="c1">// User?</span>
-<span class="kd">final</span><span class="w"> </span><span class="n">stream</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userDao</span><span class="p">.</span><span class="n">watchActiveUsers</span><span class="p">();</span><span class="w">     </span><span class="c1">// Stream&lt;List&lt;User&gt;&gt;</span>
+<p>In Drift, a DAO is a class that contains <strong>database logic for a specific feature or table group</strong>.</p>
+<p>Instead of writing queries directly in UI or services:</p>
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">await</span><span class="w"> </span><span class="n">into</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="n">insert</span><span class="p">(...);</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="kd">get</span><span class="p">();</span>
 </code></pre></div>
-<blockquote>
-<p><strong>What's happening here?</strong>
-- <strong><code>@DriftAccessor</code></strong> – Marks the class as a DAO
-- <strong>Type-safe queries</strong> – Dart methods instead of SQL strings
-- <strong>IDE support</strong> – Autocomplete and refactoring
-- <strong>Reactive</strong> – <code>.watch()</code> for streams
-- <strong>Type safety</strong> – Compile-time validation</p>
-</blockquote>
+<p>You move them into a dedicated class:</p>
+<ul>
+<li><code>UserDao</code></li>
+<li><code>OrderDao</code></li>
+<li><code>TaskDao</code></li>
+</ul>
+<p>This keeps your database layer organized and maintainable.</p>
 <hr />
 <h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Without DAOs, database code tends to spread everywhere:</p>
 <ul>
-<li><strong>Type Safety</strong> – Catch errors at compile-time, not runtime</li>
-<li><strong>IDE Support</strong> – Autocomplete, refactoring, navigation</li>
-<li><strong>Abstraction</strong> – Hide database complexity from business logic</li>
-<li><strong>Maintainability</strong> – Easy to find and update queries</li>
-<li><strong>Reusability</strong> – Same DAO used throughout the app</li>
-<li><strong>Testability</strong> – DAOs can be easily mocked</li>
-<li><strong>Organization</strong> – Queries grouped by entity</li>
+<li>UI widgets</li>
+<li>ViewModels</li>
+<li>Repositories</li>
+<li>Services</li>
+</ul>
+<p>This leads to:</p>
+<ul>
+<li>Duplicated queries</li>
+<li>Hard-to-test logic</li>
+<li>Tight coupling with UI</li>
+<li>Difficult refactoring</li>
+</ul>
+<p>DAOs solve this by:</p>
+<ul>
+<li>Centralizing database logic</li>
+<li>Improving testability</li>
+<li>Enforcing separation of concerns</li>
+<li>Making queries reusable</li>
 </ul>
 <hr />
-<h1 id="benefits-of-the-modern-dao-approach">Benefits of the Modern DAO Approach</h1>
-<blockquote>
-<p><strong>Why use the query builder instead of raw SQL?</strong></p>
-</blockquote>
-<h2 id="1-type-safety">1. Type Safety</h2>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// ❌ CLASSIC: Raw SQL (no type safety)</span>
-<span class="nd">@Query</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM users WHERE age &gt; :minAge&#39;</span><span class="p">)</span>
-<span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getUsersOlderThan</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">minAge</span><span class="p">);</span>
-<span class="c1">// SQL errors only caught at runtime!</span>
+<h1 id="syntax">Syntax</h1>
+<p>A DAO is created using <code>@DriftAccessor</code>.</p>
+<p>```dart id="d1k9qp"
+@DriftAccessor(tables: [Users])
+class UserDao extends DatabaseAccessor<AppDatabase>
+    with _$UserDaoMixin {
+  UserDao(AppDatabase db) : super(db);
+}
+<div class="language-text highlight"><pre><span></span><code>**Explanation:**
 
-<span class="c1">// ✅ MODERN: Query builder (compile-time safety)</span>
-<span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getUsersOlderThan</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">minAge</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">    </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">age</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Variable</span><span class="p">(</span><span class="n">minAge</span><span class="p">)))</span><span class="w"> </span><span class="c1">// 👈 Type-safe!</span>
-<span class="w">    </span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="p">}</span>
-<span class="c1">// Errors caught at compile-time!</span>
-</code></pre></div>
-<h2 id="2-ide-support">2. IDE Support</h2>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// ✅ MODERN: Full IDE support</span>
-<span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getActiveUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">    </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isActive</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">true</span><span class="p">)))</span><span class="w"> </span><span class="c1">// 👈 Autocomplete works!</span>
-<span class="w">    </span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre></div>
-<h2 id="3-refactoring">3. Refactoring</h2>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// ✅ MODERN: Safe refactoring</span>
-<span class="c1">// If you rename a column, the query builder catches it</span>
-<span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getActiveUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">    </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isActive</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">true</span><span class="p">)))</span><span class="w"> </span><span class="c1">// 👈 Refactoring works!</span>
-<span class="w">    </span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre></div>
-<h2 id="4-composability">4. Composability</h2>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// ✅ MODERN: Queries are composable</span>
-<span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getActiveUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">    </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isActive</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="p">}</span>
+* `DatabaseAccessor&lt;AppDatabase&gt;` gives access to the database
+* `tables` defines which tables the DAO can access
+* `_ $UserDaoMixin` is generated by Drift
 
-<span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getActiveAdults</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">    </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isActive</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">true</span><span class="p">))</span>
-<span class="w">    </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">age</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Variable</span><span class="p">(</span><span class="m">18</span><span class="p">));</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre></div>
-<hr />
-<h1 id="dao-vs-repository">DAO vs Repository</h1>
-<blockquote>
-<p><strong>Understanding the difference</strong></p>
-</blockquote>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// 👇 DAO: Type-safe database operations</span>
-<span class="nd">@DriftAccessor</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">UserDao</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">DatabaseAccessor</span><span class="o">&lt;</span><span class="n">AppDatabase</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">with</span><span class="w"> </span><span class="n">_$UserDaoMixin</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">UserDao</span><span class="p">(</span><span class="k">super</span><span class="p">.</span><span class="n">db</span><span class="p">);</span>
+---
 
-<span class="w">  </span><span class="c1">// Type-safe queries</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">getUserById</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">id</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">getSingleOrNull</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
+# Basic Queries Inside DAO
 
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createUser</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">into</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="n">insert</span><span class="p">(</span>
-<span class="w">      </span><span class="n">UsersCompanion</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="nl">name:</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="nl">email:</span><span class="w"> </span><span class="n">email</span><span class="p">),</span>
-<span class="w">    </span><span class="p">);</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">getUserById</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
+## Insert
 
-<span class="c1">// 👇 Repository: Business logic + DAO</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">UserRepository</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">UserDao</span><span class="w"> </span><span class="n">_userDao</span><span class="p">;</span>
-<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">CacheService</span><span class="w"> </span><span class="n">_cacheService</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">UserRepository</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">_userDao</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">_cacheService</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// 👇 Adds business logic (caching, validation)</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">getUserById</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// Check cache first</span>
-<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">cached</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">_cacheService</span><span class="p">.</span><span class="n">getUser</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cached</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">cached</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// Get from database</span>
-<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">_userDao</span><span class="p">.</span><span class="n">getUserById</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
-
-<span class="w">    </span><span class="c1">// Cache for next time</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">user</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">_cacheService</span><span class="p">.</span><span class="n">cacheUser</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
-
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">user</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-<hr />
-<h1 id="real-world-example">Real-World Example</h1>
-<blockquote>
-<p><strong>Complete e-commerce UserDao with modern API</strong></p>
-</blockquote>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// lib/database/daos/user_dao.dart</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:drift/drift.dart&#39;</span><span class="p">;</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;../database.dart&#39;</span><span class="p">;</span>
-<span class="k">import</span><span class="w"> </span><span class="s1">&#39;../tables/users.dart&#39;</span><span class="p">;</span>
-
-<span class="nd">@DriftAccessor</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">UserDao</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">DatabaseAccessor</span><span class="o">&lt;</span><span class="n">AppDatabase</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">with</span><span class="w"> </span><span class="n">_$UserDaoMixin</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">UserDao</span><span class="p">(</span><span class="k">super</span><span class="p">.</span><span class="n">db</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// ==================== READ OPERATIONS ====================</span>
-
-<span class="w">  </span><span class="c1">// 👇 All users</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getAllUsers</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="kd">get</span><span class="p">();</span>
-
-<span class="w">  </span><span class="c1">// 👇 By ID</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">getUserById</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">id</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">getSingleOrNull</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 By email</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">getUserByEmail</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">email</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">email</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">getSingleOrNull</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Active users</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getActiveUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isActive</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">true</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Verified users</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getVerifiedUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isVerified</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">true</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Users by age range</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getUsersByAgeRange</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">minAge</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxAge</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">age</span><span class="p">.</span><span class="n">isBetweenValues</span><span class="p">(</span><span class="n">minAge</span><span class="p">,</span><span class="w"> </span><span class="n">maxAge</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Search users</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">searchUsers</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">query</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">searchTerm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;%</span><span class="si">$</span><span class="n">query</span><span class="s1">%&#39;</span><span class="p">;</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span>
-<span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="n">username</span><span class="p">.</span><span class="n">like</span><span class="p">(</span><span class="n">searchTerm</span><span class="p">)</span><span class="w"> </span><span class="o">|</span>
-<span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="n">email</span><span class="p">.</span><span class="n">like</span><span class="p">(</span><span class="n">searchTerm</span><span class="p">)</span><span class="w"> </span><span class="o">|</span>
-<span class="w">        </span><span class="n">u</span><span class="p">.</span><span class="n">fullName</span><span class="p">.</span><span class="n">like</span><span class="p">(</span><span class="n">searchTerm</span><span class="p">)</span>
-<span class="w">      </span><span class="p">))</span>
-<span class="w">      </span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Counts</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getUserCount</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="n">count</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getActiveUserCount</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isActive</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">true</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">count</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Recent users</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getRecentUsers</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">orderBy</span><span class="p">([(</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">OrderingTerm</span><span class="p">.</span><span class="n">desc</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="n">createdAt</span><span class="p">)])</span>
-<span class="w">      </span><span class="p">..</span><span class="n">limit</span><span class="p">(</span><span class="n">limit</span><span class="p">))</span>
-<span class="w">      </span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// ==================== WATCH OPERATIONS ====================</span>
-
-<span class="w">  </span><span class="c1">// 👇 Watch active users (reactive)</span>
-<span class="w">  </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">watchActiveUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isActive</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="kc">true</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">watch</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Watch user by ID</span>
-<span class="w">  </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">User</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">watchUserById</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">id</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">watchSingleOrNull</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Watch all users</span>
-<span class="w">  </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">watchAllUsers</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="n">watch</span><span class="p">();</span>
-
-<span class="w">  </span><span class="c1">// 👇 Watch user stats</span>
-<span class="w">  </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">UserStats</span><span class="o">&gt;</span><span class="w"> </span><span class="n">watchUserStats</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">.</span><span class="n">watch</span><span class="p">()</span>
-<span class="w">      </span><span class="p">.</span><span class="n">map</span><span class="p">((</span><span class="n">users</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">UserStats</span><span class="p">(</span>
-<span class="w">          </span><span class="nl">total:</span><span class="w"> </span><span class="n">users</span><span class="p">.</span><span class="n">length</span><span class="p">,</span>
-<span class="w">          </span><span class="nl">active:</span><span class="w"> </span><span class="n">users</span><span class="p">.</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isActive</span><span class="p">).</span><span class="n">length</span><span class="p">,</span>
-<span class="w">          </span><span class="nl">verified:</span><span class="w"> </span><span class="n">users</span><span class="p">.</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">isVerified</span><span class="p">).</span><span class="n">length</span><span class="p">,</span>
-<span class="w">        </span><span class="p">);</span>
-<span class="w">      </span><span class="p">});</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// ==================== WRITE OPERATIONS ====================</span>
-
-<span class="w">  </span><span class="c1">// 👇 Create user</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createUser</span><span class="p">({</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">username</span><span class="p">,</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">password</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">fullName</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="o">?</span><span class="w"> </span><span class="n">age</span><span class="p">,</span>
-<span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">into</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="n">insert</span><span class="p">(</span>
-<span class="w">      </span><span class="n">UsersCompanion</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span>
-<span class="w">        </span><span class="nl">username:</span><span class="w"> </span><span class="n">username</span><span class="p">,</span>
-<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
-<span class="w">        </span><span class="nl">passwordHash:</span><span class="w"> </span><span class="n">_hashPassword</span><span class="p">(</span><span class="n">password</span><span class="p">),</span>
-<span class="w">        </span><span class="nl">fullName:</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="n">fullName</span><span class="p">),</span>
-<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="n">age</span><span class="p">),</span>
-<span class="w">        </span><span class="nl">isActive:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">        </span><span class="nl">isVerified:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="p">),</span>
-<span class="w">    </span><span class="p">);</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">getUserById</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Update user</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">updateUser</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">update</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="n">replace</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Update user profile</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">updateUserProfile</span><span class="p">({</span>
-<span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">userId</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">username</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">email</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">fullName</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="o">?</span><span class="w"> </span><span class="n">age</span><span class="p">,</span>
-<span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="p">(</span><span class="n">update</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">userId</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">UsersCompanion</span><span class="p">(</span>
-<span class="w">        </span><span class="nl">username:</span><span class="w"> </span><span class="n">username</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="n">username</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">        </span><span class="nl">email:</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">        </span><span class="nl">fullName:</span><span class="w"> </span><span class="n">fullName</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="n">fullName</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">        </span><span class="nl">age:</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">.</span><span class="n">absent</span><span class="p">(),</span>
-<span class="w">        </span><span class="nl">updatedAt:</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="n">DateTime</span><span class="p">.</span><span class="n">now</span><span class="p">()),</span>
-<span class="w">      </span><span class="p">));</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Status updates</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">activateUser</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">userId</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="p">(</span><span class="n">update</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">userId</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">UsersCompanion</span><span class="p">(</span><span class="nl">isActive:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="kc">true</span><span class="p">)));</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deactivateUser</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">userId</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="p">(</span><span class="n">update</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">userId</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">UsersCompanion</span><span class="p">(</span><span class="nl">isActive:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="kc">false</span><span class="p">)));</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">verifyUser</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">userId</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="p">(</span><span class="n">update</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">userId</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">UsersCompanion</span><span class="p">(</span><span class="nl">isVerified:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="kc">true</span><span class="p">)));</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Delete user</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deleteUser</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">userId</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="p">(</span><span class="n">delete</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
-<span class="w">      </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">userId</span><span class="p">)))</span>
-<span class="w">      </span><span class="p">.</span><span class="n">go</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Batch operations</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">activateMultipleUsers</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userIds</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">into</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="n">batch</span><span class="p">((</span><span class="n">batch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">userIds</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">batch</span><span class="p">.</span><span class="n">update</span><span class="p">(</span>
-<span class="w">          </span><span class="n">users</span><span class="p">,</span>
-<span class="w">          </span><span class="n">UsersCompanion</span><span class="p">(</span><span class="nl">isActive:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="kc">true</span><span class="p">)),</span>
-<span class="w">          </span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
-<span class="w">        </span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">});</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Bulk delete</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deleteMultipleUsers</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userIds</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">into</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="n">batch</span><span class="p">((</span><span class="n">batch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">userIds</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">batch</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">users</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">});</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// 👇 Upsert</span>
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">upsertUser</span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">into</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="n">insert</span><span class="p">(</span>
-<span class="w">      </span><span class="n">user</span><span class="p">,</span>
-<span class="w">      </span><span class="nl">onConflict:</span><span class="w"> </span><span class="n">DoUpdate</span><span class="p">(</span>
-<span class="w">        </span><span class="nl">target:</span><span class="w"> </span><span class="n">users</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
-<span class="w">        </span><span class="nl">update:</span><span class="w"> </span><span class="n">UsersCompanion</span><span class="p">.</span><span class="n">fromUser</span><span class="p">(</span><span class="n">user</span><span class="p">),</span>
-<span class="w">      </span><span class="p">),</span>
-<span class="w">    </span><span class="p">);</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">getUserById</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">id</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// ==================== TRANSACTIONS ====================</span>
-
-<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">activateMultipleUsersWithTransaction</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userIds</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">transaction</span><span class="p">(()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">userIds</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">activateUser</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">});</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// ==================== PRIVATE HELPERS ====================</span>
-
-<span class="w">  </span><span class="kt">String</span><span class="w"> </span><span class="n">_hashPassword</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;hashed_</span><span class="si">$</span><span class="n">password</span><span class="s1">&#39;</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-<div class="language-dart highlight"><pre><span></span><code><span class="c1">// lib/database/database.dart</span>
-<span class="nd">@DriftDatabase</span><span class="p">(</span>
-<span class="w">  </span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">],</span>
-<span class="w">  </span><span class="nl">daos:</span><span class="w"> </span><span class="p">[</span><span class="n">UserDao</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="kd">class</span><span class="w"> </span><span class="nc">AppDatabase</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">_$AppDatabase</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">AppDatabase</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">super</span><span class="p">(</span><span class="n">_openConnection</span><span class="p">());</span>
-
-<span class="w">  </span><span class="nd">@override</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">schemaVersion</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">QueryExecutor</span><span class="w"> </span><span class="n">_openConnection</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">driftDatabase</span><span class="p">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;app_database&#39;</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-<hr />
-<h1 id="dao-best-practices-modern-api">DAO Best Practices (Modern API)</h1>
+```dart id=&quot;u2m8qp&quot;
+Future&lt;int&gt; createUser(UsersCompanion user) {
+  return into(users).insert(user);
+}
+</code></pre></div></p>
+<p><strong>Explanation:</strong></p>
 <ul>
-<li><strong>Use query builder</strong> – Never use raw SQL strings</li>
-<li><strong>Use <code>.watch()</code></strong> – For reactive queries</li>
-<li><strong>Use <code>.get()</code></strong> – For one-time queries</li>
-<li><strong>Use <code>.getSingleOrNull()</code></strong> – For optional results</li>
-<li><strong>Use transactions</strong> – For multiple related operations</li>
-<li><strong>Use batch operations</strong> – For bulk operations</li>
-<li><strong>Use <code>@DriftAccessor</code></strong> – For DAO classes</li>
-<li><strong>Use type-safe Companions</strong> – For inserts and updates</li>
+<li>Wraps insert logic in a reusable method</li>
+<li>Returns inserted row ID</li>
 </ul>
 <hr />
-<h1 id="classic-vs-modern-dao-comparison">Classic vs Modern DAO Comparison</h1>
-<table>
-<thead>
-<tr>
-<th>Feature</th>
-<th>Classic (@Query)</th>
-<th>Modern (Query Builder)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Type Safety</strong></td>
-<td>❌ Runtime errors</td>
-<td>✅ Compile-time errors</td>
-</tr>
-<tr>
-<td><strong>IDE Support</strong></td>
-<td>❌ No autocomplete</td>
-<td>✅ Full autocomplete</td>
-</tr>
-<tr>
-<td><strong>Refactoring</strong></td>
-<td>❌ Manual updates</td>
-<td>✅ Automatic refactoring</td>
-</tr>
-<tr>
-<td><strong>SQL Injection</strong></td>
-<td>⚠️ Risk if not careful</td>
-<td>✅ Built-in protection</td>
-</tr>
-<tr>
-<td><strong>Reactive</strong></td>
-<td>⚠️ Limited</td>
-<td>✅ Full <code>.watch()</code> support</td>
-</tr>
-<tr>
-<td><strong>Code Clarity</strong></td>
-<td>⚠️ Mix of Dart + SQL</td>
-<td>✅ Pure Dart code</td>
-</tr>
-<tr>
-<td><strong>Testing</strong></td>
-<td>❌ Harder to test</td>
-<td>✅ Easy to test</td>
-</tr>
-</tbody>
-</table>
+<h2 id="select-all">Select All</h2>
+<p>```dart id="v8k2qp"
+Future<List\<User>> getAllUsers() {
+  return select(users).get();
+}
+<div class="language-text highlight"><pre><span></span><code>**Explanation:**
+
+* Encapsulates query logic
+* Keeps UI layer clean
+
+---
+
+## Filtered Query
+
+```dart id=&quot;p3m9qp&quot;
+Future&lt;User?&gt; findById(int id) {
+  return (select(users)..where((u) =&gt; u.id.equals(id)))
+      .getSingleOrNull();
+}
+</code></pre></div></p>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li>Encapsulates filtering logic</li>
+<li>Prevents query duplication</li>
+</ul>
+<hr />
+<h1 id="mental-model">Mental Model</h1>
+<p>```text id="t8k2qp"
+UI / Service Layer
+        │
+        ▼
+     UserDao
+        │
+        ▼
+   Drift Queries
+        │
+        ▼
+    SQLite DB
+<div class="language-text highlight"><pre><span></span><code>DAO acts as a **controlled gateway** to the database.
+
+---
+
+# Examples
+
+## Example 1: Simple User DAO
+
+```dart id=&quot;c9m2qp&quot;
+@DriftAccessor(tables: [Users])
+class UserDao extends DatabaseAccessor&lt;AppDatabase&gt;
+    with _$UserDaoMixin {
+  UserDao(AppDatabase db) : super(db);
+
+  Future&lt;int&gt; createUser(UsersCompanion user) {
+    return into(users).insert(user);
+  }
+
+  Future&lt;List&lt;User&gt;&gt; getAllUsers() {
+    return select(users).get();
+  }
+
+  Future&lt;User?&gt; getUserById(int id) {
+    return (select(users)..where((u) =&gt; u.id.equals(id)))
+        .getSingleOrNull();
+  }
+
+  Future&lt;int&gt; deleteUser(int id) {
+    return (delete(users)..where((u) =&gt; u.id.equals(id)))
+        .go();
+  }
+}
+</code></pre></div></p>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li>All user-related queries are centralized</li>
+<li>UI never touches raw SQL or Drift queries directly</li>
+<li>Easy to extend and test</li>
+</ul>
+<hr />
+<h2 id="example-2-dao-with-business-logic">Example 2: DAO with Business Logic</h2>
+<p>```dart id="m7k2qp"
+@DriftAccessor(tables: [Tasks])
+class TaskDao extends DatabaseAccessor<AppDatabase>
+    with _$TaskDaoMixin {
+  TaskDao(AppDatabase db) : super(db);</p>
+<p>Future<int> createTask(TasksCompanion task) {
+    return into(tasks).insert(task);
+  }</p>
+<p>Future<List\<Task>> getPendingTasks() {
+    return (select(tasks)
+          ..where((t) =&gt; t.isCompleted.equals(false)))
+        .get();
+  }</p>
+<p>Future<int> markCompleted(int id) {
+    return (update(tasks)..where((t) =&gt; t.id.equals(id)))
+        .write(
+      const TasksCompanion(
+        isCompleted: Value(true),
+      ),
+    );
+  }
+}
+<div class="language-text highlight"><pre><span></span><code>**Explanation:**
+
+* DAO contains both queries and business-level operations
+* UI only calls meaningful methods like `markCompleted`
+
+---
+
+## Example 3: DAO with Streams
+
+```dart id=&quot;x2m9qp&quot;
+@DriftAccessor(tables: [Messages])
+class MessageDao extends DatabaseAccessor&lt;AppDatabase&gt;
+    with _$MessageDaoMixin {
+  MessageDao(AppDatabase db) : super(db);
+
+  Stream&lt;List&lt;Message&gt;&gt; watchMessages() {
+    return select(messages).watch();
+  }
+
+  Stream&lt;List&lt;Message&gt;&gt; watchLatestMessages() {
+    return (select(messages)
+          ..orderBy([
+            (m) =&gt; OrderingTerm(
+                  expression: m.sentAt,
+                  mode: OrderingMode.desc,
+                ),
+          ])
+          ..limit(20))
+        .watch();
+  }
+}
+</code></pre></div></p>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li>DAO exposes reactive streams</li>
+<li>UI can automatically rebuild on changes</li>
+<li>Keeps query logic centralized</li>
+</ul>
+<hr />
+<h1 id="when-to-use">When to Use</h1>
+<p>Use DAOs when:</p>
+<ul>
+<li>Your app has multiple tables</li>
+<li>Queries are reused in multiple places</li>
+<li>You want clean architecture separation</li>
+<li>You need testable database logic</li>
+<li>You are building medium/large applications</li>
+</ul>
+<hr />
+<h1 id="when-not-to-use">When NOT to Use</h1>
+<p>Avoid DAOs when:</p>
+<ul>
+<li>Your app is extremely small</li>
+<li>You only have 1–2 simple queries</li>
+<li>Adding abstraction would overcomplicate things</li>
+</ul>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<ul>
+<li>One DAO per feature or table group</li>
+<li>Keep methods meaningful (e.g. <code>markTaskDone</code>, not <code>updateTask</code>)</li>
+<li>Avoid UI logic inside DAOs</li>
+<li>Prefer streams for reactive UI needs</li>
+<li>Keep queries small and focused</li>
+<li>Inject DAOs via dependency injection</li>
+</ul>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="putting-business-logic-in-ui-instead-of-dao">Putting Business Logic in UI Instead of DAO</h2>
+<p><strong>Wrong</strong></p>
+<p>```dart id="q8m2qp"
+await update(tasks).write(...);
+<div class="language-text highlight"><pre><span></span><code>inside UI layer.
+
+**Correct**
+
+```dart id=&quot;v3k9qp&quot;
+await taskDao.markCompleted(id);
+</code></pre></div></p>
+<hr />
+<h2 id="making-daos-too-large">Making DAOs Too Large</h2>
+<p><strong>Wrong</strong></p>
+<p>One giant DAO handling everything:</p>
+<p>```dart id="m1k9qp"
+class AppDao {
+  // users + orders + tasks + messages all together
+}
+<div class="language-text highlight"><pre><span></span><code>**Correct**
+
+Split by domain:
+
+* `UserDao`
+* `TaskDao`
+* `OrderDao`
+
+---
+
+## Exposing Raw Queries Everywhere
+
+**Wrong**
+
+```dart id=&quot;z9m2qp&quot;
+select(users).get();
+</code></pre></div></p>
+<p>in multiple files.</p>
+<p><strong>Correct</strong></p>
+<p><code>dart id="p2k8qp"
+userDao.getAllUsers();</code></p>
+<hr />
+<h1 id="related-apis">Related APIs</h1>
+<ul>
+<li>DatabaseAccessor</li>
+<li>DriftAccessor</li>
+<li>SelectStatement</li>
+<li>InsertStatement</li>
+<li>Streams</li>
+</ul>
 <hr />
 <h1 id="summary">Summary</h1>
-<table>
-<thead>
-<tr>
-<th>Aspect</th>
-<th>Description</th>
-<th>Benefit</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Type-Safe</strong></td>
-<td>Query builder</td>
-<td>Compile-time safety</td>
-</tr>
-<tr>
-<td><strong>IDE Support</strong></td>
-<td>Autocomplete</td>
-<td>Faster development</td>
-</tr>
-<tr>
-<td><strong>Refactoring</strong></td>
-<td>Safe renaming</td>
-<td>Easier maintenance</td>
-</tr>
-<tr>
-<td><strong>Reactive</strong></td>
-<td><code>.watch()</code></td>
-<td>Real-time updates</td>
-</tr>
-<tr>
-<td><strong>Clean Code</strong></td>
-<td>No SQL strings</td>
-<td>Better readability</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h1 id="next-steps">Next Steps</h1>
-<p>Now you understand what a modern DAO is, let's dive deeper:</p>
-<ul>
-<li><a href="link">Defining DAOs</a> – How to define DAOs</li>
-<li><a href="link">Organizing Queries</a> – Organizing queries in DAOs</li>
-<li><a href="link">Injecting Dependencies</a> – Dependency injection for DAOs</li>
-</ul>
-<hr />
-<h1 id="did-you-know">Did You Know?</h1>
-<ul>
-<li>
-<p><strong>Query builder compiles to SQL</strong> – At compile-time</p>
-</li>
-<li>
-<p><strong>Query builder is fully type-safe</strong> – No runtime surprises</p>
-</li>
-<li>
-<p><strong>Query builder is the modern way</strong> – Recommended by Drift team</p>
-</li>
-<li>
-<p><strong>Query builder supports all SQL features</strong> – Joins, aggregations, CTEs</p>
-</li>
-<li>
-<p><strong>Query builder is composable</strong> – Build complex queries piece by piece</p>
-</li>
-<li>
-<p><strong>Query builder has better performance</strong> – Optimized SQL generation</p>
-</li>
-<li>
-<p><strong>Query builder is more maintainable</strong> – Pure Dart code</p>
-</li>
-<li>
-<p><strong>Query builder is the future</strong> – Of Drift development</p>
-</li>
-</ul>
-<hr />
+<p>DAOs in Drift provide a clean abstraction layer over raw database operations by grouping related queries into dedicated classes. They improve code organization, testability, and maintainability by centralizing all database logic in one place per domain or feature.</p>
 
 
 

@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#best-practices" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -13162,6 +13167,8 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
+      
+        
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
@@ -29172,6 +29179,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -29188,9 +29197,321 @@
 
 
 
-  <h1>Best Practices</h1>
+<p>The next page is <strong>Best Practices</strong> (since we skipped the implementation-focused pages like CRUD Inside DAOs, Watching Data, etc.).</p>
+<hr />
+<h1 id="best-practices">Best Practices</h1>
+<p>Following a few simple practices when working with DAOs makes your Drift code easier to maintain, test, and scale as your application grows.</p>
+<hr />
+<h1 id="what-is-it">What is it?</h1>
+<p>A DAO is more than just a place to put queries—it's an architectural boundary between your application and the database.</p>
+<p>Well-designed DAOs:</p>
+<ul>
+<li>Have a single responsibility.</li>
+<li>Expose clean, reusable methods.</li>
+<li>Keep database logic in one place.</li>
+<li>Avoid leaking implementation details to the rest of the application.</li>
+</ul>
+<p>Poorly designed DAOs quickly become difficult to understand and maintain.</p>
+<hr />
+<h1 id="why-does-it-exist">Why does it exist?</h1>
+<p>Without consistent practices, DAOs often become:</p>
+<ul>
+<li>Very large classes.</li>
+<li>A mix of unrelated queries.</li>
+<li>Filled with business logic.</li>
+<li>Difficult to test.</li>
+<li>Hard to reuse.</li>
+</ul>
+<p>Following a consistent structure keeps the data layer predictable for everyone working on the project.</p>
+<hr />
+<h1 id="best-practices_1">Best Practices</h1>
+<h2 id="1-organize-daos-by-feature">1. Organize DAOs by Feature</h2>
+<p>Create a separate DAO for each feature or related group of tables.</p>
+<p><strong>Good</strong></p>
+<div class="language-text highlight"><pre><span></span><code>UserDao
+ProductDao
+OrderDao
+CartDao
+</code></pre></div>
+<p><strong>Avoid</strong></p>
+<div class="language-text highlight"><pre><span></span><code>AppDao
+</code></pre></div>
+<p>Feature-based DAOs are easier to navigate and maintain.</p>
+<hr />
+<h2 id="2-keep-a-single-responsibility">2. Keep a Single Responsibility</h2>
+<p>A DAO should manage one area of the database.</p>
+<p><strong>Good</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">UserDao</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">getUsers</span><span class="p">()</span>
 
+<span class="w">  </span><span class="n">createUser</span><span class="p">()</span>
 
+<span class="w">  </span><span class="n">deleteUser</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Everything relates to users.</p>
+<p><strong>Avoid</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nc">UserDao</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">getUsers</span><span class="p">()</span>
+
+<span class="w">  </span><span class="n">getProducts</span><span class="p">()</span>
+
+<span class="w">  </span><span class="n">createOrder</span><span class="p">()</span>
+
+<span class="w">  </span><span class="n">deleteCategory</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Mixing unrelated features makes the DAO harder to understand.</p>
+<hr />
+<h2 id="3-keep-business-logic-outside-the-dao">3. Keep Business Logic Outside the DAO</h2>
+<p>A DAO should perform database operations—not business workflows.</p>
+<p><strong>Good</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="n">Future</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createOrder</span><span class="p">(</span>
+<span class="w">  </span><span class="n">OrdersCompanion</span><span class="w"> </span><span class="n">order</span><span class="p">,</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">into</span><span class="p">(</span><span class="n">orders</span><span class="p">).</span><span class="n">insert</span><span class="p">(</span><span class="n">order</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The DAO performs one database operation.</p>
+<p>Business logic belongs elsewhere.</p>
+<hr />
+<h2 id="4-give-methods-descriptive-names">4. Give Methods Descriptive Names</h2>
+<p>Method names should clearly describe what they do.</p>
+<p><strong>Good</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="n">getUserById</span><span class="p">()</span>
+
+<span class="n">watchActiveUsers</span><span class="p">()</span>
+
+<span class="n">deleteUser</span><span class="p">()</span>
+
+<span class="n">updateProfile</span><span class="p">()</span>
+</code></pre></div>
+<p>Avoid vague names.</p>
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">get</span><span class="p">()</span>
+
+<span class="n">load</span><span class="p">()</span>
+
+<span class="n">fetch</span><span class="p">()</span>
+
+<span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<p>Clear names improve readability.</p>
+<hr />
+<h2 id="5-reuse-existing-queries">5. Reuse Existing Queries</h2>
+<p>Instead of duplicating queries, reuse existing DAO methods whenever possible.</p>
+<p><strong>Instead of</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">findUser</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+
+<span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">loadUser</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>Prefer one reusable method.</p>
+<div class="language-dart highlight"><pre><span></span><code><span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">getUserById</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="6-keep-methods-small">6. Keep Methods Small</h2>
+<p>Each DAO method should perform one operation.</p>
+<p><strong>Good</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="n">Future</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createUser</span><span class="p">(...)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+
+<span class="n">Future</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deleteUser</span><span class="p">(...)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+
+<span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>Small methods are easier to test and maintain.</p>
+<hr />
+<h2 id="7-share-one-database-instance">7. Share One Database Instance</h2>
+<p>Create one <code>AppDatabase</code> and inject it into all DAOs.</p>
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">database</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AppDatabase</span><span class="p">();</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">userDao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UserDao</span><span class="p">(</span><span class="n">database</span><span class="p">);</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">orderDao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OrderDao</span><span class="p">(</span><span class="n">database</span><span class="p">);</span>
+</code></pre></div>
+<p>Avoid creating a new database inside every DAO.</p>
+<hr />
+<h2 id="8-prefer-drifts-query-builder">8. Prefer Drift's Query Builder</h2>
+<p>Use Drift's fluent API whenever possible.</p>
+<div class="language-dart highlight"><pre><span></span><code><span class="k">return</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="kd">get</span><span class="p">();</span>
+</code></pre></div>
+<p>Only use raw SQL when the query builder cannot express your query cleanly.</p>
+<hr />
+<h2 id="9-return-the-appropriate-type">9. Return the Appropriate Type</h2>
+<p>Return the type that best matches the operation.</p>
+<div class="language-dart highlight"><pre><span></span><code><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span>
+
+<span class="n">Future</span><span class="o">&lt;</span><span class="n">User</span><span class="o">?&gt;</span>
+
+<span class="n">Future</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span>
+
+<span class="n">Future</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span>
+
+<span class="n">Stream</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span>
+</code></pre></div>
+<p>Avoid returning overly generic types such as <code>dynamic</code> or <code>Object</code>.</p>
+<hr />
+<h2 id="10-keep-related-queries-together">10. Keep Related Queries Together</h2>
+<p>For example:</p>
+<div class="language-text highlight"><pre><span></span><code>UserDao
+├── Reads
+├── Writes
+├── Streams
+└── Helper methods
+</code></pre></div>
+<p>Keeping similar operations together makes the DAO easier to navigate.</p>
+<hr />
+<h1 id="mental-model">Mental Model</h1>
+<p>Think of a DAO as the <strong>database API</strong> for one feature.</p>
+<div class="language-text highlight"><pre><span></span><code>UI
+ │
+ ▼
+Repository / Service
+ │
+ ▼
+UserDao
+ │
+ ├── getUsers()
+ ├── createUser()
+ ├── deleteUser()
+ └── watchUsers()
+ │
+ ▼
+Database
+</code></pre></div>
+<p>Everything related to users goes through <code>UserDao</code>.</p>
+<hr />
+<h1 id="examples">Examples</h1>
+<h2 id="simple-example">Simple Example</h2>
+<p>A focused DAO.</p>
+<div class="language-dart highlight"><pre><span></span><code><span class="nd">@DriftAccessor</span><span class="p">(</span><span class="nl">tables:</span><span class="w"> </span><span class="p">[</span><span class="n">Users</span><span class="p">])</span>
+<span class="kd">class</span><span class="w"> </span><span class="nc">UserDao</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">DatabaseAccessor</span><span class="o">&lt;</span><span class="n">AppDatabase</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="kd">with</span><span class="w"> </span><span class="n">_$UserDaoMixin</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="n">UserDao</span><span class="p">(</span><span class="n">AppDatabase</span><span class="w"> </span><span class="n">db</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">super</span><span class="p">(</span><span class="n">db</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="kd">get</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createUser</span><span class="p">(</span>
+<span class="w">    </span><span class="n">UsersCompanion</span><span class="w"> </span><span class="n">user</span><span class="p">,</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">into</span><span class="p">(</span><span class="n">users</span><span class="p">).</span><span class="n">insert</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deleteUser</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">delete</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
+<span class="w">          </span><span class="p">..</span><span class="n">where</span><span class="p">((</span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">id</span><span class="p">)))</span>
+<span class="w">        </span><span class="p">.</span><span class="n">go</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>This DAO is focused entirely on user-related operations.</p>
+<hr />
+<h2 id="real-world-example">Real-World Example</h2>
+<p>A project organized with multiple focused DAOs.</p>
+<div class="language-text highlight"><pre><span></span><code>lib/
+│
+├── database/
+│   ├── app_database.dart
+│   │
+│   ├── daos/
+│   │   ├── user_dao.dart
+│   │   ├── product_dao.dart
+│   │   ├── order_dao.dart
+│   │   ├── cart_dao.dart
+│   │   └── category_dao.dart
+│   │
+│   └── tables/
+│       ├── users.dart
+│       ├── products.dart
+│       ├── orders.dart
+│       └── categories.dart
+</code></pre></div>
+<p>This structure keeps related files together, making it easier to find and maintain database code as the project grows.</p>
+<hr />
+<h1 id="when-to-use">When to Use</h1>
+<p>Apply these practices in:</p>
+<ul>
+<li>Small projects that may grow over time.</li>
+<li>Medium-sized applications.</li>
+<li>Large production applications.</li>
+<li>Team-based development.</li>
+</ul>
+<p>The earlier you adopt these practices, the easier your project will be to maintain.</p>
+<hr />
+<h1 id="when-not-to-use">When NOT to Use</h1>
+<p>These practices are recommendations, not strict rules.</p>
+<p>For quick experiments or tutorials, it's acceptable to simplify your DAOs. However, production applications benefit greatly from following these guidelines.</p>
+<hr />
+<h1 id="common-mistakes">Common Mistakes</h1>
+<h2 id="one-dao-for-everything">One DAO for Everything</h2>
+<p><strong>Wrong</strong></p>
+<div class="language-text highlight"><pre><span></span><code>AppDao
+</code></pre></div>
+<p>Contains hundreds of unrelated queries.</p>
+<p><strong>Correct</strong></p>
+<div class="language-text highlight"><pre><span></span><code>UserDao
+
+ProductDao
+
+OrderDao
+
+CartDao
+</code></pre></div>
+<p>Split DAOs by feature.</p>
+<hr />
+<h2 id="mixing-business-logic">Mixing Business Logic</h2>
+<p><strong>Wrong</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">checkout</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Validate payment</span>
+
+<span class="w">  </span><span class="c1">// Call API</span>
+
+<span class="w">  </span><span class="c1">// Send email</span>
+
+<span class="w">  </span><span class="c1">// Insert order</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>A DAO should not manage application workflows.</p>
+<p><strong>Correct</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="n">Future</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createOrder</span><span class="p">(</span>
+<span class="w">  </span><span class="n">OrdersCompanion</span><span class="w"> </span><span class="n">order</span><span class="p">,</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">into</span><span class="p">(</span><span class="n">orders</span><span class="p">).</span><span class="n">insert</span><span class="p">(</span><span class="n">order</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Keep the DAO focused on database operations.</p>
+<hr />
+<h2 id="creating-multiple-databases">Creating Multiple Databases</h2>
+<p><strong>Wrong</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="n">UserDao</span><span class="p">(</span><span class="n">AppDatabase</span><span class="p">());</span>
+
+<span class="n">ProductDao</span><span class="p">(</span><span class="n">AppDatabase</span><span class="p">());</span>
+</code></pre></div>
+<p>Each DAO uses a different database instance.</p>
+<p><strong>Correct</strong></p>
+<div class="language-dart highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">database</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AppDatabase</span><span class="p">();</span>
+
+<span class="n">UserDao</span><span class="p">(</span><span class="n">database</span><span class="p">);</span>
+
+<span class="n">ProductDao</span><span class="p">(</span><span class="n">database</span><span class="p">);</span>
+</code></pre></div>
+<p>Share one database throughout the application.</p>
+<hr />
+<h1 id="related-apis">Related APIs</h1>
+<ul>
+<li><code>DatabaseAccessor</code></li>
+<li><code>@DriftAccessor</code></li>
+<li><code>GeneratedDatabase</code></li>
+<li><code>Select</code></li>
+<li><code>Insert</code></li>
+<li><code>Update</code></li>
+<li><code>Delete</code></li>
+<li><code>Transactions</code></li>
+</ul>
+<hr />
+<h1 id="summary">Summary</h1>
+<p>A well-designed DAO is small, focused, and responsible only for database operations. Organize DAOs by feature, keep methods descriptive, avoid mixing business logic with persistence, and share a single database instance across your application. Following these practices results in cleaner, more maintainable Drift code that scales well as your project grows.</p>
 
 
 
