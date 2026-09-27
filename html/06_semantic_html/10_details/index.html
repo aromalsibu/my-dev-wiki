@@ -35306,6 +35306,1182 @@
 
 
 <h1 id="details">Details</h1>
+<h1 id="chapter-details">Chapter: Details</h1>
+<hr />
+<h2 id="1-overview">1. Overview</h2>
+<h3 id="definition">Definition</h3>
+<p>The <strong><code>&lt;details&gt;</code> element</strong> is a semantic HTML element that creates a <strong>disclosure widget</strong> — a native, interactive component that can be toggled between two states: <strong>collapsed</strong> (content hidden) and <strong>expanded</strong> (content visible). It is typically paired with a <strong><code>&lt;summary&gt;</code></strong> element, which serves as the clickable label or heading for the widget. When the user clicks the summary (or presses Enter/Space while focused), the details widget opens or closes, revealing or hiding the content inside.</p>
+<p>The <code>&lt;details&gt;</code> element is part of the <strong>flow content</strong>, <strong>interactive content</strong>, and <strong>palpable content</strong> categories. It is a <strong>block-level</strong> element. Its native behaviour is built into the browser — no JavaScript is required to toggle the content, making it a powerful tool for creating accessible, progressively enhanced disclosures.</p>
+<h3 id="purpose">Purpose</h3>
+<p>The <code>&lt;details&gt;</code> element serves several essential purposes:</p>
+<ul>
+<li><strong>Native disclosure</strong> – creates an expandable/collapsible widget without JavaScript.</li>
+<li><strong>Accessibility</strong> – keyboard-accessible, screen-reader-friendly, and semantically meaningful.</li>
+<li><strong>Progressive enhancement</strong> – works even when JavaScript is disabled.</li>
+<li><strong>Space efficiency</strong> – hides non-essential content until the user requests it.</li>
+<li><strong>FAQ sections</strong> – ideal for questions and answers.</li>
+<li><strong>Table of contents</strong> – collapsible navigation.</li>
+<li><strong>Spoiler content</strong> – hidden until the user chooses to reveal it.</li>
+</ul>
+<h3 id="where-it-fits">Where It Fits</h3>
+<p>The <code>&lt;details&gt;</code> element is <strong>flow content</strong> and can appear anywhere flow content is accepted — inside <code>&lt;body&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;div&gt;</code>, and even inside <code>&lt;li&gt;</code> or <code>&lt;td&gt;</code>. It is most commonly used in:</p>
+<ul>
+<li><strong>FAQ pages</strong> – each question is a <code>&lt;summary&gt;</code>, each answer is the details content.</li>
+<li><strong>Documentation</strong> – collapsible sections for advanced topics.</li>
+<li><strong>Settings panels</strong> – advanced options hidden by default.</li>
+<li><strong>Table of contents</strong> – collapsible navigation.</li>
+<li><strong>Spoiler sections</strong> – hidden until clicked.</li>
+<li><strong>Long articles</strong> – collapsible sections for supplementary information.</li>
+</ul>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is HTML?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>HTML stands for HyperText Markup Language...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<hr />
+<h2 id="2-why-it-exists">2. Why It Exists</h2>
+<h3 id="the-problem">The Problem</h3>
+<p>Before <code>&lt;details&gt;</code>, creating an expandable/collapsible widget required JavaScript. Developers had to:</p>
+<ol>
+<li>Create a button or clickable element.</li>
+<li>Add an event listener.</li>
+<li>Toggle the visibility of the content.</li>
+<li>Manage ARIA attributes (<code>aria-expanded</code>, <code>aria-controls</code>).</li>
+<li>Handle keyboard accessibility.</li>
+<li>Manage focus.</li>
+</ol>
+<p>This was error-prone, inconsistent across implementations, and often inaccessible. Native HTML had no built-in disclosure widget.</p>
+<h3 id="previous-limitations">Previous Limitations</h3>
+<table>
+<thead>
+<tr>
+<th>Limitation</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No native disclosure widget</td>
+<td>Required JavaScript to implement.</td>
+</tr>
+<tr>
+<td>Inconsistent implementations</td>
+<td>Each developer had their own pattern.</td>
+</tr>
+<tr>
+<td>Accessibility issues</td>
+<td>Many custom widgets lacked keyboard support or ARIA.</td>
+</tr>
+<tr>
+<td>No progressive enhancement</td>
+<td>Widgets broke when JavaScript was disabled.</td>
+</tr>
+<tr>
+<td>Maintenance burden</td>
+<td>Custom code needed to be maintained and tested.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="why-details-was-introduced">Why <code>&lt;details&gt;</code> Was Introduced</h3>
+<p>The <code>&lt;details&gt;</code> element was introduced in <strong>HTML5</strong> to provide a <strong>native, accessible, and progressively enhanced</strong> disclosure widget. It enables:</p>
+<ul>
+<li><strong>Zero JavaScript</strong> – the toggle works natively.</li>
+<li><strong>Built-in accessibility</strong> – keyboard support, screen reader announcements.</li>
+<li><strong>Progressive enhancement</strong> – works even without JavaScript.</li>
+<li><strong>Consistency</strong> – a standard element with predictable behaviour.</li>
+<li><strong>Simple API</strong> – <code>open</code> attribute controls the state.</li>
+<li><strong>Styling</strong> – can be styled with CSS.</li>
+</ul>
+<p>The <code>&lt;details&gt;</code> element is part of the broader semantic HTML movement, which aims to make the web more accessible and reduce reliance on JavaScript for basic interactions.</p>
+<hr />
+<h2 id="3-syntax-basic-usage">3. Syntax / Basic Usage</h2>
+<h3 id="the-basic-syntax-of-details">The Basic Syntax of <code>&lt;details&gt;</code></h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click to expand<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hidden content goes here.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<ul>
+<li><strong><code>&lt;details&gt;</code></strong> – the container.</li>
+<li><strong><code>&lt;summary&gt;</code></strong> – the clickable label (always the first child, or the first child after the <code>open</code> attribute).</li>
+<li><strong>Content</strong> – any flow content, hidden until expanded.</li>
+</ul>
+<h3 id="simple-example">Simple Example</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is HTML?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>HTML stands for HyperText Markup Language. It is the standard markup language for creating web pages.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="details-with-open-attribute">Details with <code>open</code> Attribute</h3>
+<p>The <code>open</code> boolean attribute makes the details expanded by default:</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span> <span class="na">open</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>This is expanded by default<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>You can see this content immediately.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="details-without-summary">Details Without <code>&lt;summary&gt;</code></h3>
+<p>If you omit the <code>&lt;summary&gt;</code> element, the browser provides a default label (usually "Details" or "▶"):</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>This content is hidden until you click the default summary.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Note</strong>: It's best practice to always provide a <code>&lt;summary&gt;</code> element.</p>
+<h3 id="multiple-details-in-a-faq">Multiple Details in a FAQ</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is HTML?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>HTML stands for HyperText Markup Language...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is CSS?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>CSS stands for Cascading Style Sheets...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is JavaScript?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>JavaScript is a programming language...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="nested-details">Nested Details</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Chapter 1: Introduction<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Introduction content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Section 1.1: Background<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Background content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Section 1.2: Overview<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Overview content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="details-with-interactive-content">Details with Interactive Content</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Show Settings<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">form</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Name:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;name&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Save<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="code-breakdown">Code Breakdown</h3>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What It Does</th>
+<th>Why It Matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;details&gt;</code></td>
+<td>Container for the disclosure widget.</td>
+<td>Provides the toggle behaviour.</td>
+</tr>
+<tr>
+<td><code>&lt;summary&gt;</code></td>
+<td>Clickable label that toggles the widget.</td>
+<td>The user interacts with this to open/close.</td>
+</tr>
+<tr>
+<td><code>open</code></td>
+<td>Boolean attribute; makes the widget expanded by default.</td>
+<td>Controls the initial state.</td>
+</tr>
+<tr>
+<td>Content</td>
+<td>Any flow content.</td>
+<td>Hidden until expanded.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-mental-model">4. Mental Model</h2>
+<h3 id="the-drawer-analogy">The "Drawer" Analogy</h3>
+<p>Think of <code>&lt;details&gt;</code> as a <strong>drawer</strong> in a cabinet. The <code>&lt;summary&gt;</code> is the drawer handle — you pull it to open the drawer and reveal what's inside. When you push it back, the drawer closes and the contents are hidden. The drawer is closed by default (unless you specify <code>open</code>), and it works without any special tools (JavaScript).</p>
+<h3 id="the-faq-accordion-analogy">The "FAQ Accordion" Analogy</h3>
+<p>Think of a FAQ page where each question is clickable and expands to reveal the answer. Each question-answer pair is a <code>&lt;details&gt;</code> element. The question is the <code>&lt;summary&gt;</code>, and the answer is the hidden content. You can have multiple FAQs on a page, and each one opens and closes independently.</p>
+<h3 id="the-spoiler-tag-analogy">The "Spoiler Tag" Analogy</h3>
+<p>In forums, a <strong>spoiler tag</strong> hides content until you click to reveal it. The <code>&lt;details&gt;</code> element is the native HTML equivalent — it hides content behind a summary that the user must click to reveal. This is useful for spoilers, NSFW content, or any content that should be hidden by default.</p>
+<h3 id="the-foldable-section-analogy">The "Foldable Section" Analogy</h3>
+<p>Think of a long document with foldable sections — each section can be collapsed to hide its content or expanded to reveal it. The <code>&lt;details&gt;</code> element provides this functionality natively, without JavaScript. This is useful for documentation, table of contents, or any long content that benefits from being collapsible.</p>
+<hr />
+<h2 id="5-core-concepts">5. Core Concepts</h2>
+<h3 id="concept-1-the-disclosure-widget-pattern">Concept 1: The Disclosure Widget Pattern</h3>
+<p>The <code>&lt;details&gt;</code> element implements the <strong>disclosure widget</strong> pattern — a UI component that toggles the visibility of content. The pattern consists of:</p>
+<ul>
+<li>A <strong>trigger</strong> (the <code>&lt;summary&gt;</code>) — what the user clicks.</li>
+<li>The <strong>content</strong> — what is shown or hidden.</li>
+<li>A <strong>state</strong> — expanded or collapsed.</li>
+</ul>
+<p>This is a common pattern in web UIs, and <code>&lt;details&gt;</code> provides a native, accessible implementation.</p>
+<h3 id="concept-2-the-summary-element">Concept 2: The <code>&lt;summary&gt;</code> Element</h3>
+<p>The <code>&lt;summary&gt;</code> element is the <strong>clickable label</strong> for the <code>&lt;details&gt;</code> widget. It must be the <strong>first child</strong> of <code>&lt;details&gt;</code> (unless there is no summary, in which case the browser provides a default). The <code>&lt;summary&gt;</code> is displayed as a clickable label with a disclosure triangle (▶ or ▼) that indicates the state.</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click me<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>  <span class="cm">&lt;!-- Must be first child --&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hidden content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Key points</strong>:
+- Only one <code>&lt;summary&gt;</code> is allowed per <code>&lt;details&gt;</code>.
+- If omitted, the browser provides a default label (usually "Details").
+- The <code>&lt;summary&gt;</code> can contain phrasing content or a heading (<code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>).</p>
+<h3 id="concept-3-the-open-attribute">Concept 3: The <code>open</code> Attribute</h3>
+<p>The <code>open</code> attribute is a <strong>boolean attribute</strong> that controls whether the details widget is expanded or collapsed:</p>
+<ul>
+<li><strong>Present</strong> → expanded.</li>
+<li><strong>Absent</strong> → collapsed (default).</li>
+</ul>
+<div class="language-html highlight"><pre><span></span><code><span class="cm">&lt;!-- Collapsed by default --&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click to expand<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hidden content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Expanded by default --&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span> <span class="na">open</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Already expanded<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Visible content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<p>In JavaScript, you can read and modify the <code>open</code> property:</p>
+<div class="language-javascript highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">details</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;details&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="p">);</span><span class="w"> </span><span class="c1">// true or false</span>
+<span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">       </span><span class="c1">// Expands the widget</span>
+<span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">      </span><span class="c1">// Collapses the widget</span>
+</code></pre></div>
+<h3 id="concept-4-the-toggle-event">Concept 4: The <code>toggle</code> Event</h3>
+<p>When the <code>&lt;details&gt;</code> widget is opened or closed, the browser fires a <strong><code>toggle</code> event</strong>. You can listen for this event to run code when the state changes:</p>
+<div class="language-javascript highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">details</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;details&#39;</span><span class="p">);</span>
+<span class="nx">details</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;toggle&#39;</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;State changed. Open:&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">open</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div>
+<p><strong>Note</strong>: The <code>toggle</code> event does not bubble (in most browsers), so you must attach the listener to each <code>&lt;details&gt;</code> element individually.</p>
+<h3 id="concept-5-accessibility">Concept 5: Accessibility</h3>
+<p>The <code>&lt;details&gt;</code> element is <strong>natively accessible</strong>:</p>
+<ul>
+<li><strong>Keyboard</strong>: The <code>&lt;summary&gt;</code> is focusable. Pressing Enter or Space toggles the widget.</li>
+<li><strong>Screen readers</strong>: The <code>&lt;summary&gt;</code> is announced as a "disclosure triangle" or "button" with an expanded/collapsed state.</li>
+<li><strong>ARIA</strong>: The browser automatically applies the correct ARIA roles and states (<code>button</code>, <code>aria-expanded</code>).</li>
+</ul>
+<p>You don't need to add any ARIA attributes — the browser handles it.</p>
+<h3 id="concept-6-content-model">Concept 6: Content Model</h3>
+<p>The <code>&lt;details&gt;</code> element accepts <strong>flow content</strong>. It can contain:</p>
+<ul>
+<li>Paragraphs (<code>&lt;p&gt;</code>)</li>
+<li>Lists (<code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>)</li>
+<li>Images (<code>&lt;img&gt;</code>)</li>
+<li>Forms (<code>&lt;form&gt;</code>)</li>
+<li>Headings (<code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>)</li>
+<li>Tables (<code>&lt;table&gt;</code>)</li>
+<li>Other <code>&lt;details&gt;</code> elements (nested)</li>
+</ul>
+<p>The <code>&lt;summary&gt;</code> element accepts <strong>phrasing content</strong> or a <strong>heading</strong> (<code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>).</p>
+<h3 id="concept-7-styling-details-with-css">Concept 7: Styling <code>&lt;details&gt;</code> with CSS</h3>
+<p>The <code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code> elements can be styled with CSS:</p>
+<div class="language-css highlight"><pre><span></span><code><span class="nt">details</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="mh">#ccc</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="kt">rem</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">summary</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="p">;</span>
+<span class="w">    </span><span class="k">cursor</span><span class="p">:</span><span class="w"> </span><span class="kc">pointer</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">details</span><span class="o">[</span><span class="nt">open</span><span class="o">]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#f8f9fa</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">/* Style the disclosure triangle */</span>
+<span class="nt">summary</span><span class="p">::</span><span class="nd">marker</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#3498db</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The disclosure triangle (▶) is a <strong>marker</strong> — you can style it with <code>::marker</code> or remove it with <code>list-style: none</code>:</p>
+<div class="language-css highlight"><pre><span></span><code><span class="nt">summary</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">list-style</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span><span class="w"> </span><span class="c">/* Hides the default triangle */</span>
+<span class="p">}</span>
+<span class="nt">summary</span><span class="p">::</span><span class="nd">before</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">content</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;▶ &quot;</span><span class="p">;</span><span class="w"> </span><span class="c">/* Custom triangle */</span>
+<span class="p">}</span>
+<span class="nt">details</span><span class="o">[</span><span class="nt">open</span><span class="o">]</span><span class="w"> </span><span class="nt">summary</span><span class="p">::</span><span class="nd">before</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">content</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;▼ &quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="concept-8-details-vs-javascript-accordions">Concept 8: <code>&lt;details&gt;</code> vs. JavaScript Accordions</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th><code>&lt;details&gt;</code></th>
+<th>JavaScript Accordion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JavaScript required</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Accessibility</td>
+<td>Built-in</td>
+<td>Requires ARIA and keyboard handling</td>
+</tr>
+<tr>
+<td>Progressive enhancement</td>
+<td>Works without JS</td>
+<td>Breaks without JS</td>
+</tr>
+<tr>
+<td>Styling</td>
+<td>Limited but sufficient</td>
+<td>Full control</td>
+</tr>
+<tr>
+<td>Animation</td>
+<td>Hard (height transitions)</td>
+<td>Easy</td>
+</tr>
+<tr>
+<td>Complexity</td>
+<td>Low</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Maintenance</td>
+<td>Low</td>
+<td>High</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule</strong>: Use <code>&lt;details&gt;</code> when you need a simple disclosure; use a JavaScript accordion when you need complex animations or custom behaviour.</p>
+<h3 id="concept-9-details-and-name-attribute-exclusive-accordions">Concept 9: <code>&lt;details&gt;</code> and <code>name</code> Attribute (Exclusive Accordions)</h3>
+<p>The <code>name</code> attribute allows you to create <strong>exclusive accordions</strong> — where only one <code>&lt;details&gt;</code> in a group can be open at a time:</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;faq&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Question 1<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Answer 1<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;faq&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Question 2<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Answer 2<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;faq&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Question 3<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Answer 3<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<p>When you open one <code>&lt;details&gt;</code> with a given <code>name</code>, any other <code>&lt;details&gt;</code> with the same <code>name</code> that is open will be automatically closed. This is useful for FAQ sections where you want only one answer visible at a time.</p>
+<h3 id="concept-10-details-and-seo">Concept 10: <code>&lt;details&gt;</code> and SEO</h3>
+<p>Search engines can index the content inside <code>&lt;details&gt;</code> even when it's collapsed. Google has confirmed that content inside <code>&lt;details&gt;</code> is indexed and can appear in search results. This makes <code>&lt;details&gt;</code> a safe choice for FAQ content — it's accessible, space-efficient, and SEO-friendly.</p>
+<h3 id="concept-11-details-and-aria-expanded-not-needed">Concept 11: <code>&lt;details&gt;</code> and <code>aria-expanded</code> (Not Needed)</h3>
+<p>Because <code>&lt;details&gt;</code> is natively accessible, you <strong>should not</strong> add <code>aria-expanded</code> to the <code>&lt;summary&gt;</code> or <code>&lt;details&gt;</code> element. The browser automatically exposes the correct state to assistive technologies.</p>
+<div class="language-html highlight"><pre><span></span><code><span class="cm">&lt;!-- Bad: unnecessary ARIA --&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span> <span class="na">aria-expanded</span><span class="o">=</span><span class="s">&quot;false&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span> <span class="na">aria-expanded</span><span class="o">=</span><span class="s">&quot;false&quot;</span><span class="p">&gt;</span>Click me<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Good: native semantics --&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click me<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<hr />
+<h2 id="6-how-it-works">6. How It Works</h2>
+<h3 id="step-by-step-browser-processing-of-details">Step-by-Step: Browser Processing of <code>&lt;details&gt;</code></h3>
+<div class="language-text highlight"><pre><span></span><code>1.  The tokenizer encounters a `&lt;details&gt;` tag.
+    │
+    ▼
+2.  It creates a DOM node for the element.
+    │
+    ▼
+3.  It checks for the `open` attribute:
+    │   ├── If present → the details is expanded.
+    │   └── If absent → the details is collapsed (default).
+    │
+    ▼
+4.  It processes the content:
+    │   ├── The first `&lt;summary&gt;` becomes the clickable label.
+    │   ├── If no `&lt;summary&gt;` → browser provides a default label.
+    │   └── Other content becomes the hidden content.
+    │
+    ▼
+5.  When the closing tag is encountered, the element is closed.
+    │
+    ▼
+6.  Default styles are applied:
+    │   ├── display: block
+    │   └── The disclosure triangle (▶) is shown.
+    │
+    ▼
+7.  The element is added to the accessibility tree:
+    │   ├── role: group (or disclosure)
+    │   ├── The summary is a button with aria-expanded.
+    │   └── The content is hidden from screen readers when collapsed.
+    │
+    ▼
+8.  The page is rendered.
+    │
+    ▼
+9.  When the user clicks the summary:
+    │   ├── The `open` attribute is toggled.
+    │   ├── The content is shown/hidden.
+    │   ├── The `toggle` event is fired.
+    │   └── Screen readers announce the state change.
+</code></pre></div>
+<h3 id="the-accessibility-tree">The Accessibility Tree</h3>
+<p>In the accessibility tree, <code>&lt;details&gt;</code> is exposed as a <strong>group</strong> with a <strong>button</strong> (the summary) and the hidden content. The button has an <code>aria-expanded</code> state (true or false), which the browser manages automatically.</p>
+<h3 id="the-toggle-event">The <code>toggle</code> Event</h3>
+<p>The <code>toggle</code> event is fired when the <code>&lt;details&gt;</code> is opened or closed. It does not bubble by default (though this may change in future specifications). You can listen for it on each <code>&lt;details&gt;</code> element:</p>
+<div class="language-javascript highlight"><pre><span></span><code><span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">&#39;details&#39;</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">details</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">details</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;toggle&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Toggled:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+<h3 id="default-user-agent-styles">Default User Agent Styles</h3>
+<div class="language-css highlight"><pre><span></span><code><span class="nt">details</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">block</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">summary</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">list-item</span><span class="p">;</span><span class="w"> </span><span class="c">/* or block in some browsers */</span>
+<span class="w">    </span><span class="k">cursor</span><span class="p">:</span><span class="w"> </span><span class="kc">pointer</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The disclosure triangle is created by the <code>::marker</code> pseudo-element (or the <code>list-style</code> property).</p>
+<hr />
+<h2 id="7-internal-architecture-under-the-hood">7. Internal Architecture / Under the Hood</h2>
+<h3 id="the-htmldetailselement-interface">The <code>HTMLDetailsElement</code> Interface</h3>
+<p>In the DOM, <code>&lt;details&gt;</code> is represented by the <code>HTMLDetailsElement</code> interface, which inherits from <code>HTMLElement</code>. It has one specific property:</p>
+<ul>
+<li><code>open</code> – a boolean that reflects the <code>open</code> attribute.</li>
+</ul>
+<div class="language-javascript highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">details</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;details&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="p">);</span><span class="w"> </span><span class="c1">// true or false</span>
+<span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">       </span><span class="c1">// Expands the widget</span>
+</code></pre></div>
+<h3 id="the-summary-element">The <code>&lt;summary&gt;</code> Element</h3>
+<p>The <code>&lt;summary&gt;</code> element is represented by the <code>HTMLElement</code> interface. It has no specific properties beyond those of <code>HTMLElement</code>.</p>
+<h3 id="the-toggle-event_1">The <code>toggle</code> Event</h3>
+<p>The <code>toggle</code> event is of type <code>Event</code> (not a special interface). It is fired on the <code>&lt;details&gt;</code> element when the state changes.</p>
+<h3 id="browser-implementation">Browser Implementation</h3>
+<p>The <code>&lt;details&gt;</code> element is implemented natively in the browser's rendering engine. The disclosure triangle is rendered by the browser, and the toggle behaviour is handled by the browser's event system. No JavaScript is required for the basic functionality.</p>
+<h3 id="accessibility-api">Accessibility API</h3>
+<p>The browser maps <code>&lt;details&gt;</code> to the appropriate accessibility roles and states:</p>
+<ul>
+<li>The <code>&lt;details&gt;</code> element is a <code>group</code> (or <code>disclosure</code> in some implementations).</li>
+<li>The <code>&lt;summary&gt;</code> is a <code>button</code> with <code>aria-expanded</code>.</li>
+<li>The content is hidden from the accessibility tree when collapsed.</li>
+</ul>
+<hr />
+<h2 id="8-lifecycle-workflow">8. Lifecycle / Workflow</h2>
+<h3 id="the-lifecycle-of-a-details-element">The Lifecycle of a <code>&lt;details&gt;</code> Element</h3>
+<div class="language-text highlight"><pre><span></span><code>1.  Author writes the `&lt;details&gt;` element with a `&lt;summary&gt;` and content.
+    │   └── Example: &lt;details&gt;&lt;summary&gt;Click&lt;/summary&gt;&lt;p&gt;Content&lt;/p&gt;&lt;/details&gt;
+    │
+    ▼
+2.  File is deployed.
+    │
+    ▼
+3.  Browser parses the document and creates the DOM.
+    │   └── The `&lt;details&gt;` and `&lt;summary&gt;` nodes are created.
+    │   └── The `open` attribute is read.
+    │
+    ▼
+4.  Default styles are applied (display: block, disclosure triangle).
+    │
+    ▼
+5.  The accessibility tree is built:
+    │   └── group with a button (summary) and hidden content.
+    │
+    ▼
+6.  The page is rendered.
+    │
+    ▼
+7.  User clicks the summary (or presses Enter/Space):
+    │   ├── The `open` attribute is toggled.
+    │   ├── The content is shown/hidden.
+    │   ├── The `toggle` event is fired.
+    │   └── Screen readers announce the state change.
+    │
+    ▼
+8.  JavaScript may listen for the `toggle` event or modify the `open` property.
+    │
+    ▼
+9.  When the page is unloaded, the element is destroyed.
+</code></pre></div>
+<h3 id="dynamic-modification">Dynamic Modification</h3>
+<div class="language-javascript highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">details</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;details&#39;</span><span class="p">);</span>
+
+<span class="c1">// Expand the details</span>
+<span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+
+<span class="c1">// Collapse the details</span>
+<span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="c1">// Toggle the details</span>
+<span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="p">;</span>
+
+<span class="c1">// Listen for toggle events</span>
+<span class="nx">details</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;toggle&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;State:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div>
+<hr />
+<h2 id="9-practical-examples">9. Practical Examples</h2>
+<h3 id="example-1-simple-faq">Example 1: Simple FAQ</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is HTML?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>HTML stands for HyperText Markup Language. It is the standard markup language for creating web pages.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-2-faq-section-with-multiple-questions">Example 2: FAQ Section with Multiple Questions</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">section</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Frequently Asked Questions<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is HTML?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>HTML stands for HyperText Markup Language...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is CSS?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>CSS stands for Cascading Style Sheets...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is JavaScript?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>JavaScript is a programming language...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-3-exclusive-accordion-with-name">Example 3: Exclusive Accordion with <code>name</code></h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">section</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>FAQ<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">details</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;faq&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Question 1<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Answer 1<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">details</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;faq&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Question 2<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Answer 2<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">details</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;faq&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Question 3<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Answer 3<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Behaviour</strong>: Only one question can be open at a time.</p>
+<h3 id="example-4-details-with-open-attribute">Example 4: Details with <code>open</code> Attribute</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span> <span class="na">open</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>This is expanded by default<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>You can see this content immediately.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-5-nested-details-table-of-contents">Example 5: Nested Details (Table of Contents)</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Chapter 1: Introduction<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Introduction content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Section 1.1: Background<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Background content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Section 1.2: Overview<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Overview content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Chapter 2: Main Content<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Main content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-6-details-with-a-form">Example 6: Details with a Form</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Advanced Settings<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">form</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;api-key&quot;</span><span class="p">&gt;</span>API Key:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;api-key&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;api-key&quot;</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;timeout&quot;</span><span class="p">&gt;</span>Timeout (seconds):<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;number&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;timeout&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;timeout&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;30&quot;</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Save<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-7-details-with-a-heading-in-summary">Example 7: Details with a Heading in Summary</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>What is Semantic HTML?<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Semantic HTML is the practice of using HTML elements that convey meaning...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Note</strong>: Using a heading inside <code>&lt;summary&gt;</code> is valid and can be useful for document structure.</p>
+<h3 id="example-8-details-with-an-image">Example 8: Details with an Image</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Show diagram<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">figure</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;diagram.png&quot;</span> <span class="na">alt</span><span class="o">=</span><span class="s">&quot;System architecture diagram&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">figcaption</span><span class="p">&gt;</span>Figure 1: System architecture<span class="p">&lt;/</span><span class="nt">figcaption</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">figure</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-9-styling-details-with-css">Example 9: Styling <code>&lt;details&gt;</code> with CSS</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="nt">details</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="mh">#ccc</span><span class="p">;</span>
+<span class="w">        </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">        </span><span class="k">margin-bottom</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">rem</span><span class="p">;</span>
+<span class="w">        </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="kt">rem</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nt">summary</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="p">;</span>
+<span class="w">        </span><span class="k">cursor</span><span class="p">:</span><span class="w"> </span><span class="kc">pointer</span><span class="p">;</span>
+<span class="w">        </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="kt">rem</span><span class="p">;</span>
+<span class="w">        </span><span class="k">list-style</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span><span class="w"> </span><span class="c">/* Hide default triangle */</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nt">summary</span><span class="p">::</span><span class="nd">before</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">content</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;▶ &quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">inline-block</span><span class="p">;</span>
+<span class="w">        </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="k">transform</span><span class="w"> </span><span class="mf">0.2</span><span class="kt">s</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nt">details</span><span class="o">[</span><span class="nt">open</span><span class="o">]</span><span class="w"> </span><span class="nt">summary</span><span class="p">::</span><span class="nd">before</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">transform</span><span class="p">:</span><span class="w"> </span><span class="nb">rotate</span><span class="p">(</span><span class="mi">90</span><span class="kt">deg</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nt">details</span><span class="o">[</span><span class="nt">open</span><span class="o">]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#f8f9fa</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nt">details</span><span class="w"> </span><span class="nt">p</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="kt">rem</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mf">1.5</span><span class="kt">rem</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is HTML?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>HTML stands for HyperText Markup Language...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-10-details-with-javascript">Example 10: Details with JavaScript</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;myDetails&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click to expand<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hidden content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;expandBtn&quot;</span><span class="p">&gt;</span>Expand<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;collapseBtn&quot;</span><span class="p">&gt;</span>Collapse<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;toggleBtn&quot;</span><span class="p">&gt;</span>Toggle<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">details</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;myDetails&#39;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;expandBtn&#39;</span><span class="p">).</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;collapseBtn&#39;</span><span class="p">).</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;toggleBtn&#39;</span><span class="p">).</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="nx">details</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;toggle&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Details is now:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">details</span><span class="p">.</span><span class="nx">open</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;open&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;closed&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-11-details-with-a-table">Example 11: Details with a Table</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Show specifications<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">th</span><span class="p">&gt;</span>Property<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;&lt;</span><span class="nt">th</span><span class="p">&gt;</span>Value<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Weight<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>1.2 kg<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Dimensions<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>30 x 20 x 5 cm<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Battery<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>5000 mAh<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-12-details-with-a-code-block">Example 12: Details with a Code Block</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Show code example<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">pre</span><span class="p">&gt;&lt;</span><span class="nt">code</span><span class="p">&gt;</span>
+function greet(name) {
+    return `Hello, ${name}!`;
+}
+    <span class="p">&lt;/</span><span class="nt">code</span><span class="p">&gt;&lt;/</span><span class="nt">pre</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-13-details-as-a-spoiler">Example 13: Details as a Spoiler</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>⚠️ Spoiler Alert: Click to reveal<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>The butler did it.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-14-details-in-a-documentation-page">Example 14: Details in a Documentation Page</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">main</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>API Documentation<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Authentication<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>To authenticate, include your API key in the header...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Endpoints<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">code</span><span class="p">&gt;</span>GET /users<span class="p">&lt;/</span><span class="nt">code</span><span class="p">&gt;</span> — Returns a list of users<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">code</span><span class="p">&gt;</span>POST /users<span class="p">&lt;/</span><span class="nt">code</span><span class="p">&gt;</span> — Creates a new user<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">code</span><span class="p">&gt;</span>DELETE /users/:id<span class="p">&lt;/</span><span class="nt">code</span><span class="p">&gt;</span> — Deletes a user<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Error Handling<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Errors are returned as JSON objects...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">main</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-15-details-with-rolegroup-not-needed">Example 15: Details with <code>role="group"</code> (Not Needed)</h3>
+<p>The browser automatically applies the correct roles. You don't need to add ARIA:</p>
+<div class="language-html highlight"><pre><span></span><code><span class="cm">&lt;!-- Bad: unnecessary ARIA --&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;group&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;button&quot;</span> <span class="na">aria-expanded</span><span class="o">=</span><span class="s">&quot;false&quot;</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Good: native semantics --&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<hr />
+<h2 id="10-common-use-cases">10. Common Use Cases</h2>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FAQ sections</td>
+<td>Each question-answer pair</td>
+</tr>
+<tr>
+<td>Table of contents</td>
+<td>Collapsible navigation</td>
+</tr>
+<tr>
+<td>Advanced settings</td>
+<td>Hidden options</td>
+</tr>
+<tr>
+<td>Spoiler content</td>
+<td>Hidden until clicked</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>Collapsible sections</td>
+</tr>
+<tr>
+<td>Code examples</td>
+<td>Hidden code blocks</td>
+</tr>
+<tr>
+<td>Specifications</td>
+<td>Hidden tables</td>
+</tr>
+<tr>
+<td>Image galleries</td>
+<td>Collapsible images</td>
+</tr>
+<tr>
+<td>Forms</td>
+<td>Optional fields</td>
+</tr>
+<tr>
+<td>Nested navigation</td>
+<td>Hierarchical menus</td>
+</tr>
+<tr>
+<td>Product details</td>
+<td>Collapsible specifications</td>
+</tr>
+<tr>
+<td>Legal text</td>
+<td>Terms and conditions</td>
+</tr>
+<tr>
+<td>Long articles</td>
+<td>Collapsible sections</td>
+</tr>
+<tr>
+<td>Interactive tutorials</td>
+<td>Step-by-step instructions</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11-best-practices">11. Best Practices</h2>
+<ol>
+<li>
+<p><strong>Always include a <code>&lt;summary&gt;</code></strong> – it's the clickable label. Without it, the browser provides a generic default.</p>
+</li>
+<li>
+<p><strong>Place <code>&lt;summary&gt;</code> as the first child</strong> – it must be the first child of <code>&lt;details&gt;</code>.</p>
+</li>
+<li>
+<p><strong>Use descriptive summary text</strong> – the summary should clearly indicate what will be revealed.</p>
+</li>
+<li>
+<p><strong>Don't add ARIA attributes</strong> – the browser handles accessibility natively.</p>
+</li>
+<li>
+<p><strong>Use the <code>open</code> attribute for default-expanded</strong> – if you want the content visible initially.</p>
+</li>
+<li>
+<p><strong>Use the <code>name</code> attribute for exclusive accordions</strong> – to allow only one open at a time.</p>
+</li>
+<li>
+<p><strong>Style with CSS</strong> – the default styles are minimal; use CSS for a polished look.</p>
+</li>
+<li>
+<p><strong>Use <code>::marker</code> for the triangle</strong> – to customise the disclosure triangle.</p>
+</li>
+<li>
+<p><strong>Listen for the <code>toggle</code> event</strong> – to run code when the state changes.</p>
+</li>
+<li>
+<p><strong>Keep content inside <code>&lt;details&gt;</code> accessible</strong> – all interactive elements inside should be keyboard-accessible.</p>
+</li>
+<li>
+<p><strong>Don't nest <code>&lt;details&gt;</code> too deeply</strong> – it can be confusing.</p>
+</li>
+<li>
+<p><strong>Use <code>&lt;details&gt;</code> for progressive enhancement</strong> – it works without JavaScript.</p>
+</li>
+<li>
+<p><strong>Test with screen readers</strong> – ensure the state is announced correctly.</p>
+</li>
+<li>
+<p><strong>Validate your HTML</strong> – check for multiple <code>&lt;summary&gt;</code> elements and incorrect nesting.</p>
+</li>
+<li>
+<p><strong>Consider SEO</strong> – content inside <code>&lt;details&gt;</code> is indexed by search engines.</p>
+</li>
+<li>
+<p><strong>Use <code>&lt;details&gt;</code> for FAQ sections</strong> – it's the ideal use case.</p>
+</li>
+<li>
+<p><strong>Use <code>&lt;details&gt;</code> for table of contents</strong> – collapsible navigation is useful for long documents.</p>
+</li>
+<li>
+<p><strong>Don't use <code>&lt;details&gt;</code> for primary navigation</strong> – use <code>&lt;nav&gt;</code>.</p>
+</li>
+<li>
+<p><strong>Use <code>open</code> in JavaScript</strong> – to programmatically expand or collapse.</p>
+</li>
+<li>
+<p><strong>Test on different devices</strong> – ensure the details widget works everywhere.</p>
+</li>
+</ol>
+<hr />
+<h2 id="12-common-mistakes">12. Common Mistakes</h2>
+<h3 id="mistake-omitting-summary">❌ Mistake: Omitting <code>&lt;summary&gt;</code></h3>
+<p><div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content without a summary.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<strong>Why it's wrong</strong>: While valid, the browser provides a generic default label ("Details"). It's better to provide a descriptive summary.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click to expand<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-multiple-summary-elements">❌ Mistake: Multiple <code>&lt;summary&gt;</code> Elements</h3>
+<p><div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Summary 1<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Summary 2<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<strong>Why it's wrong</strong>: Only one <code>&lt;summary&gt;</code> is allowed per <code>&lt;details&gt;</code>. The second summary is ignored.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Summary<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-adding-aria-expanded-manually">❌ Mistake: Adding <code>aria-expanded</code> Manually</h3>
+<p><div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span> <span class="na">aria-expanded</span><span class="o">=</span><span class="s">&quot;false&quot;</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<strong>Why it's wrong</strong>: The browser manages <code>aria-expanded</code> natively. Adding it manually can cause conflicts.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-placing-summary-after-other-content">❌ Mistake: Placing <code>&lt;summary&gt;</code> After Other Content</h3>
+<p><div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Summary<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<strong>Why it's wrong</strong>: <code>&lt;summary&gt;</code> must be the first child (or the first child after the <code>open</code> attribute).</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Summary<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-using-details-for-primary-navigation">❌ Mistake: Using <code>&lt;details&gt;</code> for Primary Navigation</h3>
+<p><div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Menu<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">nav</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<strong>Why it's wrong</strong>: Navigation should use <code>&lt;nav&gt;</code>. <code>&lt;details&gt;</code> is for disclosure widgets, not primary navigation.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Main navigation&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-nesting-details-inside-p">❌ Mistake: Nesting <code>&lt;details&gt;</code> Inside <code>&lt;p&gt;</code></h3>
+<p><div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Some text <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span> more text.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></div>
+<strong>Why it's wrong</strong>: <code>&lt;details&gt;</code> is a block-level element and cannot be inside a <code>&lt;p&gt;</code>.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Some text<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>More text.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-using-details-without-styling">❌ Mistake: Using <code>&lt;details&gt;</code> Without Styling</h3>
+<p><div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<strong>Why it's wrong</strong>: The default styling may not match your design. Use CSS for a polished look.</p>
+<p><strong>✅ Correct</strong>: Add CSS to style the details and summary.</p>
+<h3 id="mistake-forgetting-the-name-attribute-for-exclusive-accordions">❌ Mistake: Forgetting the <code>name</code> Attribute for Exclusive Accordions</h3>
+<p><div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Question 1<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Answer 1<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Question 2<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Answer 2<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<strong>Why it's wrong</strong>: Without the <code>name</code> attribute, multiple details can be open at once (which may be fine for some use cases).</p>
+<p><strong>✅ Correct</strong> (for exclusive accordion):
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;faq&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Question 1<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Answer 1<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;faq&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Question 2<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Answer 2<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-using-details-for-large-amounts-of-content">❌ Mistake: Using <code>&lt;details&gt;</code> for Large Amounts of Content</h3>
+<p><div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Show entire book<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Chapter 1...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Chapter 2...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="cm">&lt;!-- 100,000 words --&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<strong>Why it's wrong</strong>: Very large content inside <code>&lt;details&gt;</code> can be overwhelming and hurt performance.</p>
+<p><strong>✅ Correct</strong>: Break large content into multiple sections or use navigation.</p>
+<hr />
+<h2 id="13-performance-considerations">13. Performance Considerations</h2>
+<ul>
+<li><strong><code>&lt;details&gt;</code> is lightweight</strong> – one DOM node, minimal overhead.</li>
+<li><strong>No JavaScript required</strong> – the toggle works natively, so there's no script overhead.</li>
+<li><strong>Content is hidden</strong> – when collapsed, the content is not rendered (though it's still in the DOM).</li>
+<li><strong>Images</strong> – if the content contains images, they are loaded even when the details is collapsed (unless <code>loading="lazy"</code> is used).</li>
+<li><strong>Large content</strong> – very large content inside <code>&lt;details&gt;</code> can increase DOM size and memory usage.</li>
+<li><strong>Animation</strong> – animating the height of <code>&lt;details&gt;</code> is difficult because the content is hidden with <code>display: none</code> when collapsed. Use CSS transitions on <code>grid-template-rows</code> or <code>max-height</code> for animation.</li>
+</ul>
+<hr />
+<h2 id="14-security-considerations">14. Security Considerations</h2>
+<ul>
+<li><strong>XSS (Cross-Site Scripting)</strong> – when inserting user-generated content into <code>&lt;details&gt;</code> or <code>&lt;summary&gt;</code>, use <code>textContent</code> instead of <code>innerHTML</code>.</li>
+<li><strong><code>innerHTML</code></strong> – avoid with user input; use a sanitizer if necessary.</li>
+<li><strong>External links</strong> – use <code>rel="noopener noreferrer"</code> for <code>target="_blank"</code>.</li>
+<li><strong>Forms</strong> – validate input on the server; don't rely on client-side validation alone.</li>
+<li><strong>No direct security implications</strong> – <code>&lt;details&gt;</code> itself is not a security risk.</li>
+</ul>
+<hr />
+<h2 id="15-debugging-tips">15. Debugging Tips</h2>
+<ul>
+<li><strong>DevTools Elements panel</strong> – inspect <code>&lt;details&gt;</code> to see its content and the <code>open</code> attribute.</li>
+<li><strong>Accessibility Inspector</strong> – check for the <code>group</code> role and <code>button</code> (summary) with <code>aria-expanded</code>.</li>
+<li><strong>Computed styles</strong> – check the <code>display</code> property and the <code>::marker</code> style.</li>
+<li><strong>Console</strong> – use <code>document.querySelectorAll('details')</code> to list all details.</li>
+<li><strong><code>details.open</code></strong> – check the current state.</li>
+<li><strong>Toggle event</strong> – use <code>addEventListener('toggle', ...)</code> to debug state changes.</li>
+<li><strong>Validator</strong> – check for multiple <code>&lt;summary&gt;</code> elements and incorrect nesting.</li>
+<li><strong>Screen reader testing</strong> – ensure the state is announced correctly.</li>
+</ul>
+<hr />
+<h2 id="16-when-to-use">16. When to Use</h2>
+<ul>
+<li><strong>For FAQ sections</strong> – each question-answer pair.</li>
+<li><strong>For table of contents</strong> – collapsible navigation.</li>
+<li><strong>For advanced settings</strong> – hidden options.</li>
+<li><strong>For spoiler content</strong> – hidden until clicked.</li>
+<li><strong>For documentation</strong> – collapsible sections.</li>
+<li><strong>For code examples</strong> – hidden code blocks.</li>
+<li><strong>For specifications</strong> – hidden tables.</li>
+<li><strong>For image galleries</strong> – collapsible images.</li>
+<li><strong>For forms</strong> – optional fields.</li>
+<li><strong>For nested navigation</strong> – hierarchical menus.</li>
+<li><strong>For product details</strong> – collapsible specifications.</li>
+<li><strong>For legal text</strong> – terms and conditions.</li>
+<li><strong>For long articles</strong> – collapsible sections.</li>
+</ul>
+<hr />
+<h2 id="17-when-not-to-use">17. When Not to Use</h2>
+<ul>
+<li><strong>For primary navigation</strong> – use <code>&lt;nav&gt;</code>.</li>
+<li><strong>For main content</strong> – use <code>&lt;main&gt;</code>.</li>
+<li><strong>For sidebars</strong> – use <code>&lt;aside&gt;</code>.</li>
+<li><strong>For generic containers</strong> – use <code>&lt;div&gt;</code>.</li>
+<li><strong>For thematic groupings</strong> – use <code>&lt;section&gt;</code>.</li>
+<li><strong>For self-contained content</strong> – use <code>&lt;article&gt;</code>.</li>
+<li><strong>For very large content</strong> – break it into sections.</li>
+<li><strong>For critical content</strong> – content that must be visible should not be hidden.</li>
+</ul>
+<hr />
+<h2 id="18-related-concepts">18. Related Concepts</h2>
+<ul>
+<li><code>&lt;summary&gt;</code> – the clickable label for <code>&lt;details&gt;</code>.</li>
+<li><code>open</code> attribute – controls the state.</li>
+<li><code>toggle</code> event – fired when the state changes.</li>
+<li><code>name</code> attribute – for exclusive accordions.</li>
+<li>ARIA <code>group</code> role – accessibility role.</li>
+<li>ARIA <code>button</code> role – for the summary.</li>
+<li><code>aria-expanded</code> – managed natively by the browser.</li>
+<li>Semantic HTML – the broader philosophy.</li>
+<li>Progressive enhancement – works without JavaScript.</li>
+<li>Disclosure widget pattern – the UI pattern.</li>
+</ul>
+<hr />
+<h2 id="19-did-you-know">19. Did You Know?</h2>
+<ul>
+<li>
+<p>The <code>&lt;details&gt;</code> element was introduced in <strong>HTML5</strong>. It did not exist in HTML 4.01.</p>
+</li>
+<li>
+<p>The <code>&lt;details&gt;</code> element provides a <strong>native disclosure widget</strong> — no JavaScript is required to toggle the content.</p>
+</li>
+<li>
+<p>The <code>&lt;summary&gt;</code> element is the <strong>clickable label</strong> for <code>&lt;details&gt;</code>. If omitted, the browser provides a default label (usually "Details" or "▶").</p>
+</li>
+<li>
+<p>The <code>open</code> attribute is a <strong>boolean attribute</strong> — its presence means the details is expanded.</p>
+</li>
+<li>
+<p>The <code>toggle</code> event is fired when the <code>&lt;details&gt;</code> is opened or closed. It does <strong>not bubble</strong> in most browsers.</p>
+</li>
+<li>
+<p>The <code>name</code> attribute (introduced in 2023) allows you to create <strong>exclusive accordions</strong> — only one <code>&lt;details&gt;</code> with the same <code>name</code> can be open at a time.</p>
+</li>
+<li>
+<p>The <code>&lt;details&gt;</code> element is <strong>natively accessible</strong> — keyboard support and screen reader announcements are built in. You don't need to add ARIA attributes.</p>
+</li>
+<li>
+<p>Search engines like Google <strong>index content inside <code>&lt;details&gt;</code></strong> even when it's collapsed. This makes it safe for FAQ content.</p>
+</li>
+<li>
+<p>The disclosure triangle (▶) is a <strong>marker</strong> — you can style it with <code>::marker</code> or remove it with <code>list-style: none</code>.</p>
+</li>
+<li>
+<p>The <code>&lt;details&gt;</code> element is part of the <strong>interactive content</strong> category, meaning it's focusable and can be interacted with.</p>
+</li>
+<li>
+<p>The <code>&lt;details&gt;</code> element is commonly used in <strong>FAQ sections</strong>, <strong>documentation</strong>, and <strong>table of contents</strong>.</p>
+</li>
+<li>
+<p>The <code>&lt;details&gt;</code> element can be <strong>nested</strong> — a <code>&lt;details&gt;</code> inside another <code>&lt;details&gt;</code> creates a hierarchical disclosure.</p>
+</li>
+<li>
+<p>The <code>&lt;summary&gt;</code> element can contain a <strong>heading</strong> (<code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>) for document structure.</p>
+</li>
+<li>
+<p>The <code>&lt;details&gt;</code> element is <strong>not</strong> a landmark — it does not create a navigable region in the accessibility tree.</p>
+</li>
+<li>
+<p>The <code>&lt;details&gt;</code> element works in all modern browsers, including Internet Explorer 11 (though with some styling differences).</p>
+</li>
+<li>
+<p>The <code>&lt;details&gt;</code> element is a key example of <strong>progressive enhancement</strong> — it works even when JavaScript is disabled.</p>
+</li>
+<li>
+<p>The <code>&lt;details&gt;</code> element can be <strong>animated</strong> with CSS using <code>grid-template-rows</code> or <code>max-height</code>, though it's not straightforward.</p>
+</li>
+<li>
+<p>The <code>&lt;details&gt;</code> element is one of the most useful HTML5 additions for creating <strong>interactive content without JavaScript</strong>.</p>
+</li>
+</ul>
+<hr />
+<h2 id="20-summary">20. Summary</h2>
+<ul>
+<li>The <strong><code>&lt;details&gt;</code> element</strong> creates a <strong>disclosure widget</strong> — a native, interactive component that can be toggled between collapsed and expanded states.</li>
+<li>It is a <strong>block-level</strong> element and <strong>flow content</strong>.</li>
+<li>It is typically paired with a <strong><code>&lt;summary&gt;</code></strong> element, which serves as the clickable label.</li>
+<li>The <strong><code>open</code></strong> boolean attribute controls the initial state (expanded if present).</li>
+<li>The <strong><code>toggle</code></strong> event fires when the state changes.</li>
+<li>The <strong><code>name</code></strong> attribute enables exclusive accordions.</li>
+<li>It is <strong>natively accessible</strong> — no ARIA or JavaScript required.</li>
+<li><strong>Best practices</strong>: always include a <code>&lt;summary&gt;</code>, place it first, don't add ARIA attributes, use <code>open</code> for default-expanded, use <code>name</code> for exclusive accordions, style with CSS, and test with screen readers.</li>
+<li>Common mistakes include omitting <code>&lt;summary&gt;</code>, multiple <code>&lt;summary&gt;</code> elements, adding <code>aria-expanded</code> manually, placing <code>&lt;summary&gt;</code> after other content, and using <code>&lt;details&gt;</code> for primary navigation.</li>
+<li>The <code>&lt;details&gt;</code> element is essential for <strong>FAQ sections</strong>, <strong>documentation</strong>, <strong>table of contents</strong>, and any content that benefits from being collapsible.</li>
+<li>It is one of the most useful HTML5 elements for creating <strong>interactive content without JavaScript</strong>.</li>
+</ul>
+<hr />
 
 
 

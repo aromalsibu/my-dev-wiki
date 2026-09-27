@@ -35306,6 +35306,1298 @@
 
 
 <h1 id="semantic-best-practices">Semantic Best Practices</h1>
+<h1 id="chapter-semantic-best-practices">Chapter: Semantic Best Practices</h1>
+<hr />
+<h2 id="1-overview">1. Overview</h2>
+<h3 id="definition">Definition</h3>
+<p><strong>Semantic best practices</strong> are a set of guiding principles, patterns, and conventions for choosing and structuring HTML elements in a way that maximises <strong>meaning</strong>, <strong>accessibility</strong>, <strong>maintainability</strong>, and <strong>machine-readability</strong>. They are not rigid rules — they are heuristics distilled from years of real-world web development, accessibility standards (WCAG), and the collective experience of the web community.</p>
+<p>Semantic best practices go beyond simply "using semantic elements." They encompass:</p>
+<ul>
+<li><strong>Choosing the right element</strong> for the content's meaning.</li>
+<li><strong>Structuring documents</strong> with a logical hierarchy.</li>
+<li><strong>Avoiding ARIA when native HTML suffices</strong>.</li>
+<li><strong>Separating structure, presentation, and behaviour</strong>.</li>
+<li><strong>Designing for accessibility from the start</strong>.</li>
+<li><strong>Writing markup that is understandable</strong> by humans and machines alike.</li>
+</ul>
+<p>This chapter serves as a <strong>capstone</strong> for the Semantic HTML section — it synthesises the principles covered in the previous chapters into a cohesive set of guidelines you can apply to every project.</p>
+<h3 id="purpose">Purpose</h3>
+<p>Semantic best practices serve several essential purposes:</p>
+<ul>
+<li><strong>Consistency</strong> – a shared vocabulary for making markup decisions across teams and projects.</li>
+<li><strong>Accessibility</strong> – ensuring content is usable by people with disabilities.</li>
+<li><strong>Maintainability</strong> – writing code that is easy to read, understand, and modify.</li>
+<li><strong>SEO</strong> – helping search engines understand and rank content.</li>
+<li><strong>Interoperability</strong> – ensuring content works across browsers, devices, and tools.</li>
+<li><strong>Future-proofing</strong> – writing markup that survives redesigns and technology changes.</li>
+<li><strong>Performance</strong> – reducing DOM size and improving rendering efficiency.</li>
+</ul>
+<h3 id="where-it-fits">Where It Fits</h3>
+<p>Semantic best practices are a <strong>meta-layer</strong> over everything you've learned about HTML elements. They guide your decision-making at every step: choosing elements, nesting them, adding attributes, and structuring the document. They apply to every project, every page, and every component.</p>
+<div class="language-text highlight"><pre><span></span><code>Semantic Best Practices
+│
+├── Choosing the Right Element
+├── Document Structure
+├── Accessibility First
+├── Separation of Concerns
+├── ARIA Discipline
+├── Heading Hierarchy
+├── Landmark Usage
+├── Content Modelling
+├── Progressive Enhancement
+└── Validation &amp; Testing
+</code></pre></div>
+<hr />
+<h2 id="2-why-it-exists">2. Why It Exists</h2>
+<h3 id="the-problem">The Problem</h3>
+<p>HTML is a <strong>forgiving language</strong>. Browsers will render almost anything, even invalid or poorly structured markup. This leniency is a double-edged sword:</p>
+<ul>
+<li>It ensures backward compatibility with old pages.</li>
+<li>But it also allows bad habits to persist without obvious consequences.</li>
+</ul>
+<p>The result is a web full of:</p>
+<ul>
+<li><strong>Divitis</strong> – endless <code>&lt;div&gt;</code> and <code>&lt;span&gt;</code> elements with no meaning.</li>
+<li><strong>Inaccessible interfaces</strong> – custom widgets that can't be used with a keyboard or screen reader.</li>
+<li><strong>Fragile markup</strong> – class names that break when designs change.</li>
+<li><strong>Poor SEO</strong> – search engines can't understand the content structure.</li>
+<li><strong>Maintenance nightmares</strong> – code that no one dares to touch.</li>
+<li><strong>ARIA abuse</strong> – adding ARIA roles to non-semantic elements when native elements exist.</li>
+</ul>
+<p>These problems don't show up in visual testing — the page may look fine — but they create a poor experience for users of assistive technologies and make the codebase harder to maintain.</p>
+<h3 id="previous-limitations">Previous Limitations</h3>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Divitis</td>
+<td>No semantic meaning; inaccessible; fragile.</td>
+</tr>
+<tr>
+<td>ARIA overuse</td>
+<td>Confusing for screen readers; redundant with native semantics.</td>
+</tr>
+<tr>
+<td>Broken heading hierarchy</td>
+<td>Screen reader users can't navigate.</td>
+</tr>
+<tr>
+<td>Missing landmarks</td>
+<td>No way to jump between page regions.</td>
+</tr>
+<tr>
+<td>Misused elements</td>
+<td><code>&lt;div&gt;</code> for buttons, <code>&lt;table&gt;</code> for layout, <code>&lt;b&gt;</code> for importance.</td>
+</tr>
+<tr>
+<td>No accessible names</td>
+<td>Interactive elements are unlabelled.</td>
+</tr>
+<tr>
+<td>Inline styles and events</td>
+<td>Mixed concerns; hard to maintain; security risks.</td>
+</tr>
+<tr>
+<td>Lack of validation</td>
+<td>Errors go unnoticed until they cause problems.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="why-best-practices-were-established">Why Best Practices Were Established</h3>
+<p>Semantic best practices emerged from:</p>
+<ul>
+<li><strong>WCAG (Web Content Accessibility Guidelines)</strong> – international standards for web accessibility.</li>
+<li><strong>ARIA Authoring Practices Guide (APG)</strong> – W3C guidance on ARIA usage.</li>
+<li><strong>Browser vendor documentation</strong> – MDN, Web.dev, etc.</li>
+<li><strong>Community experience</strong> – lessons learned from years of building websites.</li>
+<li><strong>Style guides</strong> – Google, Airbnb, and others publish HTML style guides.</li>
+</ul>
+<p>These practices are not arbitrary — they are backed by research, standards, and real-world results. Following them leads to better outcomes for users, developers, and businesses.</p>
+<hr />
+<h2 id="3-syntax-basic-usage-core-principles-in-action">3. Syntax / Basic Usage (Core Principles in Action)</h2>
+<h3 id="principle-1-choose-the-right-element">Principle 1: Choose the Right Element</h3>
+<p><strong>Bad</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;button&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;submit()&quot;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;heading&quot;</span><span class="p">&gt;</span>Welcome<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;nav&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;link&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;navigate(&#39;/&#39;)&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Good</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Welcome<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Main navigation&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="principle-2-use-landmarks">Principle 2: Use Landmarks</h3>
+<p><strong>Bad</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;header&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;main&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;footer&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Good</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">header</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">main</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">main</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">footer</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">footer</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="principle-3-maintain-a-logical-heading-hierarchy">Principle 3: Maintain a Logical Heading Hierarchy</h3>
+<p><strong>Bad</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Main Title<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h4</span><span class="p">&gt;</span>Subsection<span class="p">&lt;/</span><span class="nt">h4</span><span class="p">&gt;</span>   <span class="cm">&lt;!-- Skipped h2 and h3 --&gt;</span>
+<span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Another Section<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Good</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Main Title<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Section<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Subsection<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Another Section<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="principle-4-use-native-elements-before-aria">Principle 4: Use Native Elements Before ARIA</h3>
+<p><strong>Bad</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;button&quot;</span> <span class="na">tabindex</span><span class="o">=</span><span class="s">&quot;0&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;doSomething()&quot;</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Good</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">button</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;doSomething()&quot;</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="principle-5-provide-accessible-names">Principle 5: Provide Accessible Names</h3>
+<p><strong>Bad</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>✕<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">&gt;&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;logo.png&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Good</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">button</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Close&quot;</span><span class="p">&gt;</span>✕<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">&gt;&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;logo.png&quot;</span> <span class="na">alt</span><span class="o">=</span><span class="s">&quot;Company Logo&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="principle-6-separate-structure-presentation-and-behaviour">Principle 6: Separate Structure, Presentation, and Behaviour</h3>
+<p><strong>Bad</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">p</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;color: red; font-weight: bold;&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;highlight()&quot;</span><span class="p">&gt;</span>Important<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Good</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;important&quot;</span><span class="p">&gt;</span>Important<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="cm">&lt;!-- CSS in stylesheet --&gt;</span>
+<span class="cm">&lt;!-- JS in external file with addEventListener --&gt;</span>
+</code></pre></div></p>
+<h3 id="principle-7-use-lists-for-groups-of-related-items">Principle 7: Use Lists for Groups of Related Items</h3>
+<p><strong>Bad</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;menu&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/about&quot;</span><span class="p">&gt;</span>About<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/contact&quot;</span><span class="p">&gt;</span>Contact<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Good</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Main navigation&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/about&quot;</span><span class="p">&gt;</span>About<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/contact&quot;</span><span class="p">&gt;</span>Contact<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="principle-8-label-all-form-controls">Principle 8: Label All Form Controls</h3>
+<p><strong>Bad</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&quot;Name&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;email&quot;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&quot;Email&quot;</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Good</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Name:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;name&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;name&quot;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&quot;Enter your name&quot;</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;email&quot;</span><span class="p">&gt;</span>Email:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;email&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;email&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;email&quot;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&quot;your@email.com&quot;</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<hr />
+<h2 id="4-mental-model">4. Mental Model</h2>
+<h3 id="the-lego-instruction-manual-analogy">The "Lego Instruction Manual" Analogy</h3>
+<p>Think of semantic HTML as a <strong>Lego instruction manual</strong>. Each brick has a specific purpose, and the instructions tell you exactly which brick to use where. If you use the wrong brick (a <code>&lt;div&gt;</code> where a <code>&lt;button&gt;</code> should be), the model might look right from a distance, but it won't work properly. Semantic best practices are the instruction manual — they guide you to use the right brick for the right job.</p>
+<h3 id="the-signage-system-analogy">The "Signage System" Analogy</h3>
+<p>Imagine a large building (a website) with no signs. Visitors (users) would wander aimlessly, unable to find the restroom (navigation), the exit (footer), or the main hall (main content). Semantic HTML is the <strong>signage system</strong> — it tells everyone where everything is. Best practices are the rules for making the signs clear, consistent, and accessible to everyone, including those with visual impairments.</p>
+<h3 id="the-contract-with-machines-analogy">The "Contract with Machines" Analogy</h3>
+<p>Think of semantic HTML as a <strong>contract with machines</strong> (browsers, screen readers, search engines). You promise to use elements according to their intended meaning, and in return, the machines promise to interpret your content correctly. Best practices are the terms of the contract — if you follow them, the machines hold up their end. If you break them (e.g., using a <code>&lt;div&gt;</code> for a button), the contract is void, and the machines can't help you.</p>
+<h3 id="the-code-review-checklist-analogy">The "Code Review Checklist" Analogy</h3>
+<p>Semantic best practices are like a <strong>code review checklist</strong>. Before you ship your HTML, you mentally review it against the checklist:</p>
+<ul>
+<li>Is each element semantic?</li>
+<li>Is the heading hierarchy logical?</li>
+<li>Are landmarks used?</li>
+<li>Are ARIA attributes necessary?</li>
+<li>Are forms labelled?</li>
+<li>Is the markup valid?</li>
+</ul>
+<p>If you can answer "yes" to all, you've followed best practices.</p>
+<hr />
+<h2 id="5-core-concepts">5. Core Concepts</h2>
+<h3 id="concept-1-semantic-first-aria-second">Concept 1: Semantic First, ARIA Second</h3>
+<p>The <strong>First Rule of ARIA</strong> is: <em>"If you can use a native HTML element with the semantics and behavior you require already built in, instead of re-purposing an element and adding an ARIA role, state or property to make it accessible, then do so."</em></p>
+<p><strong>Why</strong>: Native HTML elements come with built-in accessibility, keyboard support, and browser behaviour. ARIA only changes the accessibility tree — it doesn't add behaviour. A <code>&lt;div role="button"&gt;</code> looks like a button to screen readers but doesn't behave like one (no keyboard activation, no focus management) without additional JavaScript.</p>
+<p><strong>Rule</strong>: Use <code>&lt;button&gt;</code> for buttons, <code>&lt;a&gt;</code> for links, <code>&lt;input&gt;</code> for inputs, <code>&lt;nav&gt;</code> for navigation, etc. Only reach for ARIA when no native element fits.</p>
+<h3 id="concept-2-landmarks-for-navigation">Concept 2: Landmarks for Navigation</h3>
+<p><strong>Landmark roles</strong> are the primary way screen reader users navigate a page. The main landmarks are:</p>
+<table>
+<thead>
+<tr>
+<th>Landmark</th>
+<th>Element</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>banner</code></td>
+<td><code>&lt;header&gt;</code> (top-level)</td>
+<td>Site-wide header</td>
+</tr>
+<tr>
+<td><code>navigation</code></td>
+<td><code>&lt;nav&gt;</code></td>
+<td>Navigation links</td>
+</tr>
+<tr>
+<td><code>main</code></td>
+<td><code>&lt;main&gt;</code></td>
+<td>Primary content</td>
+</tr>
+<tr>
+<td><code>complementary</code></td>
+<td><code>&lt;aside&gt;</code></td>
+<td>Supplementary content</td>
+</tr>
+<tr>
+<td><code>contentinfo</code></td>
+<td><code>&lt;footer&gt;</code> (top-level)</td>
+<td>Site-wide footer</td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td><code>&lt;form role="search"&gt;</code></td>
+<td>Search functionality</td>
+</tr>
+<tr>
+<td><code>region</code></td>
+<td><code>&lt;section&gt;</code> (with accessible name)</td>
+<td>Thematic grouping</td>
+</tr>
+<tr>
+<td><code>form</code></td>
+<td><code>&lt;form&gt;</code> (with accessible name)</td>
+<td>Form</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Best practice</strong>: Use landmarks consistently. Every page should have at least <code>banner</code>, <code>main</code>, and <code>contentinfo</code>. Use <code>navigation</code> for major menus. Use <code>complementary</code> for sidebars. Use <code>region</code> for sections with headings.</p>
+<p><strong>Why</strong>: Screen reader users can press a single key (e.g., <code>D</code> in NVDA) to cycle through landmarks, making navigation fast and efficient.</p>
+<h3 id="concept-3-the-heading-hierarchy">Concept 3: The Heading Hierarchy</h3>
+<p><strong>Headings</strong> (<code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>) create the document outline. Best practices:</p>
+<ul>
+<li><strong>One <code>&lt;h1&gt;</code> per page</strong> – the main title of the page.</li>
+<li><strong>No skipped levels</strong> – <code>&lt;h1&gt;</code> → <code>&lt;h2&gt;</code> → <code>&lt;h3&gt;</code> → etc.</li>
+<li><strong>Descriptive headings</strong> – each heading should clearly describe the content that follows.</li>
+<li><strong>Don't use headings for styling</strong> – use CSS for visual hierarchy.</li>
+<li><strong>Headings inside sections</strong> – every <code>&lt;section&gt;</code> and <code>&lt;article&gt;</code> should have a heading.</li>
+</ul>
+<p><strong>Why</strong>: Screen reader users can navigate by headings (press <code>H</code> for next heading, <code>1</code>–<code>6</code> for specific levels). A logical hierarchy makes the content navigable and understandable.</p>
+<h3 id="concept-4-content-models-and-valid-nesting">Concept 4: Content Models and Valid Nesting</h3>
+<p>Each HTML element has a <strong>content model</strong> – the type of content it can contain. Best practices:</p>
+<ul>
+<li><strong>Respect content models</strong> – don't put block elements inside <code>&lt;p&gt;</code>, don't put <code>&lt;li&gt;</code> outside <code>&lt;ul&gt;</code>/<code>&lt;ol&gt;</code>.</li>
+<li><strong>Use the right container</strong> – <code>&lt;ul&gt;</code> for unordered lists, <code>&lt;ol&gt;</code> for ordered lists, <code>&lt;dl&gt;</code> for description lists.</li>
+<li><strong>Don't over-nest</strong> – keep the DOM shallow for performance and maintainability.</li>
+</ul>
+<p><strong>Why</strong>: Invalid nesting leads to unpredictable DOM structures and can break accessibility.</p>
+<h3 id="concept-5-accessible-names-for-interactive-elements">Concept 5: Accessible Names for Interactive Elements</h3>
+<p>Every interactive element (buttons, links, form controls) needs an <strong>accessible name</strong> — a label that screen readers announce. Best practices:</p>
+<ul>
+<li><strong>Visible text</strong> – the best accessible name is visible text (e.g., <code>&lt;button&gt;Submit&lt;/button&gt;</code>).</li>
+<li><strong><code>aria-label</code></strong> – for elements with no visible text (e.g., icon buttons).</li>
+<li><strong><code>aria-labelledby</code></strong> – to reference another element that provides the name.</li>
+<li><strong><code>&lt;label&gt;</code> for form controls</strong> – always associate a label with every input.</li>
+</ul>
+<p><strong>Why</strong>: Without an accessible name, screen readers announce "button" or "link" with no context, making the page unusable.</p>
+<h3 id="concept-6-separation-of-concerns">Concept 6: Separation of Concerns</h3>
+<ul>
+<li><strong>HTML</strong> = structure and semantics.</li>
+<li><strong>CSS</strong> = presentation.</li>
+<li><strong>JavaScript</strong> = behaviour.</li>
+</ul>
+<p>Best practices:</p>
+<ul>
+<li><strong>No inline styles</strong> – use external or internal CSS.</li>
+<li><strong>No inline event handlers</strong> (<code>onclick</code>, etc.) – use <code>addEventListener</code>.</li>
+<li><strong>No presentational elements</strong> – avoid <code>&lt;font&gt;</code>, <code>&lt;center&gt;</code>, <code>&lt;big&gt;</code>, etc.</li>
+<li><strong>No presentational attributes</strong> – avoid <code>bgcolor</code>, <code>align</code>, <code>border</code>, etc.</li>
+</ul>
+<p><strong>Why</strong>: Separation makes code easier to maintain, test, and scale. It also improves caching and performance.</p>
+<h3 id="concept-7-progressive-enhancement">Concept 7: Progressive Enhancement</h3>
+<p>Build a solid HTML foundation, then layer on CSS and JavaScript:</p>
+<ol>
+<li><strong>HTML</strong> – the content works without CSS or JS.</li>
+<li><strong>CSS</strong> – enhances the visual presentation.</li>
+<li><strong>JavaScript</strong> – adds interactivity and dynamic behaviour.</li>
+</ol>
+<p><strong>Why</strong>: Ensures the content is accessible even when CSS or JS fails to load, or when the user has disabled them.</p>
+<h3 id="concept-8-validation-and-testing">Concept 8: Validation and Testing</h3>
+<ul>
+<li><strong>Validate your HTML</strong> – use the W3C validator.</li>
+<li><strong>Test with screen readers</strong> – NVDA, JAWS, VoiceOver, TalkBack.</li>
+<li><strong>Test keyboard navigation</strong> – navigate the page using only the keyboard.</li>
+<li><strong>Use accessibility tools</strong> – Lighthouse, axe, WAVE.</li>
+<li><strong>Test responsive design</strong> – ensure the page works on all screen sizes.</li>
+</ul>
+<p><strong>Why</strong>: Validation catches errors early; testing ensures real users can use your content.</p>
+<h3 id="concept-9-meaningful-alt-text">Concept 9: Meaningful <code>alt</code> Text</h3>
+<p>Every <code>&lt;img&gt;</code> must have an <code>alt</code> attribute:</p>
+<ul>
+<li><strong>Descriptive alt</strong> – for meaningful images: <code>alt="Company logo"</code>.</li>
+<li><strong>Empty alt</strong> – for decorative images: <code>alt=""</code>.</li>
+<li><strong>No redundant alt</strong> – don't repeat the caption in the alt text.</li>
+</ul>
+<p><strong>Why</strong>: Screen readers announce the alt text; if it's missing, they may read the filename.</p>
+<h3 id="concept-10-use-time-for-dates">Concept 10: Use <code>&lt;time&gt;</code> for Dates</h3>
+<p>Wrap dates and times in <code>&lt;time&gt;</code> with a <code>datetime</code> attribute:</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">time</span> <span class="na">datetime</span><span class="o">=</span><span class="s">&quot;2026-09-08&quot;</span><span class="p">&gt;</span>September 8, 2026<span class="p">&lt;/</span><span class="nt">time</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why</strong>: Machines can parse the date; humans read the friendly text.</p>
+<h3 id="concept-11-use-figure-and-figcaption-for-media">Concept 11: Use <code>&lt;figure&gt;</code> and <code>&lt;figcaption&gt;</code> for Media</h3>
+<p>Group images, diagrams, and code with captions:</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">figure</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;chart.png&quot;</span> <span class="na">alt</span><span class="o">=</span><span class="s">&quot;Sales chart&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">figcaption</span><span class="p">&gt;</span>Figure 1: Sales growth<span class="p">&lt;/</span><span class="nt">figcaption</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">figure</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why</strong>: The caption is programmatically associated with the media.</p>
+<h3 id="concept-12-use-details-for-disclosure">Concept 12: Use <code>&lt;details&gt;</code> for Disclosure</h3>
+<p>Use <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> for native disclosure widgets:</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>What is HTML?<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>HTML is...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why</strong>: Native accessibility and no JavaScript required.</p>
+<h3 id="concept-13-use-dialog-for-modals">Concept 13: Use <code>&lt;dialog&gt;</code> for Modals</h3>
+<p>Use <code>&lt;dialog&gt;</code> with <code>showModal()</code> for native modals:</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">dialog</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;myDialog&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;dialog&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Close<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">dialog</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;myDialog&#39;</span><span class="p">).</span><span class="nx">showModal</span><span class="p">();</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why</strong>: Native focus trapping, Escape handling, and accessibility.</p>
+<h3 id="concept-14-landmark-labels-for-multiple-instances">Concept 14: Landmark Labels for Multiple Instances</h3>
+<p>When you have multiple instances of the same landmark, label them:</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Main navigation&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Footer navigation&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why</strong>: Screen reader users can distinguish between them.</p>
+<h3 id="concept-15-use-aria-current-for-current-items">Concept 15: Use <code>aria-current</code> for Current Items</h3>
+<p>Mark the current page or item in a set:</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span> <span class="na">aria-current</span><span class="o">=</span><span class="s">&quot;page&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why</strong>: Screen readers announce "current page".</p>
+<hr />
+<h2 id="6-how-it-works-applying-best-practices">6. How It Works (Applying Best Practices)</h2>
+<h3 id="step-by-step-a-semantic-review-workflow">Step-by-Step: A Semantic Review Workflow</h3>
+<div class="language-text highlight"><pre><span></span><code>1.  Start with Content
+    │   └── What is the content? What is its meaning?
+    │
+    ▼
+2.  Choose Elements
+    │   ├── Is there a native HTML element for this?
+    │   ├── Does it convey the right meaning?
+    │   └── Avoid &lt;div&gt;/&lt;span&gt; unless no semantic element fits.
+    │
+    ▼
+3.  Structure the Document
+    │   ├── &lt;header&gt;, &lt;nav&gt;, &lt;main&gt;, &lt;aside&gt;, &lt;footer&gt;
+    │   ├── Headings in logical order (h1 → h2 → h3)
+    │   └── Sections and articles for thematic grouping.
+    │
+    ▼
+4.  Label Interactive Elements
+    │   ├── &lt;label&gt; for form controls.
+    │   ├── Visible text for buttons and links.
+    │   └── aria-label for icon-only elements.
+    │
+    ▼
+5.  Add ARIA Only When Necessary
+    │   ├── First Rule of ARIA: use native HTML.
+    │   ├── Add roles only when no native element fits.
+    │   └── Add states/properties for dynamic content.
+    │
+    ▼
+6.  Separate Concerns
+    │   ├── CSS in stylesheets (no inline styles).
+    │   ├── JS in external files (no onclick attributes).
+    │   └── No presentational HTML.
+    │
+    ▼
+7.  Validate
+    │   ├── W3C HTML Validator.
+    │   ├── Lighthouse / axe accessibility audit.
+    │   └── Screen reader testing.
+    │
+    ▼
+8.  Review and Refine
+    │   └── Iterate until the markup is semantic and accessible.
+</code></pre></div>
+<h3 id="the-semantic-checklist">The Semantic Checklist</h3>
+<p>Before shipping any page, review it against this checklist:</p>
+<ul>
+<li>[ ] Is every element the most semantic choice?</li>
+<li>[ ] Is there exactly one <code>&lt;h1&gt;</code>?</li>
+<li>[ ] Are heading levels sequential (no skipping)?</li>
+<li>[ ] Are landmarks used (<code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code>)?</li>
+<li>[ ] Does every <code>&lt;main&gt;</code> appear only once?</li>
+<li>[ ] Is every <code>&lt;nav&gt;</code> labelled if there are multiple?</li>
+<li>[ ] Does every image have an appropriate <code>alt</code>?</li>
+<li>[ ] Does every form control have a <code>&lt;label&gt;</code>?</li>
+<li>[ ] Does every button have visible text or an <code>aria-label</code>?</li>
+<li>[ ] Is there any unnecessary ARIA?</li>
+<li>[ ] Are there any inline styles or event handlers?</li>
+<li>[ ] Is the HTML valid?</li>
+<li>[ ] Does the page work with a keyboard only?</li>
+<li>[ ] Does the page work with a screen reader?</li>
+<li>[ ] Is the page responsive?</li>
+<li>[ ] Are links descriptive (not "click here")?</li>
+<li>[ ] Are dates wrapped in <code>&lt;time&gt;</code>?</li>
+<li>[ ] Are media elements wrapped in <code>&lt;figure&gt;</code> with <code>&lt;figcaption&gt;</code>?</li>
+<li>[ ] Are disclosure widgets using <code>&lt;details&gt;</code>?</li>
+<li>[ ] Are modals using <code>&lt;dialog&gt;</code>?</li>
+</ul>
+<hr />
+<h2 id="7-internal-architecture-under-the-hood">7. Internal Architecture / Under the Hood</h2>
+<h3 id="how-semantic-html-affects-the-accessibility-tree">How Semantic HTML Affects the Accessibility Tree</h3>
+<p>The browser builds an <strong>accessibility tree</strong> from the DOM. Semantic elements and ARIA attributes determine:</p>
+<ul>
+<li>The <strong>role</strong> of each node (button, link, heading, landmark, etc.).</li>
+<li>The <strong>name</strong> of each node (from text content, <code>aria-label</code>, <code>aria-labelledby</code>, etc.).</li>
+<li>The <strong>state</strong> of each node (expanded, checked, disabled, etc.).</li>
+<li>The <strong>relationships</strong> between nodes (labelled by, described by, etc.).</li>
+</ul>
+<p>Screen readers consume this tree to present the page to users. Semantic HTML ensures the tree is accurate and useful.</p>
+<h3 id="how-semantic-html-affects-seo">How Semantic HTML Affects SEO</h3>
+<p>Search engines use semantic HTML to:</p>
+<ul>
+<li>Identify the <strong>primary content</strong> (<code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>).</li>
+<li>Understand the <strong>hierarchy</strong> (<code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>).</li>
+<li>Recognise <strong>navigation</strong> (<code>&lt;nav&gt;</code>).</li>
+<li>Extract <strong>metadata</strong> (<code>&lt;time&gt;</code>, <code>&lt;address&gt;</code>).</li>
+<li>Distinguish <strong>main content</strong> from <strong>supplementary content</strong> (<code>&lt;aside&gt;</code>).</li>
+</ul>
+<p>Google has confirmed that semantic HTML is a <strong>ranking signal</strong> — not directly, but through its impact on content understanding and user experience.</p>
+<h3 id="how-semantic-html-affects-performance">How Semantic HTML Affects Performance</h3>
+<ul>
+<li><strong>Smaller DOM</strong> – fewer elements means faster parsing and rendering.</li>
+<li><strong>Fewer styles</strong> – semantic elements have sensible default styles, reducing the need for CSS resets.</li>
+<li><strong>Better caching</strong> – external CSS and JS files are cached separately from HTML.</li>
+<li><strong>Progressive rendering</strong> – semantic elements help browsers render content incrementally.</li>
+</ul>
+<h3 id="the-role-of-the-html-validator">The Role of the HTML Validator</h3>
+<p>The W3C validator checks for:</p>
+<ul>
+<li><strong>Valid nesting</strong> – respecting content models.</li>
+<li><strong>Required attributes</strong> – e.g., <code>alt</code> on <code>&lt;img&gt;</code>.</li>
+<li><strong>Duplicate IDs</strong> – which break JavaScript and CSS.</li>
+<li><strong>Deprecated elements</strong> – <code>&lt;font&gt;</code>, <code>&lt;center&gt;</code>, etc.</li>
+<li><strong>ARIA validity</strong> – correct roles, states, and properties.</li>
+</ul>
+<p>Validation catches errors that might not be visually apparent but can break accessibility.</p>
+<hr />
+<h2 id="8-lifecycle-workflow">8. Lifecycle / Workflow</h2>
+<h3 id="the-lifecycle-of-semantic-best-practices">The Lifecycle of Semantic Best Practices</h3>
+<div class="language-text highlight"><pre><span></span><code>1.  Planning
+    │   └── Choose the semantic structure before writing code.
+    │
+    ▼
+2.  Authoring
+    │   └── Write semantic HTML using the right elements.
+    │
+    ▼
+3.  Review
+    │   └── Check against the semantic checklist.
+    │
+    ▼
+4.  Validation
+    │   └── Run the W3C validator.
+    │
+    ▼
+5.  Testing
+    │   ├── Keyboard navigation.
+    │   ├── Screen reader testing.
+    │   ├── Responsive testing.
+    │   └── Lighthouse / axe audit.
+    │
+    ▼
+6.  Deployment
+    │   └── Ship the semantic, accessible markup.
+    │
+    ▼
+7.  Maintenance
+    │   ├── Keep the structure semantic as content changes.
+    │   └── Re-validate and re-test after updates.
+    │
+    ▼
+8.  Refactoring
+    │   └── Improve semantics over time as best practices evolve.
+</code></pre></div>
+<h3 id="continuous-improvement">Continuous Improvement</h3>
+<p>Semantic best practices are not a one-time task — they are an ongoing commitment. As the web platform evolves (new elements, new ARIA features, new accessibility guidelines), you should review and update your markup.</p>
+<hr />
+<h2 id="9-practical-examples">9. Practical Examples</h2>
+<h3 id="example-1-a-fully-semantic-page">Example 1: A Fully Semantic Page</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&quot;en&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Semantic Best Practices Demo<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;styles.css&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;#main-content&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;skip-link&quot;</span><span class="p">&gt;</span>Skip to main content<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">header</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>My Website<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Main navigation&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span> <span class="na">aria-current</span><span class="o">=</span><span class="s">&quot;page&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/about&quot;</span><span class="p">&gt;</span>About<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/contact&quot;</span><span class="p">&gt;</span>Contact<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">main</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;main-content&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">article</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">header</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Article Title<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Published on <span class="p">&lt;</span><span class="nt">time</span> <span class="na">datetime</span><span class="o">=</span><span class="s">&quot;2026-09-08&quot;</span><span class="p">&gt;</span>September 8, 2026<span class="p">&lt;/</span><span class="nt">time</span><span class="p">&gt;</span> by <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/author/jane&quot;</span><span class="p">&gt;</span>Jane Doe<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">section</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Introduction<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>This is the introduction...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">section</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Key Points<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+                    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>First point<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+                    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Second point<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+                <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+
+                <span class="p">&lt;</span><span class="nt">figure</span><span class="p">&gt;</span>
+                    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;diagram.png&quot;</span> <span class="na">alt</span><span class="o">=</span><span class="s">&quot;System architecture diagram showing three layers&quot;</span><span class="p">&gt;</span>
+                    <span class="p">&lt;</span><span class="nt">figcaption</span><span class="p">&gt;</span>Figure 1: System architecture<span class="p">&lt;/</span><span class="nt">figcaption</span><span class="p">&gt;</span>
+                <span class="p">&lt;/</span><span class="nt">figure</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">section</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Details<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+                    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Advanced details<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+                    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hidden content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+                <span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">section</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">footer</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Tags: <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/tag/html&quot;</span><span class="p">&gt;</span>HTML<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>, <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/tag/semantics&quot;</span><span class="p">&gt;</span>Semantics<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">footer</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">article</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">aside</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Related articles&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Related Articles<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;#&quot;</span><span class="p">&gt;</span>Article 1<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;#&quot;</span><span class="p">&gt;</span>Article 2<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">aside</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">main</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">footer</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="ni">&amp;copy;</span> 2026 My Website. All rights reserved.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">address</span><span class="p">&gt;</span>
+            Contact: <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;mailto:info@example.com&quot;</span><span class="p">&gt;</span>info@example.com<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">address</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Footer navigation&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/privacy&quot;</span><span class="p">&gt;</span>Privacy<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/terms&quot;</span><span class="p">&gt;</span>Terms<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">footer</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;app.js&quot;</span> <span class="na">defer</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Key Semantic Features</strong>:
+- <code>lang</code> on <code>&lt;html&gt;</code>.
+- Skip link to main content.
+- <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code>.
+- Single <code>&lt;h1&gt;</code>, logical heading hierarchy.
+- <code>aria-label</code> on multiple navs and aside.
+- <code>aria-current="page"</code> on the current nav link.
+- <code>&lt;time&gt;</code> for dates.
+- <code>&lt;figure&gt;</code> and <code>&lt;figcaption&gt;</code> for media.
+- <code>&lt;details&gt;</code> for disclosure.
+- <code>&lt;address&gt;</code> for contact information.
+- External CSS and JS with <code>defer</code>.</p>
+<h3 id="example-2-before-and-after-a-form">Example 2: Before and After – A Form</h3>
+<p><strong>Before (Non-Semantic)</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;form&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;field&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Name:<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;field&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>Email:<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;email&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;button&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;submitForm()&quot;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>After (Semantic)</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;/submit&quot;</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;POST&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Name:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;name&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;name&quot;</span> <span class="na">required</span> <span class="na">autocomplete</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;email&quot;</span><span class="p">&gt;</span>Email:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;email&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;email&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;email&quot;</span> <span class="na">required</span> <span class="na">autocomplete</span><span class="o">=</span><span class="s">&quot;email&quot;</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Improvements</strong>:
+- <code>&lt;form&gt;</code> instead of <code>&lt;div class="form"&gt;</code>.
+- <code>&lt;label&gt;</code> associated with inputs.
+- <code>type="email"</code> for email validation.
+- <code>required</code> for mandatory fields.
+- <code>autocomplete</code> for autofill.
+- <code>&lt;button&gt;</code> instead of <code>&lt;div class="button"&gt;</code>.
+- No inline event handler.</p>
+<h3 id="example-3-before-and-after-navigation">Example 3: Before and After – Navigation</h3>
+<p><strong>Before (Non-Semantic)</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;nav&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;nav-item&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;location.href=&#39;/&#39;&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;nav-item&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;location.href=&#39;/about&#39;&quot;</span><span class="p">&gt;</span>About<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;nav-item&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;location.href=&#39;/contact&#39;&quot;</span><span class="p">&gt;</span>Contact<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>After (Semantic)</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Main navigation&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span> <span class="na">aria-current</span><span class="o">=</span><span class="s">&quot;page&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/about&quot;</span><span class="p">&gt;</span>About<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/contact&quot;</span><span class="p">&gt;</span>Contact<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Improvements</strong>:
+- <code>&lt;nav&gt;</code> landmark.
+- <code>&lt;ul&gt;</code> list structure.
+- <code>&lt;a&gt;</code> links (keyboard accessible, right-clickable).
+- <code>aria-current="page"</code> on the current page.
+- No inline event handlers.</p>
+<h3 id="example-4-before-and-after-modal">Example 4: Before and After – Modal</h3>
+<p><strong>Before (Non-Semantic)</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;modal-overlay&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;overlay&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;modal&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;modal-header&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;close&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;closeModal()&quot;</span><span class="p">&gt;</span>✕<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Confirm<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;modal-body&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Are you sure?<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;modal-footer&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;btn&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;confirm()&quot;</span><span class="p">&gt;</span>Yes<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;btn&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;closeModal()&quot;</span><span class="p">&gt;</span>No<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>After (Semantic)</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">dialog</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;confirmDialog&quot;</span> <span class="na">aria-labelledby</span><span class="o">=</span><span class="s">&quot;dialogTitle&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h2</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;dialogTitle&quot;</span><span class="p">&gt;</span>Confirm<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Are you sure?<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;dialog&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;yes&quot;</span><span class="p">&gt;</span>Yes<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">&gt;</span>No<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">dialog</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">dialog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;confirmDialog&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">dialog</span><span class="p">.</span><span class="nx">showModal</span><span class="p">();</span>
+<span class="w">    </span><span class="nx">dialog</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;close&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">dialog</span><span class="p">.</span><span class="nx">returnValue</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;yes&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Confirm action</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<p><strong>Improvements</strong>:
+- <code>&lt;dialog&gt;</code> for native modal behaviour.
+- Native focus trapping and Escape handling.
+- <code>&lt;form method="dialog"&gt;</code> for user choice.
+- <code>&lt;button&gt;</code> instead of <code>&lt;div class="btn"&gt;</code>.
+- Accessible name via <code>aria-labelledby</code>.</p>
+<h3 id="example-5-a-semantic-component-library">Example 5: A Semantic Component Library</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="cm">&lt;!-- Button --&gt;</span>
+<span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;button&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;btn&quot;</span><span class="p">&gt;</span>Click me<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Icon button --&gt;</span>
+<span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;button&quot;</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Close&quot;</span><span class="p">&gt;</span>✕<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Link --&gt;</span>
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/about&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;link&quot;</span><span class="p">&gt;</span>About us<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Navigation --&gt;</span>
+<span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Main navigation&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Card --&gt;</span>
+<span class="p">&lt;</span><span class="nt">article</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;card&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">header</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Card Title<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Card content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">footer</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/card/1&quot;</span><span class="p">&gt;</span>Read more<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">footer</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">article</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Form field --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;form-field&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;username&quot;</span><span class="p">&gt;</span>Username:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;username&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;username&quot;</span> <span class="na">required</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Accordion --&gt;</span>
+<span class="p">&lt;</span><span class="nt">details</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">summary</span><span class="p">&gt;</span>Section title<span class="p">&lt;/</span><span class="nt">summary</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">details</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Modal --&gt;</span>
+<span class="p">&lt;</span><span class="nt">dialog</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;myModal&quot;</span> <span class="na">aria-labelledby</span><span class="o">=</span><span class="s">&quot;modalTitle&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h2</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;modalTitle&quot;</span><span class="p">&gt;</span>Modal Title<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Modal content...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;dialog&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Close<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">dialog</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Alert --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;alert&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Your session is about to expire.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Figure --&gt;</span>
+<span class="p">&lt;</span><span class="nt">figure</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;chart.png&quot;</span> <span class="na">alt</span><span class="o">=</span><span class="s">&quot;Sales chart&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">figcaption</span><span class="p">&gt;</span>Figure 1: Sales growth<span class="p">&lt;/</span><span class="nt">figcaption</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">figure</span><span class="p">&gt;</span>
+
+<span class="cm">&lt;!-- Time --&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Published on <span class="p">&lt;</span><span class="nt">time</span> <span class="na">datetime</span><span class="o">=</span><span class="s">&quot;2026-09-08&quot;</span><span class="p">&gt;</span>September 8, 2026<span class="p">&lt;/</span><span class="nt">time</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></div>
+<hr />
+<h2 id="10-common-use-cases">10. Common Use Cases</h2>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Best Practice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Page structure</td>
+<td>Use <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Use <code>&lt;nav&gt;</code> with <code>&lt;ul&gt;</code> and <code>&lt;a&gt;</code></td>
+</tr>
+<tr>
+<td>Articles</td>
+<td>Use <code>&lt;article&gt;</code> with <code>&lt;header&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;footer&gt;</code></td>
+</tr>
+<tr>
+<td>Sections</td>
+<td>Use <code>&lt;section&gt;</code> with a heading</td>
+</tr>
+<tr>
+<td>Sidebars</td>
+<td>Use <code>&lt;aside&gt;</code> with <code>aria-label</code></td>
+</tr>
+<tr>
+<td>Buttons</td>
+<td>Use <code>&lt;button&gt;</code> with <code>type</code></td>
+</tr>
+<tr>
+<td>Links</td>
+<td>Use <code>&lt;a href&gt;</code></td>
+</tr>
+<tr>
+<td>Forms</td>
+<td>Use <code>&lt;form&gt;</code> with <code>&lt;label&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;button&gt;</code></td>
+</tr>
+<tr>
+<td>Tables</td>
+<td>Use <code>&lt;table&gt;</code>, <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;th scope&gt;</code>, <code>&lt;caption&gt;</code></td>
+</tr>
+<tr>
+<td>Images</td>
+<td>Use <code>&lt;img&gt;</code> with <code>alt</code></td>
+</tr>
+<tr>
+<td>Figures</td>
+<td>Use <code>&lt;figure&gt;</code> with <code>&lt;figcaption&gt;</code></td>
+</tr>
+<tr>
+<td>Dates</td>
+<td>Use <code>&lt;time&gt;</code> with <code>datetime</code></td>
+</tr>
+<tr>
+<td>Contact info</td>
+<td>Use <code>&lt;address&gt;</code></td>
+</tr>
+<tr>
+<td>Disclosure</td>
+<td>Use <code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code></td>
+</tr>
+<tr>
+<td>Modals</td>
+<td>Use <code>&lt;dialog&gt;</code> with <code>showModal()</code></td>
+</tr>
+<tr>
+<td>Alerts</td>
+<td>Use <code>role="alert"</code></td>
+</tr>
+<tr>
+<td>Live regions</td>
+<td>Use <code>aria-live</code></td>
+</tr>
+<tr>
+<td>Loading states</td>
+<td>Use <code>aria-busy</code></td>
+</tr>
+<tr>
+<td>Current page</td>
+<td>Use <code>aria-current="page"</code></td>
+</tr>
+<tr>
+<td>Expanded state</td>
+<td>Use <code>aria-expanded</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11-best-practices-the-full-list">11. Best Practices (The Full List)</h2>
+<h3 id="structure">Structure</h3>
+<ol>
+<li><strong>Use semantic elements</strong> – <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code>.</li>
+<li><strong>One <code>&lt;h1&gt;</code> per page</strong> – the main title.</li>
+<li><strong>Sequential heading hierarchy</strong> – no skipped levels.</li>
+<li><strong>Use <code>&lt;main&gt;</code> once</strong> – for primary content.</li>
+<li><strong>Label multiple landmarks</strong> – <code>aria-label</code> on navs, asides, etc.</li>
+<li><strong>Use <code>&lt;section&gt;</code> only with a heading</strong> – otherwise use <code>&lt;div&gt;</code>.</li>
+<li><strong>Use <code>&lt;article&gt;</code> for self-contained content</strong> – blog posts, comments.</li>
+<li><strong>Use <code>&lt;aside&gt;</code> for tangential content</strong> – sidebars, pull quotes.</li>
+<li><strong>Use <code>&lt;figure&gt;</code> and <code>&lt;figcaption&gt;</code></strong> – for media with captions.</li>
+<li><strong>Use <code>&lt;details&gt;</code> for disclosure</strong> – native, accessible.</li>
+<li><strong>Use <code>&lt;dialog&gt;</code> for modals</strong> – native, accessible.</li>
+<li><strong>Use <code>&lt;time&gt;</code> for dates</strong> – with <code>datetime</code>.</li>
+<li><strong>Use <code>&lt;address&gt;</code> for contact info</strong> – not for arbitrary addresses.</li>
+</ol>
+<h3 id="accessibility">Accessibility</h3>
+<ol>
+<li><strong>Provide <code>alt</code> on all images</strong> – descriptive or empty for decorative.</li>
+<li><strong>Label all form controls</strong> – <code>&lt;label for&gt;</code> or wrapping <code>&lt;label&gt;</code>.</li>
+<li><strong>Provide accessible names</strong> – visible text, <code>aria-label</code>, or <code>aria-labelledby</code>.</li>
+<li><strong>Use <code>aria-current</code></strong> – for the current page or item.</li>
+<li><strong>Use <code>aria-expanded</code></strong> – for expandable elements.</li>
+<li><strong>Use <code>aria-live</code></strong> – for dynamic content updates.</li>
+<li><strong>Use <code>role="alert"</code></strong> – for urgent messages.</li>
+<li><strong>Ensure keyboard accessibility</strong> – all interactive elements focusable and operable.</li>
+<li><strong>Manage focus</strong> – trap focus in modals, restore focus when closed.</li>
+<li><strong>Provide skip links</strong> – "Skip to main content."</li>
+<li><strong>Test with screen readers</strong> – NVDA, JAWS, VoiceOver.</li>
+<li><strong>Test keyboard navigation</strong> – Tab, Shift+Tab, Enter, Space, Escape.</li>
+</ol>
+<h3 id="aria-discipline">ARIA Discipline</h3>
+<ol>
+<li><strong>First Rule of ARIA</strong> – use native HTML first.</li>
+<li><strong>Don't override native semantics</strong> – e.g., <code>&lt;button role="link"&gt;</code> is wrong.</li>
+<li><strong>Don't add redundant ARIA</strong> – <code>&lt;button aria-label="Submit"&gt;Submit&lt;/button&gt;</code> is redundant.</li>
+<li><strong>Don't use ARIA for styling</strong> – use CSS.</li>
+<li><strong>Keep ARIA minimal</strong> – only add what's necessary.</li>
+<li><strong>Follow the ARIA Authoring Practices</strong> – for complex widgets.</li>
+</ol>
+<h3 id="separation-of-concerns">Separation of Concerns</h3>
+<ol>
+<li><strong>No inline styles</strong> – use CSS classes.</li>
+<li><strong>No inline event handlers</strong> – use <code>addEventListener</code>.</li>
+<li><strong>No presentational elements</strong> – avoid <code>&lt;font&gt;</code>, <code>&lt;center&gt;</code>, <code>&lt;big&gt;</code>.</li>
+<li><strong>No presentational attributes</strong> – avoid <code>bgcolor</code>, <code>align</code>, <code>border</code>.</li>
+<li><strong>External CSS and JS</strong> – cacheable and maintainable.</li>
+<li><strong>Use <code>defer</code> for scripts</strong> – non-blocking.</li>
+</ol>
+<h3 id="content-and-semantics">Content and Semantics</h3>
+<ol>
+<li><strong>Use lists for groups of items</strong> – <code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, <code>&lt;dl&gt;</code>.</li>
+<li><strong>Use <code>&lt;table&gt;</code> for tabular data</strong> – not for layout.</li>
+<li><strong>Use <code>&lt;blockquote&gt;</code> for quotations</strong> – with <code>&lt;cite&gt;</code> for source.</li>
+<li><strong>Use <code>&lt;code&gt;</code>, <code>&lt;kbd&gt;</code>, <code>&lt;samp&gt;</code>, <code>&lt;var&gt;</code></strong> – for technical content.</li>
+<li><strong>Use <code>&lt;abbr&gt;</code> for abbreviations</strong> – with <code>title</code>.</li>
+<li><strong>Use <code>&lt;strong&gt;</code> for importance, <code>&lt;em&gt;</code> for emphasis</strong> – not <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code>.</li>
+<li><strong>Use <code>&lt;mark&gt;</code> for highlighting</strong> – not for importance.</li>
+</ol>
+<h3 id="maintenance">Maintenance</h3>
+<ol>
+<li><strong>Validate your HTML</strong> – W3C validator.</li>
+<li><strong>Keep the DOM shallow</strong> – avoid deep nesting.</li>
+<li><strong>Use meaningful class names</strong> – not <code>.red</code> or <code>.big</code>.</li>
+<li><strong>Comment complex structures</strong> – for maintainability.</li>
+<li><strong>Review semantics regularly</strong> – as the site evolves.</li>
+<li><strong>Stay updated</strong> – follow HTML Living Standard changes.</li>
+</ol>
+<hr />
+<h2 id="12-common-mistakes">12. Common Mistakes</h2>
+<h3 id="mistake-divitis-overuse-of-div">❌ Mistake: Divitis (Overuse of <code>&lt;div&gt;</code>)</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;nav&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;nav-item&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;main&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;article&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;title&quot;</span><span class="p">&gt;</span>Title<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;content&quot;</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: No semantic meaning; inaccessible; fragile.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">header</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">nav</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">main</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">article</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Title<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">article</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">main</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-using-div-for-buttons">❌ Mistake: Using <code>&lt;div&gt;</code> for Buttons</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;button&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;submit()&quot;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Not focusable, not keyboard-accessible, no semantic role.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-multiple-h1-elements">❌ Mistake: Multiple <code>&lt;h1&gt;</code> Elements</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Site Title<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Article Title<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Only one <code>&lt;h1&gt;</code> per page; breaks the document outline.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Site Title<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Article Title<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-skipping-heading-levels">❌ Mistake: Skipping Heading Levels</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Title<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Subsection<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Confuses screen reader navigation.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Title<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Section<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Subsection<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-using-aria-when-native-html-exists">❌ Mistake: Using ARIA When Native HTML Exists</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;button&quot;</span> <span class="na">tabindex</span><span class="o">=</span><span class="s">&quot;0&quot;</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;doSomething()&quot;</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Violates the First Rule of ARIA; loses keyboard support.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">button</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;doSomething()&quot;</span><span class="p">&gt;</span>Click<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-adding-redundant-aria">❌ Mistake: Adding Redundant ARIA</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">button</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Submit&quot;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: The visible text already provides the accessible name.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-missing-alt-on-images">❌ Mistake: Missing <code>alt</code> on Images</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;logo.png&quot;</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Screen readers may read the filename.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;logo.png&quot;</span> <span class="na">alt</span><span class="o">=</span><span class="s">&quot;Company Logo&quot;</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-unlabelled-form-controls">❌ Mistake: Unlabelled Form Controls</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&quot;Name&quot;</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Placeholder is not a substitute for a label; disappears on input.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Name:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;name&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;name&quot;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&quot;Enter your name&quot;</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-inline-event-handlers">❌ Mistake: Inline Event Handlers</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">button</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&quot;submit()&quot;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Mixes behaviour with structure; XSS risk; hard to maintain.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;submitBtn&quot;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;submitBtn&#39;</span><span class="p">).</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">submit</span><span class="p">);</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-using-table-for-layout">❌ Mistake: Using <code>&lt;table&gt;</code> for Layout</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Sidebar<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Main content<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Tables are for tabular data, not layout.</p>
+<p><strong>✅ Correct</strong>: Use CSS Grid or Flexbox.</p>
+<h3 id="mistake-unlabelled-multiple-navs">❌ Mistake: Unlabelled Multiple Navs</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">nav</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">nav</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Screen reader users can't distinguish between them.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Main navigation&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">nav</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Footer navigation&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-using-div-for-paragraphs">❌ Mistake: Using <code>&lt;div&gt;</code> for Paragraphs</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>This is a paragraph of text.<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: No semantic meaning; screen readers don't treat it as a paragraph.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>This is a paragraph of text.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-forgetting-the-skip-link">❌ Mistake: Forgetting the Skip Link</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">header</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">nav</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">main</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">main</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Keyboard users must tab through all navigation to reach the main content.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;#main-content&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;skip-link&quot;</span><span class="p">&gt;</span>Skip to main content<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">header</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">main</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;main-content&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">main</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-using-b-and-i-for-semantics">❌ Mistake: Using <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code> for Semantics</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;</span><span class="nt">b</span><span class="p">&gt;</span>Important:<span class="p">&lt;/</span><span class="nt">b</span><span class="p">&gt;</span> This is <span class="p">&lt;</span><span class="nt">i</span><span class="p">&gt;</span>emphasized<span class="p">&lt;/</span><span class="nt">i</span><span class="p">&gt;</span>.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code> have no semantic meaning.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Important:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span> This is <span class="p">&lt;</span><span class="nt">em</span><span class="p">&gt;</span>emphasized<span class="p">&lt;/</span><span class="nt">em</span><span class="p">&gt;</span>.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-no-lang-attribute-on-html">❌ Mistake: No <code>lang</code> Attribute on <code>&lt;html&gt;</code></h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Screen readers may mispronounce content; search engines may not know the language.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&quot;en&quot;</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<hr />
+<h2 id="13-performance-considerations">13. Performance Considerations</h2>
+<ul>
+<li><strong>Smaller DOM</strong> – semantic elements reduce the need for wrapper <code>&lt;div&gt;</code>s, resulting in a smaller DOM and faster parsing.</li>
+<li><strong>Fewer styles</strong> – semantic elements have sensible default styles, reducing the need for CSS resets.</li>
+<li><strong>Better caching</strong> – external CSS and JS files are cached separately from HTML, improving repeat visits.</li>
+<li><strong>Progressive rendering</strong> – semantic elements help browsers render content incrementally.</li>
+<li><strong>Accessibility tree</strong> – semantic elements add meaningful nodes to the accessibility tree, but the performance impact is negligible.</li>
+<li><strong>Focus management</strong> – native <code>&lt;dialog&gt;</code> focus trapping is more efficient than JavaScript-based solutions.</li>
+<li><strong>Disclosure widgets</strong> – native <code>&lt;details&gt;</code> avoids JavaScript overhead.</li>
+</ul>
+<h3 id="performance-anti-patterns">Performance Anti-Patterns</h3>
+<ul>
+<li><strong>Divitis</strong> – thousands of <code>&lt;div&gt;</code>s increase DOM size and slow down rendering.</li>
+<li><strong>Deep nesting</strong> – deeply nested elements increase layout and paint time.</li>
+<li><strong>Inline styles</strong> – prevent CSS caching and increase HTML size.</li>
+<li><strong>Blocking scripts</strong> – <code>&lt;script&gt;</code> without <code>defer</code>/<code>async</code> blocks parsing.</li>
+</ul>
+<hr />
+<h2 id="14-security-considerations">14. Security Considerations</h2>
+<ul>
+<li><strong>XSS (Cross-Site Scripting)</strong> – when inserting user-generated content, use <code>textContent</code> instead of <code>innerHTML</code>. Sanitize all user input.</li>
+<li><strong>Inline event handlers</strong> – avoid <code>onclick</code>, <code>onload</code>, etc.; they are a major XSS vector.</li>
+<li><strong><code>javascript:</code> URLs</strong> – avoid in <code>href</code> and <code>src</code>.</li>
+<li><strong><code>target="_blank"</code></strong> – use <code>rel="noopener noreferrer"</code> to prevent tabnabbing.</li>
+<li><strong>Content Security Policy (CSP)</strong> – use CSP headers to restrict script sources.</li>
+<li><strong>Subresource Integrity (SRI)</strong> – use <code>integrity</code> attributes on external scripts and styles.</li>
+<li><strong>Form validation</strong> – always validate on the server; client-side validation is for UX only.</li>
+<li><strong>Sensitive data</strong> – never store secrets in <code>data-*</code> attributes or <code>localStorage</code>.</li>
+</ul>
+<h3 id="secure-markup-practices">Secure Markup Practices</h3>
+<ul>
+<li><strong>Use semantic elements</strong> – they are less prone to XSS than custom elements with inline handlers.</li>
+<li><strong>Escape user input</strong> – always escape <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>"</code>, and <code>'</code>.</li>
+<li><strong>Use HTTPS</strong> – encrypt all traffic.</li>
+<li><strong>Set security headers</strong> – CSP, X-Content-Type-Options, X-Frame-Options, Referrer-Policy.</li>
+</ul>
+<hr />
+<h2 id="15-debugging-tips">15. Debugging Tips</h2>
+<h3 id="tools">Tools</h3>
+<ul>
+<li><strong>W3C HTML Validator</strong> – checks for valid markup.</li>
+<li><strong>Lighthouse</strong> – audits performance, accessibility, SEO, and best practices.</li>
+<li><strong>axe DevTools</strong> – accessibility testing extension.</li>
+<li><strong>WAVE</strong> – web accessibility evaluation tool.</li>
+<li><strong>Accessibility Inspector</strong> – in browser DevTools, shows the accessibility tree.</li>
+<li><strong>HeadingsMap</strong> – extension that visualises the heading hierarchy.</li>
+<li><strong>Screen readers</strong> – NVDA (Windows), JAWS (Windows), VoiceOver (macOS/iOS), TalkBack (Android).</li>
+<li><strong>Keyboard only</strong> – navigate the page without a mouse.</li>
+</ul>
+<h3 id="manual-testing">Manual Testing</h3>
+<ol>
+<li><strong>Disable CSS</strong> – does the content still make sense?</li>
+<li><strong>Disable JavaScript</strong> – does the core functionality still work?</li>
+<li><strong>Navigate with keyboard</strong> – Tab, Shift+Tab, Enter, Space, Escape.</li>
+<li><strong>Navigate with screen reader</strong> – listen to the page.</li>
+<li><strong>Zoom to 200%</strong> – does the layout hold up?</li>
+<li><strong>Use high contrast mode</strong> – is the content still readable?</li>
+</ol>
+<h3 id="debugging-the-accessibility-tree">Debugging the Accessibility Tree</h3>
+<p>In Chrome DevTools:</p>
+<ol>
+<li>Open the <strong>Elements</strong> panel.</li>
+<li>Select an element.</li>
+<li>Open the <strong>Accessibility</strong> tab.</li>
+<li>Check the <strong>role</strong>, <strong>name</strong>, and <strong>state</strong> of the element.</li>
+</ol>
+<p>This shows you exactly what screen readers see.</p>
+<hr />
+<h2 id="16-when-to-use">16. When to Use</h2>
+<ul>
+<li><strong>Always</strong> – semantic best practices apply to every HTML document, regardless of project size or complexity.</li>
+<li><strong>From the start</strong> – it's easier to write semantic HTML from the beginning than to refactor later.</li>
+<li><strong>In team projects</strong> – consistent practices make collaboration easier.</li>
+<li><strong>On accessibility-critical sites</strong> – government, education, healthcare, e-commerce.</li>
+<li><strong>In long-lived projects</strong> – semantic markup survives redesigns and technology changes.</li>
+</ul>
+<hr />
+<h2 id="17-when-not-to-use">17. When Not to Use</h2>
+<ul>
+<li><strong>Never</strong> – you should always aim to follow semantic best practices.</li>
+<li><strong>However</strong> – you can <strong>prioritise</strong> them: accessibility and structure first, then SEO, then performance.</li>
+<li><strong>Exception</strong> – when a native element doesn't exist for a custom widget, ARIA is appropriate (but follow the APG).</li>
+</ul>
+<hr />
+<h2 id="18-related-concepts">18. Related Concepts</h2>
+<ul>
+<li><strong>Accessibility</strong> – WCAG, ARIA, screen readers, keyboard navigation.</li>
+<li><strong>SEO</strong> – search engine optimisation, structured data, rich snippets.</li>
+<li><strong>DOM</strong> – Document Object Model, accessibility tree.</li>
+<li><strong>HTML Living Standard</strong> – the evolving specification.</li>
+<li><strong>Progressive Enhancement</strong> – building from a solid HTML foundation.</li>
+<li><strong>Separation of Concerns</strong> – HTML, CSS, JS.</li>
+<li><strong>ARIA Authoring Practices Guide (APG)</strong> – W3C guidance.</li>
+<li><strong>W3C Validator</strong> – markup validation.</li>
+<li><strong>Lighthouse</strong> – auditing tool.</li>
+<li><strong>Semantic Web</strong> – machine-readable web.</li>
+</ul>
+<hr />
+<h2 id="19-did-you-know">19. Did You Know?</h2>
+<ul>
+<li>
+<p>The term <strong>"divitis"</strong> refers to the overuse of <code>&lt;div&gt;</code> elements — a common anti-pattern in early HTML5 development.</p>
+</li>
+<li>
+<p>The <strong>First Rule of ARIA</strong> is often quoted in accessibility circles: <em>"If you can use a native HTML element with the semantics and behavior you require already built in, instead of re-purposing an element and adding an ARIA role, state or property to make it accessible, then do so."</em></p>
+</li>
+<li>
+<p><strong>Screen reader users</strong> navigate primarily by headings and landmarks. A page with a logical heading hierarchy and clear landmarks is dramatically easier to use.</p>
+</li>
+<li>
+<p><strong>Google has confirmed</strong> that semantic HTML is not a direct ranking factor, but it improves content understanding and user experience, which indirectly affect rankings.</p>
+</li>
+<li>
+<p><strong>WCAG 2.2</strong> (the current Web Content Accessibility Guidelines) includes specific success criteria related to semantic HTML, such as "Headings and Labels" (2.4.6) and "Info and Relationships" (1.3.1).</p>
+</li>
+<li>
+<p>The <strong><code>&lt;dialog&gt;</code> element</strong> was the first native modal in HTML, eliminating the need for custom modal libraries for basic use cases.</p>
+</li>
+<li>
+<p>The <strong><code>&lt;details&gt;</code> element</strong> provides a native disclosure widget — no JavaScript required.</p>
+</li>
+<li>
+<p><strong>Native HTML elements</strong> are always more accessible than custom ARIA widgets, because they have built-in keyboard support, focus management, and screen reader announcements.</p>
+</li>
+<li>
+<p><strong>Semantic HTML reduces the need for CSS classes</strong> — you can style <code>&lt;nav&gt;</code>, <code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>, etc. directly.</p>
+</li>
+<li>
+<p><strong>Validation is not enough</strong> — a page can be valid HTML but still have poor semantics. Manual testing with assistive technologies is essential.</p>
+</li>
+<li>
+<p><strong>The accessibility tree</strong> is what screen readers consume — semantic HTML ensures this tree is accurate.</p>
+</li>
+<li>
+<p><strong>Progressive enhancement</strong> means the page works without CSS or JS, and is enhanced when they are available.</p>
+</li>
+<li>
+<p><strong>The "skip to main content" link</strong> is a simple but powerful accessibility feature that benefits keyboard users.</p>
+</li>
+<li>
+<p><strong>Structured data (JSON-LD, microdata)</strong> complements semantic HTML by providing additional machine-readable context.</p>
+</li>
+<li>
+<p><strong>Semantic HTML is a team sport</strong> — everyone on the team must follow the practices for them to be effective.</p>
+</li>
+<li>
+<p><strong>Modern frameworks</strong> (React, Vue, Angular) still produce HTML, so semantic best practices apply regardless of the framework.</p>
+</li>
+<li>
+<p><strong>The web is for everyone</strong> — semantic HTML is the foundation of an inclusive web.</p>
+</li>
+</ul>
+<hr />
+<h2 id="20-summary">20. Summary</h2>
+<ul>
+<li><strong>Semantic best practices</strong> are guiding principles for choosing and structuring HTML elements to maximise meaning, accessibility, maintainability, and machine-readability.</li>
+<li><strong>Core principles</strong>: semantic first, ARIA second; logical heading hierarchy; landmarks for navigation; accessible names for interactive elements; separation of concerns; progressive enhancement; validation and testing.</li>
+<li><strong>Key elements</strong>: <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;figure&gt;</code>, <code>&lt;figcaption&gt;</code>, <code>&lt;details&gt;</code>, <code>&lt;dialog&gt;</code>, <code>&lt;time&gt;</code>, <code>&lt;address&gt;</code>.</li>
+<li><strong>Accessibility</strong>: <code>alt</code> on images, <code>&lt;label&gt;</code> on forms, <code>aria-label</code> for icon buttons, <code>aria-current</code> for current items, keyboard accessibility, screen reader testing.</li>
+<li><strong>ARIA discipline</strong>: use native HTML first; don't override native semantics; don't add redundant ARIA; keep it minimal.</li>
+<li><strong>Separation of concerns</strong>: no inline styles, no inline event handlers, no presentational elements.</li>
+<li><strong>Common mistakes</strong>: divitis, multiple <code>&lt;h1&gt;</code>s, skipped heading levels, ARIA overuse, missing <code>alt</code>, unlabelled forms, using <code>&lt;div&gt;</code> for buttons, using <code>&lt;table&gt;</code> for layout.</li>
+<li><strong>Performance</strong>: smaller DOM, fewer styles, better caching, progressive rendering.</li>
+<li><strong>Security</strong>: sanitize user input, avoid inline handlers, use CSP and SRI, use <code>rel="noopener noreferrer"</code>.</li>
+<li><strong>Debugging</strong>: W3C validator, Lighthouse, axe, screen readers, keyboard testing.</li>
+<li><strong>Semantic HTML is the foundation</strong> of an accessible, maintainable, and future-proof web.</li>
+<li><strong>Follow the practices consistently</strong> — they benefit users, developers, and businesses alike.</li>
+</ul>
+<hr />
+<p><strong>This concludes the deep-dive page on "Semantic Best Practices."</strong></p>
+<hr />
 
 
 

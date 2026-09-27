@@ -35306,6 +35306,1747 @@
 
 
 <h1 id="accessibility">Accessibility</h1>
+<h1 id="chapter-accessibility-tables">Chapter: Accessibility (Tables)</h1>
+<hr />
+<h2 id="1-overview">1. Overview</h2>
+<h3 id="definition">Definition</h3>
+<p><strong>Table accessibility</strong> is the practice of structuring HTML tables so that <strong>all users</strong> — including those using screen readers, keyboard navigation, magnification, or other assistive technologies — can understand the table's structure, navigate its cells, and interpret the relationship between headers and data. It ensures that the <strong>semantic meaning</strong> of the table is preserved and conveyed, not just its visual appearance.</p>
+<p>A table is accessible when:</p>
+<ul>
+<li>Every data cell is programmatically associated with its <strong>row and column headers</strong>.</li>
+<li>The table has a <strong>caption</strong> or accessible name describing its purpose.</li>
+<li>The <strong>reading order</strong> is logical and matches the visual order.</li>
+<li><strong>Complex structures</strong> (spanned cells, multiple header rows) are correctly associated.</li>
+<li>The table is <strong>navigable</strong> with a keyboard and by screen reader shortcuts.</li>
+<li>The table is <strong>understandable</strong> without relying on visual layout alone.</li>
+</ul>
+<p>Accessibility is not a feature added after the fact — it is a property of <strong>correct table structure</strong>. A table that is semantically well-formed is, by definition, mostly accessible. A table that relies on visual layout tricks (e.g., <code>div</code>s, CSS grid without semantics, or spans without proper headers) is inaccessible even if it looks correct.</p>
+<h3 id="purpose">Purpose</h3>
+<p>Table accessibility serves several essential purposes:</p>
+<ul>
+<li><strong>Comprehension</strong> – screen reader users can understand the meaning of each cell.</li>
+<li><strong>Navigation</strong> – users can jump between cells, rows, and columns.</li>
+<li><strong>Context</strong> – headers are announced with each cell.</li>
+<li><strong>Legal compliance</strong> – WCAG, ADA, Section 508, EN 301 549.</li>
+<li><strong>SEO</strong> – search engines use table structure to understand data.</li>
+<li><strong>Universal design</strong> – benefits all users, not just those with disabilities.</li>
+<li><strong>Data integrity</strong> – structural correctness improves machine readability.</li>
+</ul>
+<h3 id="where-it-fits">Where It Fits</h3>
+<p>Table accessibility is a <strong>cross-cutting concern</strong> that touches every part of the table:</p>
+<ul>
+<li><strong>Structure</strong> – <code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code>.</li>
+<li><strong>Row groups</strong> – <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;tfoot&gt;</code>.</li>
+<li><strong>Column groups</strong> – <code>&lt;colgroup&gt;</code>, <code>&lt;col&gt;</code>.</li>
+<li><strong>Header association</strong> – <code>scope</code>, <code>headers</code>, <code>id</code>.</li>
+<li><strong>Caption</strong> – <code>&lt;caption&gt;</code>.</li>
+<li><strong>ARIA</strong> – <code>role</code>, <code>aria-*</code> when native semantics are insufficient.</li>
+</ul>
+<p>It is not a separate feature — it is the <strong>correct use of the table model</strong>.</p>
+<hr />
+<h2 id="2-why-it-exists">2. Why It Exists</h2>
+<h3 id="the-problem">The Problem</h3>
+<p>Tables are one of the most visually oriented HTML structures. A sighted user can glance at a table and immediately understand its structure: the header row at the top, the row labels on the left, the data in the grid, and the totals at the bottom. But a screen reader user cannot see the layout — they hear the table linearly, cell by cell.</p>
+<p>Without accessibility:</p>
+<ul>
+<li>A screen reader might read "10,000" with no context ("Is this sales? Expenses? A date?").</li>
+<li>A user might not know how many columns or rows the table has.</li>
+<li>A user might not be able to navigate to a specific cell.</li>
+<li>A user might not know which header applies to which cell.</li>
+<li>Complex tables (with spanned cells) might be incomprehensible.</li>
+</ul>
+<p>Inaccessible tables are <strong>exclusionary</strong> — they deny users the information they need.</p>
+<h3 id="previous-limitations">Previous Limitations</h3>
+<table>
+<thead>
+<tr>
+<th>Limitation</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No <code>&lt;th&gt;</code></td>
+<td>Screen readers can't identify headers.</td>
+</tr>
+<tr>
+<td>No <code>scope</code></td>
+<td>Screen readers can't determine header scope.</td>
+</tr>
+<tr>
+<td>No <code>&lt;caption&gt;</code></td>
+<td>Tables have no accessible name.</td>
+</tr>
+<tr>
+<td>No row groups</td>
+<td>Sections aren't announced.</td>
+</tr>
+<tr>
+<td>Complex spans without <code>headers</code></td>
+<td>Header–cell associations are lost.</td>
+</tr>
+<tr>
+<td>Layout tables</td>
+<td>Screen readers read meaningless cell by cell.</td>
+</tr>
+<tr>
+<td>CSS grid without semantics</td>
+<td>Screen readers see a flat list.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="why-table-accessibility-was-standardized">Why Table Accessibility Was Standardized</h3>
+<p>Table accessibility was standardized through:</p>
+<ul>
+<li><strong>HTML 4.0 (1997)</strong> – introduced <code>&lt;th&gt;</code>, <code>scope</code>, <code>&lt;caption&gt;</code>, row groups.</li>
+<li><strong>WCAG 1.0 (1999)</strong> – required table headers.</li>
+<li><strong>WCAG 2.0 (2008)</strong> – required programmatic header association.</li>
+<li><strong>ARIA (2008+)</strong> – roles for tables when native semantics are insufficient.</li>
+<li><strong>HTML5 (2014)</strong> – formalized the table model.</li>
+</ul>
+<p>These standards ensure that tables are <strong>universally understandable</strong> and that assistive technologies can reliably interpret them.</p>
+<hr />
+<h2 id="3-syntax-basic-usage">3. Syntax / Basic Usage</h2>
+<h3 id="the-accessible-table-checklist">The Accessible Table Checklist</h3>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Table has a name</td>
+<td><code>&lt;caption&gt;</code> or <code>aria-label</code></td>
+</tr>
+<tr>
+<td>Header cells identified</td>
+<td><code>&lt;th&gt;</code> with <code>scope</code></td>
+</tr>
+<tr>
+<td>Data cells associated</td>
+<td>Position + <code>scope</code> + <code>headers</code></td>
+</tr>
+<tr>
+<td>Sections identified</td>
+<td><code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;tfoot&gt;</code></td>
+</tr>
+<tr>
+<td>Complex tables</td>
+<td><code>id</code> + <code>headers</code></td>
+</tr>
+<tr>
+<td>Spanned headers</td>
+<td><code>scope="colgroup"</code> / <code>scope="rowgroup"</code></td>
+</tr>
+<tr>
+<td>No layout tables</td>
+<td>Use CSS Grid or Flexbox</td>
+</tr>
+</tbody>
+</table>
+<h3 id="accessible-simple-table">Accessible Simple Table</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Monthly Sales (2026)<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Month<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>January<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>February<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$12,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Screen reader announcement</strong>: "Table: Monthly Sales. Table with 2 rows, 2 columns. Month, Sales. January, Sales: $10,000. February, Sales: $12,000."</p>
+<h3 id="accessible-table-with-row-groups-and-totals">Accessible Table with Row Groups and Totals</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Monthly Expenses (2026)<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Category<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Amount<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>Rent<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$1,200<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>Utilities<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$300<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tfoot</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>Total<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$1,500<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tfoot</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="accessible-table-with-column-groups">Accessible Table with Column Groups</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Quarterly Sales by Region (2026)<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">colgroup</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">col</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;region-col&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">col</span> <span class="na">span</span><span class="o">=</span><span class="s">&quot;3&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;sales-col&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">colgroup</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">rowspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Region<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;3&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;colgroup&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q1<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q2<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q3<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>North<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$12k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$13k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>South<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$8k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$9k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="accessible-table-with-headers-for-complex-association">Accessible Table with <code>headers</code> for Complex Association</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Employee Directory<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;dept&quot;</span><span class="p">&gt;</span>Department<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;salary&quot;</span><span class="p">&gt;</span>Salary<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;dept&quot;</span><span class="p">&gt;</span>Engineering<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;salary&quot;</span><span class="p">&gt;</span>$120,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="accessible-table-with-multiple-header-rows">Accessible Table with Multiple Header Rows</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Sales Summary<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">rowspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Product<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;colgroup&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">rowspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Total<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Units<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Revenue<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>Widget<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>500<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$5,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$5,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="accessible-table-with-aria-when-needed">Accessible Table with ARIA (When Needed)</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="cm">&lt;!-- Only when native table semantics aren&#39;t possible --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;table&quot;</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Monthly Sales&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;columnheader&quot;</span><span class="p">&gt;</span>Month<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;columnheader&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;rowheader&quot;</span><span class="p">&gt;</span>January<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;cell&quot;</span><span class="p">&gt;</span>$10,000<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Note</strong>: Native <code>&lt;table&gt;</code> is always preferred. ARIA tables are for exceptional cases (e.g., CSS Grid layouts that need table semantics).</p>
+<h3 id="code-breakdown">Code Breakdown</h3>
+<table>
+<thead>
+<tr>
+<th>Element/Attribute</th>
+<th>Accessibility Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;caption&gt;</code></td>
+<td>Table's accessible name.</td>
+</tr>
+<tr>
+<td><code>&lt;th scope="col"&gt;</code></td>
+<td>Column header.</td>
+</tr>
+<tr>
+<td><code>&lt;th scope="row"&gt;</code></td>
+<td>Row header.</td>
+</tr>
+<tr>
+<td><code>&lt;th scope="colgroup"&gt;</code></td>
+<td>Column group header.</td>
+</tr>
+<tr>
+<td><code>&lt;th scope="rowgroup"&gt;</code></td>
+<td>Row group header.</td>
+</tr>
+<tr>
+<td><code>&lt;thead&gt;</code></td>
+<td>Header row group.</td>
+</tr>
+<tr>
+<td><code>&lt;tbody&gt;</code></td>
+<td>Body row group.</td>
+</tr>
+<tr>
+<td><code>&lt;tfoot&gt;</code></td>
+<td>Footer row group.</td>
+</tr>
+<tr>
+<td><code>headers</code></td>
+<td>Direct header association.</td>
+</tr>
+<tr>
+<td><code>id</code> on <code>&lt;th&gt;</code></td>
+<td>Target for <code>headers</code>.</td>
+</tr>
+<tr>
+<td><code>role="table"</code></td>
+<td>ARIA table (fallback).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-mental-model">4. Mental Model</h2>
+<h3 id="the-spreadsheet-navigation-analogy">The "Spreadsheet Navigation" Analogy</h3>
+<p>Think of a screen reader user navigating a table like a <strong>blind person using a spreadsheet with a screen reader</strong>. As they move from cell to cell, the screen reader announces the row and column headers, giving context. Without headers, the numbers are meaningless.</p>
+<h3 id="the-excel-freeze-panes-analogy">The "Excel Freeze Panes" Analogy</h3>
+<p>Accessible tables are like <strong>Excel with freeze panes</strong>. The header row and column stay visible as you scroll, giving context for every cell. In an accessible table, the headers are always announced, even if they're not visible on screen.</p>
+<h3 id="the-database-record-analogy">The "Database Record" Analogy</h3>
+<p>Each cell is like a <strong>database field value</strong>. The headers are the field names. A screen reader user needs the field name to understand the value. "10,000" alone means nothing; "January, Sales: 10,000" means everything.</p>
+<h3 id="the-blindfolded-reading-analogy">The "Blindfolded Reading" Analogy</h3>
+<p>Imagine reading a table while blindfolded — you can only hear the cells as they're read aloud. Without headers, you'd hear "10,000, 12,000, 8,000" with no context. With headers, you'd hear "January Sales: 10,000; February Sales: 12,000." Accessibility is about <strong>restoring context</strong>.</p>
+<h3 id="the-braille-display-analogy">The "Braille Display" Analogy</h3>
+<p>For Braille users, a table is rendered as a linear sequence of characters. Without structural markup, the relationships between headers and data are lost. With proper markup, the Braille display can navigate the table structurally.</p>
+<hr />
+<h2 id="5-core-concepts">5. Core Concepts</h2>
+<h3 id="concept-1-headercell-association">Concept 1: Header–Cell Association</h3>
+<p>The core of table accessibility is the <strong>header–cell association</strong> — the programmatic link between a data cell and its headers. It is created by:</p>
+<ol>
+<li><strong>Position</strong> – headers in the first row (column headers) and first column (row headers).</li>
+<li><strong><code>scope</code></strong> – explicitly declares the header's scope.</li>
+<li><strong><code>headers</code></strong> – direct reference from a data cell to header IDs.</li>
+</ol>
+<p>Screen readers use this association to announce the correct header for each cell.</p>
+<h3 id="concept-2-the-caption-element">Concept 2: The <code>&lt;caption&gt;</code> Element</h3>
+<p>The <code>&lt;caption&gt;</code> element provides the table's <strong>accessible name</strong>. It must be the first child of <code>&lt;table&gt;</code>. Screen readers announce it before the table data.</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Monthly Sales (2026)<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    ...
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Alternative</strong>: <code>aria-label</code> or <code>aria-labelledby</code> on <code>&lt;table&gt;</code>.</p>
+<h3 id="concept-3-the-scope-attribute">Concept 3: The <code>scope</code> Attribute</h3>
+<p>The <code>scope</code> attribute on <code>&lt;th&gt;</code> declares what the header applies to:</p>
+<ul>
+<li><strong><code>col</code></strong> – column header.</li>
+<li><strong><code>row</code></strong> – row header.</li>
+<li><strong><code>colgroup</code></strong> – column group header.</li>
+<li><strong><code>rowgroup</code></strong> – row group header.</li>
+</ul>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Month<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>January<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">th</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;3&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;colgroup&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">th</span> <span class="na">rowspan</span><span class="o">=</span><span class="s">&quot;3&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span><span class="p">&gt;</span>Engineering<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Best practice</strong>: Always use <code>scope</code> on <code>&lt;th&gt;</code> in simple tables.</p>
+<h3 id="concept-4-the-headers-attribute">Concept 4: The <code>headers</code> Attribute</h3>
+<p>For complex tables, the <code>headers</code> attribute on <code>&lt;td&gt;</code> references the <code>id</code> values of the relevant <code>&lt;th&gt;</code> cells. It creates a direct association that overrides position-based inference.</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>When to use</strong>: When <code>scope</code> alone is insufficient — e.g., headers that span multiple rows/columns, or headers in different parts of the table.</p>
+<h3 id="concept-5-row-groups">Concept 5: Row Groups</h3>
+<p>The <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;tfoot&gt;</code> elements divide the table into sections. Screen readers announce these sections, making the table easier to navigate.</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">tfoot</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Total<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">tfoot</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="concept-6-cell-spanning-and-accessibility">Concept 6: Cell Spanning and Accessibility</h3>
+<p>Cells with <code>colspan</code> and <code>rowspan</code> complicate accessibility. The header–cell association must account for the merged grid. Use:</p>
+<ul>
+<li><code>scope="colgroup"</code> for headers spanning multiple columns.</li>
+<li><code>scope="rowgroup"</code> for headers spanning multiple rows.</li>
+<li><code>headers</code> for irregular associations.</li>
+</ul>
+<h3 id="concept-7-the-reading-order">Concept 7: The Reading Order</h3>
+<p>Screen readers read tables in <strong>document order</strong> — left to right, top to bottom. The reading order should match the logical structure of the data. Avoid using CSS to visually reorder cells (e.g., <code>order</code>, <code>flex-direction: row-reverse</code>) — this breaks the reading order.</p>
+<h3 id="concept-8-keyboard-navigation">Concept 8: Keyboard Navigation</h3>
+<p>Screen readers support keyboard shortcuts for table navigation:</p>
+<ul>
+<li><strong>NVDA</strong>: <code>Ctrl+Alt+Arrow</code> to move between cells; <code>T</code> to jump to the next table.</li>
+<li><strong>JAWS</strong>: <code>Ctrl+Alt+Arrow</code> to move; <code>T</code> to jump to the next table.</li>
+<li><strong>VoiceOver</strong>: <code>VO+Arrow</code> to navigate cells.</li>
+<li><strong>TalkBack</strong>: Swipe gestures.</li>
+</ul>
+<p>Correct markup ensures these shortcuts work.</p>
+<h3 id="concept-9-layout-tables-are-inaccessible">Concept 9: Layout Tables Are Inaccessible</h3>
+<p>Tables used for <strong>layout</strong> (not data) are inaccessible — screen readers read every cell with no meaningful structure. Use CSS Grid or Flexbox for layout.</p>
+<p><strong>Exception</strong>: HTML emails often require layout tables due to limited CSS support. Add <code>role="presentation"</code> to signal that the table is presentational.</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;presentation&quot;</span><span class="p">&gt;</span>
+    <span class="cm">&lt;!-- layout content --&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="concept-10-aria-roles-for-tables">Concept 10: ARIA Roles for Tables</h3>
+<p>When native <code>&lt;table&gt;</code> can't be used (e.g., CSS Grid layout with table semantics), ARIA roles can be applied:</p>
+<ul>
+<li><code>role="table"</code> – the container.</li>
+<li><code>role="rowgroup"</code> – row group.</li>
+<li><code>role="row"</code> – row.</li>
+<li><code>role="columnheader"</code> – column header.</li>
+<li><code>role="rowheader"</code> – row header.</li>
+<li><code>role="cell"</code> – data cell.</li>
+</ul>
+<p><strong>Note</strong>: Native tables are always preferred. ARIA tables require manual keyboard support.</p>
+<h3 id="concept-11-wcag-requirements">Concept 11: WCAG Requirements</h3>
+<p>Relevant WCAG success criteria:</p>
+<ul>
+<li><strong>1.3.1 (Info and Relationships)</strong> – header–cell associations must be programmatically determinable.</li>
+<li><strong>1.3.2 (Meaningful Sequence)</strong> – reading order must be meaningful.</li>
+<li><strong>2.1.1 (Keyboard)</strong> – all functionality must be keyboard accessible.</li>
+<li><strong>4.1.2 (Name, Role, Value)</strong> – roles and states must be programmatically determinable.</li>
+<li><strong>1.4.3 (Contrast)</strong> – sufficient contrast for table content.</li>
+<li><strong>1.4.10 (Reflow)</strong> – tables must be usable at 320px width.</li>
+</ul>
+<h3 id="concept-12-testing-with-screen-readers">Concept 12: Testing with Screen Readers</h3>
+<p>Automated tools catch some issues, but <strong>manual testing with screen readers</strong> is essential. Test with:</p>
+<ul>
+<li><strong>NVDA</strong> (Windows, free).</li>
+<li><strong>JAWS</strong> (Windows, commercial).</li>
+<li><strong>VoiceOver</strong> (macOS/iOS, built-in).</li>
+<li><strong>TalkBack</strong> (Android, built-in).</li>
+</ul>
+<p>Listen to how the table is announced and navigate it cell by cell.</p>
+<h3 id="concept-13-tables-and-mobile-accessibility">Concept 13: Tables and Mobile Accessibility</h3>
+<p>On small screens, tables often break layout. Use:</p>
+<ul>
+<li><code>overflow-x: auto</code> for horizontal scroll.</li>
+<li><code>table-layout: fixed</code> for predictable widths.</li>
+<li>Responsive patterns (stacked layout with <code>data-label</code> attributes).</li>
+<li>Ensure touch targets are large enough.</li>
+</ul>
+<h3 id="concept-14-tables-and-cognitive-accessibility">Concept 14: Tables and Cognitive Accessibility</h3>
+<ul>
+<li><strong>Keep tables simple</strong> – fewer columns/rows are easier to understand.</li>
+<li><strong>Use clear headers</strong> – short, descriptive.</li>
+<li><strong>Avoid excessive spanning</strong> – it complicates the mental model.</li>
+<li><strong>Provide a caption</strong> – tells users what the table is about.</li>
+<li><strong>Use consistent formatting</strong> – e.g., all currency values with the same format.</li>
+</ul>
+<h3 id="concept-15-seo-and-table-accessibility">Concept 15: SEO and Table Accessibility</h3>
+<p>Search engines use table structure to understand data. Accessible tables (with <code>&lt;th&gt;</code>, <code>scope</code>, and <code>&lt;caption&gt;</code>) are more likely to be correctly indexed and may appear in rich results (e.g., featured snippets).</p>
+<hr />
+<h2 id="6-how-it-works">6. How It Works</h2>
+<h3 id="step-by-step-screen-reader-reading-an-accessible-table">Step-by-Step: Screen Reader Reading an Accessible Table</h3>
+<div class="language-text highlight"><pre><span></span><code>1.  User navigates to the table.
+    │
+    ▼
+2.  Screen reader announces:
+    │   &quot;Table: Monthly Sales. Table with 2 rows, 3 columns.&quot;
+    │
+    ▼
+3.  User navigates to the first data cell.
+    │
+    ▼
+4.  Screen reader announces:
+    │   &quot;January, Sales: $10,000.&quot;
+    │   (Row header &quot;January&quot; + column header &quot;Sales&quot; + cell value)
+    │
+    ▼
+5.  User navigates to the next cell.
+    │
+    ▼
+6.  Screen reader announces:
+    │   &quot;February, Sales: $12,000.&quot;
+    │
+    ▼
+7.  User can jump to the next table with a keyboard shortcut.
+</code></pre></div>
+<h3 id="the-accessibility-tree">The Accessibility Tree</h3>
+<p>In the accessibility tree, a table is exposed as:</p>
+<div class="language-text highlight"><pre><span></span><code>table (name: &quot;Monthly Sales&quot;)
+├── rowgroup (thead)
+│   └── row
+│       ├── columnheader: &quot;Month&quot;
+│       └── columnheader: &quot;Sales&quot;
+└── rowgroup (tbody)
+    ├── row
+    │   ├── rowheader: &quot;January&quot;
+    │   └── cell: &quot;$10,000&quot;
+    └── row
+        ├── rowheader: &quot;February&quot;
+        └── cell: &quot;$12,000&quot;
+</code></pre></div>
+<p>Screen readers traverse this tree, announcing headers with cells.</p>
+<h3 id="headercell-association-algorithm">Header–Cell Association Algorithm</h3>
+<p>The browser computes the association using:</p>
+<ol>
+<li><strong>Grid position</strong> – the row and column of each cell.</li>
+<li><strong><code>scope</code> attribute</strong> – which headers apply to which cells.</li>
+<li><strong><code>headers</code> attribute</strong> – direct references.</li>
+<li><strong>Row/column groups</strong> – headers in <code>&lt;thead&gt;</code> apply to columns.</li>
+</ol>
+<p>The algorithm is defined in the HTML-AAM (Accessibility API Mapping) specification.</p>
+<h3 id="default-behavior">Default Behavior</h3>
+<ul>
+<li><code>&lt;th&gt;</code> in <code>&lt;thead&gt;</code> → <code>columnheader</code>.</li>
+<li><code>&lt;th&gt;</code> in <code>&lt;tbody&gt;</code> first column → <code>rowheader</code>.</li>
+<li><code>&lt;th&gt;</code> with <code>scope="col"</code> → <code>columnheader</code>.</li>
+<li><code>&lt;th&gt;</code> with <code>scope="row"</code> → <code>rowheader</code>.</li>
+<li><code>&lt;td&gt;</code> → <code>cell</code>.</li>
+</ul>
+<h3 id="keyboard-shortcuts">Keyboard Shortcuts</h3>
+<table>
+<thead>
+<tr>
+<th>Screen Reader</th>
+<th>Next Table</th>
+<th>Next Cell</th>
+<th>Next Row</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NVDA</td>
+<td><code>T</code></td>
+<td><code>Ctrl+Alt+→</code></td>
+<td><code>Ctrl+Alt+↓</code></td>
+</tr>
+<tr>
+<td>JAWS</td>
+<td><code>T</code></td>
+<td><code>Ctrl+Alt+→</code></td>
+<td><code>Ctrl+Alt+↓</code></td>
+</tr>
+<tr>
+<td>VoiceOver</td>
+<td><code>VO+Cmd+T</code></td>
+<td><code>VO+→</code></td>
+<td><code>VO+↓</code></td>
+</tr>
+<tr>
+<td>TalkBack</td>
+<td>Swipe</td>
+<td>Swipe</td>
+<td>Swipe</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-internal-architecture-under-the-hood">7. Internal Architecture / Under the Hood</h2>
+<h3 id="the-html-aam-specification">The HTML-AAM Specification</h3>
+<p>The <strong>HTML Accessibility API Mappings (HTML-AAM)</strong> specification defines how HTML elements are exposed to assistive technologies. For tables:</p>
+<ul>
+<li><code>&lt;table&gt;</code> → <code>role: table</code>.</li>
+<li><code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;tfoot&gt;</code> → <code>role: rowgroup</code>.</li>
+<li><code>&lt;tr&gt;</code> → <code>role: row</code>.</li>
+<li><code>&lt;th scope="col"&gt;</code> → <code>role: columnheader</code>.</li>
+<li><code>&lt;th scope="row"&gt;</code> → <code>role: rowheader</code>.</li>
+<li><code>&lt;td&gt;</code> → <code>role: cell</code>.</li>
+</ul>
+<h3 id="the-accessible-name-computation">The Accessible Name Computation</h3>
+<p>The accessible name of a table is computed from:</p>
+<ol>
+<li><code>aria-labelledby</code> (highest priority).</li>
+<li><code>aria-label</code>.</li>
+<li><code>&lt;caption&gt;</code>.</li>
+<li><code>title</code> (fallback).</li>
+</ol>
+<h3 id="the-accessible-description-computation">The Accessible Description Computation</h3>
+<p>The accessible description is computed from:</p>
+<ol>
+<li><code>aria-describedby</code>.</li>
+<li><code>title</code> (fallback).</li>
+</ol>
+<h3 id="headercell-association-algorithm_1">Header–Cell Association Algorithm</h3>
+<p>The algorithm (simplified):</p>
+<ol>
+<li>For each <code>&lt;td&gt;</code>, find its row and column.</li>
+<li>If <code>headers</code> is present, use the referenced headers.</li>
+<li>Otherwise, find the row and column headers:</li>
+<li>Row header: the first <code>&lt;th scope="row"&gt;</code> in the same row.</li>
+<li>Column header: the <code>&lt;th scope="col"&gt;</code> in the same column.</li>
+<li>If <code>scope="rowgroup"</code> or <code>scope="colgroup"</code>, apply to the entire group.</li>
+</ol>
+<h3 id="screen-reader-implementation">Screen Reader Implementation</h3>
+<p>Screen readers implement their own table navigation and announcement logic, using the accessibility tree. They may:</p>
+<ul>
+<li>Announce the table dimensions.</li>
+<li>Announce the headers for each cell.</li>
+<li>Allow jumping between cells, rows, and columns.</li>
+<li>Provide a "table mode" for complex navigation.</li>
+</ul>
+<h3 id="the-rolepresentation-attribute">The <code>role="presentation"</code> Attribute</h3>
+<p>When a table is used for layout, <code>role="presentation"</code> (or <code>role="none"</code>) removes the table semantics from the accessibility tree. The cells are then treated as regular content.</p>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;presentation&quot;</span><span class="p">&gt;</span>
+    <span class="cm">&lt;!-- layout content --&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Note</strong>: This is only for layout tables. Data tables should never use <code>role="presentation"</code>.</p>
+<h3 id="aria-table-roles">ARIA Table Roles</h3>
+<p>When native tables can't be used:</p>
+<table>
+<thead>
+<tr>
+<th>ARIA Role</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>table</code></td>
+<td>Container.</td>
+</tr>
+<tr>
+<td><code>rowgroup</code></td>
+<td>Row group.</td>
+</tr>
+<tr>
+<td><code>row</code></td>
+<td>Row.</td>
+</tr>
+<tr>
+<td><code>columnheader</code></td>
+<td>Column header.</td>
+</tr>
+<tr>
+<td><code>rowheader</code></td>
+<td>Row header.</td>
+</tr>
+<tr>
+<td><code>cell</code></td>
+<td>Data cell.</td>
+</tr>
+</tbody>
+</table>
+<p>ARIA tables require manual keyboard support and focus management.</p>
+<hr />
+<h2 id="8-lifecycle-workflow">8. Lifecycle / Workflow</h2>
+<h3 id="the-lifecycle-of-an-accessible-table">The Lifecycle of an Accessible Table</h3>
+<div class="language-text highlight"><pre><span></span><code>1.  Author writes the table with accessibility in mind.
+    │   ├── &lt;caption&gt; for the name.
+    │   ├── &lt;th&gt; for headers.
+    │   ├── scope for associations.
+    │   └── Row groups for sections.
+    │
+    ▼
+2.  File is deployed.
+    │
+    ▼
+3.  Browser parses the document and builds the DOM.
+    │
+    ▼
+4.  The accessibility tree is built:
+    │   ├── table, rowgroup, row roles.
+    │   ├── columnheader, rowheader, cell roles.
+    │   └── Header–cell associations computed.
+    │
+    ▼
+5.  Screen readers consume the accessibility tree.
+    │
+    ▼
+6.  User navigates the table.
+    │   ├── Screen reader announces table dimensions.
+    │   ├── Announces headers with each cell.
+    │   └── Supports keyboard navigation.
+    │
+    ▼
+7.  Automated tools (Lighthouse, axe) audit the table.
+    │
+    ▼
+8.  Manual testing with screen readers confirms accessibility.
+    │
+    ▼
+9.  When the page is unloaded, the table is destroyed.
+</code></pre></div>
+<h3 id="continuous-accessibility">Continuous Accessibility</h3>
+<p>Accessibility is not a one-time task. As content changes:</p>
+<ul>
+<li>Re-validate tables.</li>
+<li>Re-test with screen readers.</li>
+<li>Update captions and headers.</li>
+<li>Ensure new rows follow the same patterns.</li>
+</ul>
+<hr />
+<h2 id="9-practical-examples">9. Practical Examples</h2>
+<h3 id="example-1-accessible-simple-table">Example 1: Accessible Simple Table</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Monthly Sales (2026)<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Month<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>January<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>February<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$12,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-2-accessible-table-with-totals">Example 2: Accessible Table with Totals</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Monthly Expenses (2026)<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Category<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Amount<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>Rent<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$1,200<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>Utilities<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$300<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tfoot</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>Total<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$1,500<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tfoot</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-3-accessible-table-with-column-group-header">Example 3: Accessible Table with Column Group Header</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Quarterly Sales by Region (2026)<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">rowspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Region<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;3&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;colgroup&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q1<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q2<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q3<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>North<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$12k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$13k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-4-accessible-table-with-headers">Example 4: Accessible Table with <code>headers</code></h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Employee Directory<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;dept&quot;</span><span class="p">&gt;</span>Department<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;salary&quot;</span><span class="p">&gt;</span>Salary<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;dept&quot;</span><span class="p">&gt;</span>Engineering<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;salary&quot;</span><span class="p">&gt;</span>$120,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-5-accessible-table-with-aria-label-instead-of-caption">Example 5: Accessible Table with <code>aria-label</code> Instead of Caption</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Monthly Sales&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Month<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>January<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-6-accessible-table-with-aria-describedby">Example 6: Accessible Table with <code>aria-describedby</code></h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span> <span class="na">aria-describedby</span><span class="o">=</span><span class="s">&quot;table-note&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Monthly Sales<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;table-note&quot;</span><span class="p">&gt;</span>Data is updated on the first of each month.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-7-accessible-table-with-row-groups">Example 7: Accessible Table with Row Groups</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Employee Directory by Department<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Role<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span><span class="p">&gt;</span>Engineering<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Backend<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span><span class="p">&gt;</span>Design<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Carol<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>UX<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-8-accessible-table-with-spanned-headers">Example 8: Accessible Table with Spanned Headers</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Sales Summary<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">rowspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Product<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;colgroup&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">rowspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Total<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Units<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Revenue<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>Widget<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>500<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$5,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$5,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-9-accessible-layout-table-email">Example 9: Accessible Layout Table (Email)</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;presentation&quot;</span> <span class="na">width</span><span class="o">=</span><span class="s">&quot;100%&quot;</span> <span class="na">cellpadding</span><span class="o">=</span><span class="s">&quot;0&quot;</span> <span class="na">cellspacing</span><span class="o">=</span><span class="s">&quot;0&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span> <span class="na">align</span><span class="o">=</span><span class="s">&quot;center&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">table</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;presentation&quot;</span> <span class="na">width</span><span class="o">=</span><span class="s">&quot;600&quot;</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Header<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-10-accessible-table-with-aria-fallback">Example 10: Accessible Table with ARIA (Fallback)</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;table&quot;</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Monthly Sales&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;columnheader&quot;</span><span class="p">&gt;</span>Month<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;columnheader&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;rowheader&quot;</span><span class="p">&gt;</span>January<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;cell&quot;</span><span class="p">&gt;</span>$10,000<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-11-responsive-accessible-table">Example 11: Responsive Accessible Table</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;overflow-x: auto;&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Employee Directory<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Email<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Phone<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Department<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>alice@example.com<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>(555) 123-4567<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Engineering<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-12-accessible-table-with-scoperowgroup">Example 12: Accessible Table with <code>scope="rowgroup"</code></h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Sales by Region<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Region<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Country<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">rowspan</span><span class="o">=</span><span class="s">&quot;3&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span><span class="p">&gt;</span>Europe<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>UK<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Germany<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$12k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>France<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$8k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-13-accessible-table-with-scopecolgroup">Example 13: Accessible Table with <code>scope="colgroup"</code></h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Sales Summary<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Product<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;3&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;colgroup&quot;</span><span class="p">&gt;</span>Quarterly Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q1<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q2<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q3<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Widget<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$12k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$13k<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-14-accessible-table-with-headers-for-irregular-structure">Example 14: Accessible Table with <code>headers</code> for Irregular Structure</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Sales by Region and Quarter<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;region&quot;</span><span class="p">&gt;</span>Region<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;q1&quot;</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span><span class="p">&gt;</span>Q1<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;q2&quot;</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span><span class="p">&gt;</span>Q2<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;q1-units&quot;</span><span class="p">&gt;</span>Units<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;q1-rev&quot;</span><span class="p">&gt;</span>Revenue<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;q2-units&quot;</span><span class="p">&gt;</span>Units<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;q2-rev&quot;</span><span class="p">&gt;</span>Revenue<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;north&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>North<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;north q1 q1-units&quot;</span><span class="p">&gt;</span>500<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;north q1 q1-rev&quot;</span><span class="p">&gt;</span>$5,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;north q2 q2-units&quot;</span><span class="p">&gt;</span>600<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">headers</span><span class="o">=</span><span class="s">&quot;north q2 q2-rev&quot;</span><span class="p">&gt;</span>$6,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-15-accessible-table-with-print-styles">Example 15: Accessible Table with Print Styles</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="p">@</span><span class="k">media</span><span class="w"> </span><span class="nt">print</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">thead</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">table-header-group</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="nt">tfoot</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">table-footer-group</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Product List<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Product<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Price<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Widget<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$9.99<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Gadget<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$19.99<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tfoot</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>Total<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$29.98<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tfoot</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-16-accessible-table-with-sticky-header">Example 16: Accessible Table with Sticky Header</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="p">.</span><span class="nc">sticky-table</span><span class="w"> </span><span class="nt">thead</span><span class="w"> </span><span class="nt">th</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">position</span><span class="p">:</span><span class="w"> </span><span class="kc">sticky</span><span class="p">;</span>
+<span class="w">        </span><span class="k">top</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#2c3e50</span><span class="p">;</span>
+<span class="w">        </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="w">        </span><span class="k">z-index</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;sticky-table&quot;</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;max-height: 300px; overflow-y: auto;&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Employee Directory<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Role<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Engineer<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Bob<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Designer<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="cm">&lt;!-- Many rows... --&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-17-accessible-table-with-high-contrast">Example 17: Accessible Table with High Contrast</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="nt">table</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">border-collapse</span><span class="p">:</span><span class="w"> </span><span class="kc">collapse</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nt">caption</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="p">;</span>
+<span class="w">        </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">left</span><span class="p">;</span>
+<span class="w">        </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="kt">rem</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nt">th</span><span class="o">,</span><span class="w"> </span><span class="nt">td</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="mh">#333</span><span class="p">;</span>
+<span class="w">        </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="kt">rem</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nt">thead</span><span class="w"> </span><span class="nt">th</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#000</span><span class="p">;</span>
+<span class="w">        </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#fff</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nt">tbody</span><span class="w"> </span><span class="nt">th</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#f0f0f0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#000</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Monthly Sales<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Month<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>January<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-18-accessible-table-with-aria-describedby-for-instructions">Example 18: Accessible Table with <code>aria-describedby</code> for Instructions</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span> <span class="na">aria-describedby</span><span class="o">=</span><span class="s">&quot;table-instructions&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Monthly Sales<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Month<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>January<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;table-instructions&quot;</span><span class="p">&gt;</span>
+    Use the arrow keys to navigate cells. All values are in USD.
+<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-19-accessible-table-with-multiple-tbody-elements">Example 19: Accessible Table with Multiple <code>&lt;tbody&gt;</code> Elements</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Employee Directory by Department<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Role<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span><span class="p">&gt;</span>Engineering<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Backend<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span><span class="p">&gt;</span>Design<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Carol<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>UX<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<h3 id="example-20-complete-accessible-table">Example 20: Complete Accessible Table</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&quot;en&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Accessible Table<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">        </span><span class="nt">body</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="n">system-ui</span><span class="p">,</span><span class="w"> </span><span class="kc">sans-serif</span><span class="p">;</span>
+<span class="w">            </span><span class="k">max-width</span><span class="p">:</span><span class="w"> </span><span class="mi">900</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="kt">rem</span><span class="w"> </span><span class="kc">auto</span><span class="p">;</span>
+<span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">1</span><span class="kt">rem</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="nt">table</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+<span class="w">            </span><span class="k">border-collapse</span><span class="p">:</span><span class="w"> </span><span class="kc">collapse</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="nt">caption</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">left</span><span class="p">;</span>
+<span class="w">            </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mf">1.25</span><span class="kt">rem</span><span class="p">;</span>
+<span class="w">            </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="p">;</span>
+<span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#2c3e50</span><span class="p">;</span>
+<span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mf">0.75</span><span class="kt">rem</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">border-bottom</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="mh">#3498db</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="nt">th</span><span class="o">,</span><span class="w"> </span><span class="nt">td</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mf">0.75</span><span class="kt">rem</span><span class="p">;</span>
+<span class="w">            </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="mh">#dee2e6</span><span class="p">;</span>
+<span class="w">            </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">left</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="nt">thead</span><span class="w"> </span><span class="nt">th</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#2c3e50</span><span class="p">;</span>
+<span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="nt">tbody</span><span class="w"> </span><span class="nt">th</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#f8f9fa</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="nt">tfoot</span><span class="w"> </span><span class="nt">th</span><span class="o">,</span><span class="w"> </span><span class="nt">tfoot</span><span class="w"> </span><span class="nt">td</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#e9ecef</span><span class="p">;</span>
+<span class="w">            </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Accessible Table<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">table</span> <span class="na">aria-describedby</span><span class="o">=</span><span class="s">&quot;table-note&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Quarterly Sales by Region (2026)<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">colgroup</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">col</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;region-col&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">col</span> <span class="na">span</span><span class="o">=</span><span class="s">&quot;4&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;sales-col&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">colgroup</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">rowspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Region<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;4&quot;</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;colgroup&quot;</span><span class="p">&gt;</span>Sales<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q1<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q2<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q3<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Q4<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>North<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$12,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$13,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$14,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>South<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$8,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$9,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$11,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>East<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$11,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$13,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$14,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$15,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>West<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$9,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$10,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$12,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$13,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tfoot</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>Total<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$38,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$44,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$49,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>$53,000<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tfoot</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;table-note&quot;</span><span class="p">&gt;</span>
+        All figures are in USD and rounded to the nearest thousand.
+    <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+<hr />
+<h2 id="10-common-use-cases">10. Common Use Cases</h2>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Accessibility Feature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Financial reports</td>
+<td><code>&lt;th&gt;</code>, <code>scope</code>, <code>&lt;tfoot&gt;</code></td>
+</tr>
+<tr>
+<td>Data exports</td>
+<td><code>&lt;caption&gt;</code>, headers</td>
+</tr>
+<tr>
+<td>Scientific data</td>
+<td><code>&lt;th&gt;</code>, <code>scope</code>, <code>&lt;caption&gt;</code></td>
+</tr>
+<tr>
+<td>Comparison tables</td>
+<td><code>&lt;th&gt;</code>, <code>scope</code>, <code>&lt;colgroup&gt;</code></td>
+</tr>
+<tr>
+<td>Timetables</td>
+<td><code>&lt;th&gt;</code>, <code>scope</code>, <code>&lt;thead&gt;</code></td>
+</tr>
+<tr>
+<td>Directories</td>
+<td><code>&lt;th&gt;</code>, <code>scope</code>, <code>&lt;caption&gt;</code></td>
+</tr>
+<tr>
+<td>Schedules</td>
+<td><code>&lt;th&gt;</code>, <code>scope</code>, <code>scope="rowgroup"</code></td>
+</tr>
+<tr>
+<td>Pricing tables</td>
+<td><code>&lt;th&gt;</code>, <code>scope</code>, <code>&lt;caption&gt;</code></td>
+</tr>
+<tr>
+<td>Dashboards</td>
+<td><code>&lt;th&gt;</code>, <code>scope</code>, <code>aria-describedby</code></td>
+</tr>
+<tr>
+<td>Data grids</td>
+<td>ARIA roles (fallback)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11-best-practices">11. Best Practices</h2>
+<ol>
+<li>
+<p><strong>Always use native <code>&lt;table&gt;</code></strong> – not <code>&lt;div&gt;</code> with ARIA roles.</p>
+</li>
+<li>
+<p><strong>Always use <code>&lt;th&gt;</code> for headers</strong> – not <code>&lt;td&gt;</code> with bold text.</p>
+</li>
+<li>
+<p><strong>Always use <code>scope</code> on <code>&lt;th&gt;</code></strong> – <code>col</code>, <code>row</code>, <code>colgroup</code>, <code>rowgroup</code>.</p>
+</li>
+<li>
+<p><strong>Always provide a <code>&lt;caption&gt;</code></strong> – or <code>aria-label</code> / <code>aria-labelledby</code>.</p>
+</li>
+<li>
+<p><strong>Use <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;tfoot&gt;</code></strong> – to group rows semantically.</p>
+</li>
+<li>
+<p><strong>Use <code>headers</code> for complex tables</strong> – when <code>scope</code> is insufficient.</p>
+</li>
+<li>
+<p><strong>Use <code>id</code> on <code>&lt;th&gt;</code></strong> – for <code>headers</code> references.</p>
+</li>
+<li>
+<p><strong>Keep tables simple</strong> – fewer columns and rows are easier to navigate.</p>
+</li>
+<li>
+<p><strong>Avoid layout tables</strong> – use CSS Grid or Flexbox.</p>
+</li>
+<li>
+<p><strong>Use <code>role="presentation"</code> for layout tables</strong> – if a table must be used for layout.</p>
+</li>
+<li>
+<p><strong>Use <code>aria-describedby</code></strong> – for additional context.</p>
+</li>
+<li>
+<p><strong>Ensure logical reading order</strong> – don't reorder cells with CSS.</p>
+</li>
+<li>
+<p><strong>Test with screen readers</strong> – NVDA, JAWS, VoiceOver, TalkBack.</p>
+</li>
+<li>
+<p><strong>Test keyboard navigation</strong> – <code>Tab</code>, <code>Ctrl+Alt+Arrow</code>.</p>
+</li>
+<li>
+<p><strong>Test at 320px width</strong> – for WCAG 1.4.10 (Reflow).</p>
+</li>
+<li>
+<p><strong>Ensure sufficient contrast</strong> – for table content.</p>
+</li>
+<li>
+<p><strong>Use <code>table-layout: fixed</code></strong> – for predictable widths.</p>
+</li>
+<li>
+<p><strong>Use <code>overflow-x: auto</code></strong> – for responsive tables.</p>
+</li>
+<li>
+<p><strong>Validate your HTML</strong> – use the W3C validator.</p>
+</li>
+<li>
+<p><strong>Run automated audits</strong> – Lighthouse, axe, WAVE.</p>
+</li>
+<li>
+<p><strong>Document your table patterns</strong> – in a style guide.</p>
+</li>
+<li>
+<p><strong>Re-test after content changes</strong> – accessibility is ongoing.</p>
+</li>
+<li>
+<p><strong>Use <code>aria-sort</code></strong> – for sortable tables.</p>
+</li>
+<li>
+<p><strong>Use <code>aria-rowcount</code> and <code>aria-colcount</code></strong> – for virtualized tables.</p>
+</li>
+<li>
+<p><strong>Avoid <code>aria-hidden="true"</code> on table cells</strong> – it removes them from the accessibility tree.</p>
+</li>
+</ol>
+<hr />
+<h2 id="12-common-mistakes">12. Common Mistakes</h2>
+<h3 id="mistake-using-td-for-headers">❌ Mistake: Using <code>&lt;td&gt;</code> for Headers</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Age<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Screen readers don't identify these as headers.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Age<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-omitting-scope">❌ Mistake: Omitting <code>scope</code></h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">th</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: The header's scope is not declared.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-omitting-caption">❌ Mistake: Omitting <code>&lt;caption&gt;</code></h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: The table has no accessible name.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Monthly Sales<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thead</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">thead</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-using-layout-tables">❌ Mistake: Using Layout Tables</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Sidebar<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Content<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Screen readers read the table as data, not layout.</p>
+<p><strong>✅ Correct</strong>: Use CSS Grid or Flexbox. Or add <code>role="presentation"</code> for email layouts.</p>
+<h3 id="mistake-using-css-to-reorder-cells">❌ Mistake: Using CSS to Reorder Cells</h3>
+<div class="language-css highlight"><pre><span></span><code><span class="nt">tbody</span><span class="w"> </span><span class="nt">tr</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">flex</span><span class="p">;</span>
+<span class="w">    </span><span class="k">flex-direction</span><span class="p">:</span><span class="w"> </span><span class="kc">row-reverse</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: The visual order no longer matches the reading order.</p>
+<p><strong>✅ Correct</strong>: Keep the DOM order matching the visual order.</p>
+<h3 id="mistake-using-aria-hiddentrue-on-table-cells">❌ Mistake: Using <code>aria-hidden="true"</code> on Table Cells</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">td</span> <span class="na">aria-hidden</span><span class="o">=</span><span class="s">&quot;true&quot;</span><span class="p">&gt;</span>Data<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: The cell is removed from the accessibility tree.</p>
+<p><strong>✅ Correct</strong>: Don't hide table cells unless the content is decorative.</p>
+<h3 id="mistake-using-aria-when-native-semantics-suffice">❌ Mistake: Using ARIA When Native Semantics Suffice</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;table&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;cell&quot;</span><span class="p">&gt;</span>Data<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Native <code>&lt;table&gt;</code> already has the correct roles.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Data<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-forgetting-scoperowgroup-for-group-headers">❌ Mistake: Forgetting <code>scope="rowgroup"</code> for Group Headers</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">th</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span><span class="p">&gt;</span>Engineering<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Backend<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: The group header isn't associated with the row group.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">tbody</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;rowgroup&quot;</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;2&quot;</span><span class="p">&gt;</span>Engineering<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Backend<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">tbody</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<h3 id="mistake-overusing-spans">❌ Mistake: Overusing Spans</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">th</span> <span class="na">colspan</span><span class="o">=</span><span class="s">&quot;5&quot;</span> <span class="na">rowspan</span><span class="o">=</span><span class="s">&quot;5&quot;</span><span class="p">&gt;</span>All Data<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Complex spans confuse screen readers.</p>
+<p><strong>✅ Correct</strong>: Keep spans small and use <code>scope</code>.</p>
+<h3 id="mistake-not-testing-with-screen-readers">❌ Mistake: Not Testing with Screen Readers</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">th</span> <span class="na">scope</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Without testing, you don't know if the table is announced correctly.</p>
+<p><strong>✅ Correct</strong>: Test with NVDA, JAWS, or VoiceOver.</p>
+<h3 id="mistake-using-rolepresentation-on-data-tables">❌ Mistake: Using <code>role="presentation"</code> on Data Tables</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span> <span class="na">role</span><span class="o">=</span><span class="s">&quot;presentation&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;&lt;</span><span class="nt">th</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">th</span><span class="p">&gt;&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Alice<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: The table's semantics are removed — screen readers can't interpret it.</p>
+<p><strong>✅ Correct</strong>: Only use <code>role="presentation"</code> on layout tables.</p>
+<h3 id="mistake-using-aria-label-on-table-when-caption-exists">❌ Mistake: Using <code>aria-label</code> on <code>&lt;table&gt;</code> When <code>&lt;caption&gt;</code> Exists</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">table</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Monthly Sales&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">caption</span><span class="p">&gt;</span>Sales Data<span class="p">&lt;/</span><span class="nt">caption</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: <code>aria-label</code> overrides the caption, which can be confusing.</p>
+<p><strong>✅ Correct</strong>: Use one or the other.</p>
+<h3 id="mistake-forgetting-to-close-cells">❌ Mistake: Forgetting to Close Cells</h3>
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Cell 1
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Cell 2
+<span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+</code></pre></div>
+<p><strong>Why it's wrong</strong>: Missing closing tags can cause parsing issues.</p>
+<p><strong>✅ Correct</strong>:
+<div class="language-html highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Cell 1<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>Cell 2<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+</code></pre></div></p>
+<hr />
+<h2 id="13-performance-considerations">13. Performance Considerations</h2>
+<ul>
+<li><strong>Accessibility tree size</strong> – complex tables (many rows, spans) increase the accessibility tree size.</li>
+<li><strong>Screen reader performance</strong> – very large tables can slow down screen readers.</li>
+<li><strong>Rendering</strong> – accessibility features have negligible rendering cost.</li>
+<li><strong>Automated audits</strong> – Lighthouse and axe are fast, but not exhaustive.</li>
+<li><strong>Manual testing</strong> – time-consuming but essential.</li>
+</ul>
+<h3 id="performance-tips">Performance Tips</h3>
+<ol>
+<li><strong>Keep tables simple</strong> – fewer rows and columns.</li>
+<li><strong>Virtualize very large tables</strong> – for hundreds of rows.</li>
+<li><strong>Use <code>aria-rowcount</code> and <code>aria-colcount</code></strong> – for virtualized tables.</li>
+<li><strong>Avoid complex spans</strong> – they increase the accessibility tree's complexity.</li>
+<li><strong>Minify HTML</strong> – reduce file size.</li>
+</ol>
+<hr />
+<h2 id="14-security-considerations">14. Security Considerations</h2>
+<ul>
+<li><strong>XSS</strong> – if table content contains user-generated data, sanitize it before rendering.</li>
+<li><strong><code>innerHTML</code></strong> – avoid using <code>innerHTML</code> with user input; use <code>textContent</code> or a sanitizer.</li>
+<li><strong>Injection</strong> – never insert user input directly into table attributes.</li>
+<li><strong>Data leakage</strong> – tables often contain sensitive data; ensure access controls are in place.</li>
+<li><strong>No direct security implications</strong> – table accessibility itself is not a security risk.</li>
+</ul>
+<h3 id="security-best-practices">Security Best Practices</h3>
+<ol>
+<li><strong>Sanitize user input</strong> – before inserting into tables.</li>
+<li><strong>Use <code>textContent</code></strong> – instead of <code>innerHTML</code> for text.</li>
+<li><strong>Validate structure</strong> – ensure the table structure is well-formed.</li>
+<li><strong>Use CSP</strong> – to restrict inline scripts and styles.</li>
+<li><strong>Protect sensitive data</strong> – with server-side access controls.</li>
+</ol>
+<hr />
+<h2 id="15-debugging-tips">15. Debugging Tips</h2>
+<ul>
+<li><strong>DevTools Elements panel</strong> – inspect the table structure.</li>
+<li><strong>Accessibility Inspector</strong> – check the accessibility tree (roles, names, states).</li>
+<li><strong>Computed styles</strong> – check <code>display</code>, <code>border-collapse</code>, <code>border-spacing</code>.</li>
+<li><strong>Console</strong> – use <code>document.querySelectorAll('th')</code> to count headers.</li>
+<li><strong><code>table.rows</code></strong> – check the row count.</li>
+<li><strong><code>table.tHead</code></strong> – check the header row group.</li>
+<li><strong>Validator</strong> – check for invalid nesting and attributes.</li>
+<li><strong>Lighthouse</strong> – audit for accessibility.</li>
+<li><strong>axe DevTools</strong> – browser extension for accessibility testing.</li>
+<li><strong>WAVE</strong> – web accessibility evaluation tool.</li>
+<li><strong>Screen reader testing</strong> – NVDA, JAWS, VoiceOver, TalkBack.</li>
+<li><strong>Keyboard testing</strong> – navigate the table with <code>Tab</code> and arrow keys.</li>
+<li><strong>Test with CSS disabled</strong> – ensure the table still makes sense.</li>
+<li><strong>Test at 320px width</strong> – for WCAG 1.4.10 (Reflow).</li>
+</ul>
+<hr />
+<h2 id="16-when-to-use">16. When to Use</h2>
+<ul>
+<li><strong>For all data tables</strong> – accessibility is required.</li>
+<li><strong>For financial reports</strong> – headers, totals, captions.</li>
+<li><strong>For scientific data</strong> – headers, units, captions.</li>
+<li><strong>For comparison tables</strong> – headers, scope, colgroups.</li>
+<li><strong>For timetables</strong> – headers, row groups.</li>
+<li><strong>For directories</strong> – headers, scope, captions.</li>
+<li><strong>For schedules</strong> – headers, row groups, spanning.</li>
+</ul>
+<hr />
+<h2 id="17-when-not-to-use">17. When Not to Use</h2>
+<ul>
+<li><strong>For layout</strong> – use CSS Grid or Flexbox.</li>
+<li><strong>For non-tabular data</strong> – use lists or paragraphs.</li>
+<li><strong>For single-cell tables</strong> – use a paragraph.</li>
+<li><strong>For decorative grids</strong> – use CSS Grid.</li>
+<li><strong>For complex application UIs</strong> – use ARIA grid patterns (with full keyboard support).</li>
+</ul>
+<hr />
+<h2 id="18-related-concepts">18. Related Concepts</h2>
+<ul>
+<li><code>&lt;table&gt;</code> – table container.</li>
+<li><code>&lt;caption&gt;</code> – table title.</li>
+<li><code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;tfoot&gt;</code> – row groups.</li>
+<li><code>&lt;tr&gt;</code> – table row.</li>
+<li><code>&lt;th&gt;</code> – header cell.</li>
+<li><code>&lt;td&gt;</code> – data cell.</li>
+<li><code>scope</code> attribute – header scope.</li>
+<li><code>headers</code> attribute – direct header association.</li>
+<li><code>id</code> attribute – target for <code>headers</code>.</li>
+<li><code>&lt;colgroup&gt;</code>, <code>&lt;col&gt;</code> – column groups.</li>
+<li><code>colspan</code>, <code>rowspan</code> – cell spanning.</li>
+<li><code>role="presentation"</code> – for layout tables.</li>
+<li>ARIA roles – <code>table</code>, <code>row</code>, <code>columnheader</code>, etc.</li>
+<li>WCAG – accessibility guidelines.</li>
+<li>HTML-AAM – Accessibility API Mappings.</li>
+<li>Screen readers – NVDA, JAWS, VoiceOver, TalkBack.</li>
+<li>Lighthouse, axe, WAVE – accessibility testing tools.</li>
+</ul>
+<hr />
+<h2 id="19-did-you-know">19. Did You Know?</h2>
+<ul>
+<li>
+<p><strong>WCAG 1.3.1 (Info and Relationships)</strong> requires that table header–cell associations be programmatically determinable.</p>
+</li>
+<li>
+<p><strong>Screen readers</strong> announce tables as "Table with N rows, M columns" and read the headers for each cell.</p>
+</li>
+<li>
+<p>The <strong><code>scope</code> attribute</strong> is essential for accessibility — without it, screen readers may not associate headers with cells correctly.</p>
+</li>
+<li>
+<p>The <strong><code>headers</code> attribute</strong> is used for complex tables where <code>scope</code> is insufficient.</p>
+</li>
+<li>
+<p>The <strong><code>&lt;caption&gt;</code> element</strong> provides the table's accessible name — it's announced before the table data.</p>
+</li>
+<li>
+<p><strong>Layout tables</strong> are inaccessible — use CSS Grid or Flexbox. If a table must be used (e.g., email), add <code>role="presentation"</code>.</p>
+</li>
+<li>
+<p><strong><code>role="presentation"</code></strong> removes the table's semantics — do not use on data tables.</p>
+</li>
+<li>
+<p><strong>ARIA roles</strong> (<code>role="table"</code>, <code>role="row"</code>, etc.) are a fallback when native <code>&lt;table&gt;</code> can't be used.</p>
+</li>
+<li>
+<p><strong>NVDA</strong> uses <code>Ctrl+Alt+Arrow</code> to navigate cells and <code>T</code> to jump to the next table.</p>
+</li>
+<li>
+<p><strong>JAWS</strong> uses <code>Ctrl+Alt+Arrow</code> and <code>T</code> similarly.</p>
+</li>
+<li>
+<p><strong>VoiceOver</strong> uses <code>VO+Arrow</code> to navigate cells.</p>
+</li>
+<li>
+<p><strong>TalkBack</strong> uses swipe gestures.</p>
+</li>
+<li>
+<p>The <strong>HTML-AAM specification</strong> defines how table elements are mapped to accessibility APIs.</p>
+</li>
+<li>
+<p><strong><code>aria-rowcount</code> and <code>aria-colcount</code></strong> are used for virtualized tables where not all rows/columns are in the DOM.</p>
+</li>
+<li>
+<p><strong><code>aria-sort</code></strong> is used on sortable table headers to indicate the current sort order.</p>
+</li>
+<li>
+<p><strong><code>aria-describedby</code></strong> provides additional context for the table.</p>
+</li>
+<li>
+<p><strong><code>aria-labelledby</code></strong> references another element for the table's name.</p>
+</li>
+<li>
+<p><strong>Tables with <code>display: grid</code></strong> lose their table semantics — use native <code>&lt;table&gt;</code> or ARIA roles.</p>
+</li>
+<li>
+<p><strong><code>border-collapse: collapse</code></strong> can affect how borders are rendered on spanned cells.</p>
+</li>
+<li>
+<p><strong>Sticky headers</strong> are implemented with <code>position: sticky</code> on <code>&lt;thead&gt; th</code>.</p>
+</li>
+<li>
+<p><strong>Responsive tables</strong> often use <code>overflow-x: auto</code> on a wrapper.</p>
+</li>
+<li>
+<p><strong>WCAG 1.4.10 (Reflow)</strong> requires tables to be usable at 320px width without horizontal scrolling.</p>
+</li>
+<li>
+<p><strong>WCAG 1.4.3 (Contrast)</strong> requires sufficient contrast for table content.</p>
+</li>
+<li>
+<p><strong>Accessibility is not optional</strong> — it's a legal requirement in many jurisdictions (ADA, Section 508, EN 301 549, AODA).</p>
+</li>
+<li>
+<p><strong>Automated tools</strong> catch about 30% of accessibility issues — manual testing is essential.</p>
+</li>
+<li>
+<p><strong>Screen reader testing</strong> is the gold standard for table accessibility.</p>
+</li>
+<li>
+<p><strong>Accessible tables benefit everyone</strong> — they're clearer, more navigable, and more machine-readable.</p>
+</li>
+<li>
+<p><strong>The first rule of ARIA</strong> is: use native HTML first. This applies to tables more than any other element.</p>
+</li>
+<li>
+<p><strong>Tables are one of the most complex HTML structures</strong> — accessibility requires care.</p>
+</li>
+<li>
+<p><strong>Following best practices for table accessibility</strong> leads to more inclusive, maintainable, and semantic tables.</p>
+</li>
+</ul>
+<hr />
+<h2 id="20-summary">20. Summary</h2>
+<ul>
+<li><strong>Table accessibility</strong> ensures that tables are understandable and navigable by all users, including those using screen readers.</li>
+<li><strong>Core principles</strong>: use <code>&lt;th&gt;</code> for headers, <code>scope</code> for association, <code>&lt;caption&gt;</code> for the name, <code>&lt;thead&gt;</code>/<code>&lt;tbody&gt;</code>/<code>&lt;tfoot&gt;</code> for structure, and <code>headers</code> for complex tables.</li>
+<li><strong>Best practices</strong>: use native <code>&lt;table&gt;</code>, always include <code>&lt;caption&gt;</code>, always use <code>scope</code>, use row groups, use <code>headers</code> for complex tables, test with screen readers, and test with keyboard navigation.</li>
+<li>Common mistakes include using <code>&lt;td&gt;</code> for headers, omitting <code>scope</code>, omitting <code>&lt;caption&gt;</code>, using layout tables, using CSS to reorder cells, and using ARIA when native semantics suffice.</li>
+<li>The <code>&lt;caption&gt;</code> element provides the table's accessible name.</li>
+<li>The <code>scope</code> attribute is essential for header–cell association.</li>
+<li>The <code>headers</code> attribute is used for complex tables with irregular header structures.</li>
+<li><code>role="presentation"</code> is used for layout tables (not data tables).</li>
+<li>ARIA roles are a fallback when native <code>&lt;table&gt;</code> can't be used.</li>
+<li><strong>Testing</strong> with screen readers (NVDA, JAWS, VoiceOver, TalkBack) is essential.</li>
+<li><strong>WCAG</strong> success criteria 1.3.1, 1.3.2, 2.1.1, 4.1.2 apply to tables.</li>
+<li><strong>Accessible tables</strong> benefit all users, improve SEO, and meet legal requirements.</li>
+<li>Table accessibility is not a feature — it's a property of <strong>correct table structure</strong>.</li>
+</ul>
+<hr />
 
 
 
